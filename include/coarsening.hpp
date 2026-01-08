@@ -219,7 +219,7 @@ public:
 		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (!ProgramConfig::coarsening_clusterization_prohibition) {
+		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size = c<vw_t>((c<real_t>(max_allowed_size) / c<real_t>(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 

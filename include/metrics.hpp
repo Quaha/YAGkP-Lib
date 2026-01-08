@@ -100,7 +100,7 @@ public:
 				accuracy = balances[curr_V] - 1.0_r / k;
 			}
 		}
-		return accuracy;
+		return accuracy * k;
 	}
 
 	template <typename vw_t, typename ew_t>

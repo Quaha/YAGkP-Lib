@@ -38,8 +38,8 @@ namespace ProgramConfig {
     // --- Bipartitioning parameters ---
     inline BipartitioningMethod bipartitioning_method = BipartitioningMethod::GraphGrowingAlgorithm;
 
-    inline int_t bipartitioning_GraphGrowingAlgorithm_launches_count = 100_i;
-    inline int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100_i;
+    inline int_t bipartitioning_GraphGrowingAlgorithm_launches_count = 300_i;
+    inline int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 300_i;
 
     // --- Uncoarsening parameters ---
 	inline UncoarseningMethod uncoarsening_method = UncoarseningMethod::DirectMapping;   
