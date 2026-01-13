@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 input_file = "input.txt"
 xlabel = "Номер итерации огрубления"
 ylabel = "Удельный вес сжатой компоненты (%)"
-title = "Random Matching + GGA + Direct Mapping"
+title = "Heavy Clique Matching + GGGA + KL"
 
 use_log_scale = False
 

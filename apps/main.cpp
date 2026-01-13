@@ -14,30 +14,30 @@ using namespace std;
 
 int main() {
 
-    //ProgramStatistics::InitMatchingStatistics();
+    ProgramStatistics::InitMatchingStatistics();
 
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    ProgramConfig::coarsening_method = ProgramConfig::CoarseningMethod::HeavyCliqueMatching;
-	ProgramConfig::bipartitioning_method = ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm;
-	ProgramConfig::uncoarsening_method = ProgramConfig::UncoarseningMethod::KernighanLin;
+    ProgramConfig::coarsening_method = ProgramConfig::CoarseningMethod::HeavyEdgeMatching;
+	ProgramConfig::bipartitioning_method = ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm;
+	ProgramConfig::uncoarsening_method = ProgramConfig::UncoarseningMethod::DirectMapping;
 
-    ProgramConfig::coarsening_clusterization_prohibition = false;
-	ProgramConfig::coarsening_clusterization_size_factor = 0.9_r;
+    ProgramConfig::coarsening_clusterization_prohibition = true;
+	ProgramConfig::coarsening_clusterization_size_factor = 10000.15_r;
 
-    ProgramConfig::coarsening_vertix_count_limit = 1000_i;
+    ProgramConfig::coarsening_vertix_count_limit = 500_i;
     ProgramConfig::coarsening_itarations_limit = 40_i;
 
 
-    ProgramConfig::accuracy = 0.15_r;
+    ProgramConfig::accuracy = 0.05_r;
 
 	ProgramConfig::post_processing_disbalance_fix = false;
-	ProgramConfig::post_processing_improvement = true;
+	ProgramConfig::post_processing_improvement = false;
 
     PrintBenchmark();
 
-    //ProgramStatistics::PrintMatchingStatistics();
+    ProgramStatistics::PrintMatchingStatistics();
 
     return 0;
 }
