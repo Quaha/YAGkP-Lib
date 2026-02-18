@@ -38,16 +38,16 @@ public:
         vw_t total_weight = graph.getSumOfVertexWeights();
 
         vw_t ideal_weight = total_weight / c<vw_t>(2);
-        vw_t max_allowed = (ProgramConfig::accuracy + 1.0_r) * ideal_weight;
+        vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
         ew_t best_edge_cut;
 
         bool found = false;
 
-        for (int_t i = 0_i; i < ProgramConfig::bipartitioning_GraphGrowingAlgorithm_launches_count; ++i) {
+        for (int_t i = 0; i < ProgramConfig::bipartitioning_GraphGrowingAlgorithm_launches_count; ++i) {
 
-            Vector<int_t> partition(n, 0_i);
+            Vector<int_t> partition(n, 0);
             Vector<bool> visited(n, false);
 
             std::queue<int_t> q;
@@ -57,7 +57,7 @@ public:
             for (int_t start_V : order) {
                 if (graph.vertex_weights[start_V] <= max_allowed) {
                     q.push(start_V);
-                    partition[start_V] = 1_i;
+                    partition[start_V] = 1;
                     visited[start_V] = true;
                     break;
                 }
@@ -72,7 +72,7 @@ public:
                     continue;
                 }
 
-                partition[curr_V] = 1_i;
+                partition[curr_V] = 1;
                 current_weight += graph.vertex_weights[curr_V];
 
                 for (auto [next_V, w] : graph[curr_V]) {
@@ -101,16 +101,16 @@ public:
         const int_t n = graph.n;
 
         vw_t ideal_weight = graph.getSumOfVertexWeights() / c<vw_t>(2);
-        vw_t max_allowed = (ProgramConfig::accuracy + 1.0_r) * ideal_weight;
+        vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
         ew_t best_edge_cut;
 
         bool found = false;
 
-        for (int_t i = 0_i; i < ProgramConfig::bipartitioning_GreedyGraphGrowingAlgorithm_launches_count; ++i) {
+        for (int_t i = 0; i < ProgramConfig::bipartitioning_GreedyGraphGrowingAlgorithm_launches_count; ++i) {
 
-            Vector<int_t> partition(n, 0_i);
+            Vector<int_t> partition(n, 0);
 			Vector<bool> blocked(n, false);
             
             vw_t current_weight = c<vw_t>(0);
@@ -125,14 +125,14 @@ public:
                 for (int_t V: order) {
                     if (!blocked[V] && graph.getVertexWeight(V) + current_weight <= max_allowed) {
                         flag = true;
-                        partition[V] = 1_i;
+                        partition[V] = 1;
                         blocked[V] = true;
 
                         for (auto [next_V, w1] : graph[V]) {
                             ew_t inc_w = c<ew_t>(0);
                             ew_t dec_w = w1;
                             for (auto [near_V, w2] : graph[next_V]) {
-                                if (partition[near_V] == 0_i) {
+                                if (partition[near_V] == 0) {
                                     inc_w += w2;
                                 }
                             }
@@ -154,17 +154,17 @@ public:
 
                     current_weight += graph.vertex_weights[curr_V];
 
-                    partition[curr_V] = 1_i;
+                    partition[curr_V] = 1;
                     for (auto [next_V, w1] : graph[curr_V]) {
                         if (blocked[next_V]) continue;
                         ew_t inc_w = c<ew_t>(0);
                         ew_t dec_w = c<ew_t>(0);
 
                         for (auto [near_V, w2] : graph[next_V]) {
-                            if (partition[near_V] == 0_i) {
+                            if (partition[near_V] == 0) {
                                 inc_w += w2;
                             }
-                            else if (partition[near_V] == 1_i) {
+                            else if (partition[near_V] == 1) {
                                 dec_w += w2;
                             }
                         }

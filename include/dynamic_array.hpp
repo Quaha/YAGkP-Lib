@@ -10,9 +10,9 @@ public:
     using pointer = T*;
     using const_pointer = const T*;
     using reference = T&;
-    using const_reference = const T&;
+    using consteference = const T&;
     using iterator = T*;
-    using const_iterator = const T*;
+    using constterator = const T*;
     using size_type = int;
 
 private:
@@ -94,7 +94,7 @@ public:
         return data_ptr[i];
     }
 
-    const_reference operator[](size_type i) const noexcept {
+    consteference operator[](size_type i) const noexcept {
         return data_ptr[i];
     }
 
@@ -122,11 +122,11 @@ public:
         return data_ptr + sz;
     }
 
-    const_iterator begin() const noexcept {
+    constterator begin() const noexcept {
         return data_ptr;
     }
 
-    const_iterator end() const noexcept {
+    constterator end() const noexcept {
         return data_ptr + sz;
     }
 

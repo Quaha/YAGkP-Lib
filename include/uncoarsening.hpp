@@ -19,13 +19,13 @@ public:
 	) {
 		switch (ProgramConfig::uncoarsening_method) {
 		case ProgramConfig::UncoarseningMethod::DirectMapping:
-			for (int_t i = levels.size() - 1_i; i > 0_i; --i) {
-				partition = Uncoarser::DirectMapping<vw_t, ew_t>(levels[i - 1_i], levels[i], partition);
+			for (int_t i = levels.size() - 1; i > 0; --i) {
+				partition = Uncoarser::DirectMapping<vw_t, ew_t>(levels[i - 1], levels[i], partition);
 			}
 			break;
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
-			for (int_t i = levels.size() - 1_i; i > 0_i; --i) {
-				partition = Uncoarser::KernighanLin<vw_t, ew_t>(levels[i - 1_i], levels[i], partition);
+			for (int_t i = levels.size() - 1; i > 0; --i) {
+				partition = Uncoarser::KernighanLin<vw_t, ew_t>(levels[i - 1], levels[i], partition);
 			}
 			break;
 
@@ -43,7 +43,7 @@ public:
 		const int_t n = level.uncoarse_to_coarse.size();
 		Vector<int_t> prev_partition(n);
 
-		for (int_t i = 0_i; i < n; ++i) {
+		for (int_t i = 0; i < n; ++i) {
 			prev_partition[i] = coarse_partition[level.uncoarse_to_coarse[i]];
 		}
 
@@ -69,8 +69,8 @@ public:
 			vw_t total_weight0 = c<vw_t>(0);
 			vw_t total_weight1 = c<vw_t>(0);
 
-			for (int_t i = 0_i; i < n; ++i) {
-				if (prev_partition[i] == 0_i) {
+			for (int_t i = 0; i < n; ++i) {
+				if (prev_partition[i] == 0) {
 					total_weight0 += graph.getVertexWeight(i);
 				}
 				else {
@@ -79,11 +79,11 @@ public:
 			}
 
 			for (int_t i = 0; i < n; ++i) {
-				if (prev_partition[i] == 0_i && total_weight0 < total_weight1) {
+				if (prev_partition[i] == 0 && total_weight0 < total_weight1) {
 					blocked[i] = true;
 
 				}
-				if (prev_partition[i] == 1_i && total_weight1 < total_weight0) {
+				if (prev_partition[i] == 1 && total_weight1 < total_weight0) {
 					blocked[i] = true;
 				}
 			}
@@ -91,7 +91,7 @@ public:
 
 		IndexedHeap<ew_t> heap(n);
 
-		for (int_t start_V = 0_i; start_V < n; ++start_V) {
+		for (int_t start_V = 0; start_V < n; ++start_V) {
 			ew_t inc_w = c<ew_t>(0);
 			ew_t dec_w = c<ew_t>(0);
 
@@ -117,7 +117,7 @@ public:
 				break;
 			}
 
-			prev_partition[curr_V] = 1_i - prev_partition[curr_V];
+			prev_partition[curr_V] = 1 - prev_partition[curr_V];
 
 			for (auto [next_V, w1] : graph[curr_V]) {
 				if (!blocked[next_V]) {

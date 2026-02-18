@@ -18,16 +18,16 @@ void PrintBenchmark() {
 
     Vector<int_t> ks;
 
-    ks.push_back(2_i);
-    ks.push_back(4_i);
-    ks.push_back(8_i);
-    ks.push_back(16_i);
-    ks.push_back(32_i);
-    //ks.push_back(64_i);
-    //ks.push_back(128_i);
-    //ks.push_back(256_i);
+    ks.push_back(2);
+    ks.push_back(4);
+    ks.push_back(8);
+    ks.push_back(16);
+    ks.push_back(32);
+    //ks.push_back(64);
+    //ks.push_back(128);
+    //ks.push_back(256);
 
-    std::cout << "accuracy (imbalance): " << ProgramConfig::accuracy * 100.0_r << "%" << "\n";
+    std::cout << "accuracy (imbalance): " << ProgramConfig::accuracy * 100.0 << "%" << "\n";
 
     for (const auto& path : files) {
         String filename = std::filesystem::path(path).filename().string();
@@ -47,7 +47,7 @@ void PrintBenchmark() {
 
             real_t real_accuracy = PartitionMetrics::GetAccuracy(g, k, partition);
 
-            std::cout << "k = " << k << " | edge cut = " << edge_cut << " | real imbalance = " << real_accuracy * 100.0_r << "%" << "\n";
+            std::cout << "k = " << k << " | edge cut = " << edge_cut << " | real imbalance = " << real_accuracy * 100.0 << "%" << "\n";
             std::cout << "Max part size = " << PartitionMetrics::GetMaxPartWeight(g, k, partition);
             std::cout << " | Optimal part size = " << c<real_t>(g.getSumOfVertexWeights()) / c<real_t>(k) << "\n\n";
         }

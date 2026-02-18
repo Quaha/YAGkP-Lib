@@ -8,5 +8,5 @@ struct CoarseLevel {
 	Vector<int_t>		  uncoarse_to_coarse;
 	Vector<Vector<int_t>> coarse_to_uncoarse;
 	Graph<vw_t, ew_t>	  coarsed_graph;
-	Vector<ew_t>		  vertex_importance;
+	Vector<ew_t>		  vertexmportance;
 };

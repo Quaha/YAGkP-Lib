@@ -19,7 +19,7 @@ Vector<String> GetFileNames(const String& folder, const String& format) {
 
 Vector<int_t> GetRandomPermutation(int_t n) {
     Vector<int_t> permutation(n);
-    std::iota(permutation.begin(), permutation.end(), 0_i);
+    std::iota(permutation.begin(), permutation.end(), 0);
 
     std::shuffle(permutation.begin(), permutation.end(), rng);
 
@@ -27,6 +27,6 @@ Vector<int_t> GetRandomPermutation(int_t n) {
 }
 
 int_t GetRandomInt(int_t n) {
-	std::uniform_int_distribution<int_t> dist(0_i, n - 1_i);
+	std::uniform_int_distribution<int_t> dist(0, n - 1);
 	return dist(rng);
 }

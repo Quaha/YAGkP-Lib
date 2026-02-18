@@ -14,8 +14,6 @@ using namespace std;
 
 int main() {
 
-    ProgramStatistics::InitMatchingStatistics();
-
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
@@ -24,20 +22,18 @@ int main() {
 	ProgramConfig::uncoarsening_method = ProgramConfig::UncoarseningMethod::DirectMapping;
 
     ProgramConfig::coarsening_clusterization_prohibition = true;
-	ProgramConfig::coarsening_clusterization_size_factor = 10000.15_r;
+	ProgramConfig::coarsening_clusterization_size_factor = 10000.15;
 
-    ProgramConfig::coarsening_vertix_count_limit = 500_i;
-    ProgramConfig::coarsening_itarations_limit = 40_i;
+    ProgramConfig::coarsening_vertix_count_limit = 500;
+    ProgramConfig::coarsening_itarations_limit = 40;
 
 
-    ProgramConfig::accuracy = 0.05_r;
+    ProgramConfig::accuracy = 0.05;
 
 	ProgramConfig::post_processing_disbalance_fix = false;
 	ProgramConfig::post_processing_improvement = false;
 
     PrintBenchmark();
-
-    ProgramStatistics::PrintMatchingStatistics();
 
     return 0;
 }

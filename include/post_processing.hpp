@@ -29,7 +29,7 @@ public:
 		}
 
 		vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = c<vw_t>(c<real_t>(total_weight) / c<real_t>(k) * (1.0_r + ProgramConfig::accuracy + EPS));
+        vw_t max_allowed = c<vw_t>(c<real_t>(total_weight) / c<real_t>(k) * (1.0 + ProgramConfig::accuracy + EPS));
 
 		while (max_allowed * c<vw_t>(k) < total_weight) {
 			max_allowed += c<vw_t>(1);
@@ -47,13 +47,13 @@ public:
 
         while (!heap.empty() && heap.top().first > max_allowed) {
 			vw_t weight = heap.top().first;
-			int_t c_idx = heap.top().second;
+			int_t cdx = heap.top().second;
 
             int_t target = -1;
             vw_t min_w = std::numeric_limits<vw_t>::max();
 
 			for (int_t t = 0; t < k; ++t) {
-				if (t == c_idx) continue;
+				if (t == cdx) continue;
 				if (comp_weight[t] < min_w) {
 					min_w = comp_weight[t];
 					target = t;
@@ -64,22 +64,22 @@ public:
                 break;
             }
 
-			int_t size = comp_vertices[c_idx].size();
-			int_t rand_idx = GetRandomInt(size);
+			int_t size = comp_vertices[cdx].size();
+			int_t randdx = GetRandomInt(size);
 
-			std::swap(comp_vertices[c_idx][rand_idx], comp_vertices[c_idx].back());
+			std::swap(comp_vertices[cdx][randdx], comp_vertices[cdx].back());
 
-			int_t vertex_to_move = comp_vertices[c_idx].back();
-			comp_vertices[c_idx].pop_back();
+			int_t vertex_to_move = comp_vertices[cdx].back();
+			comp_vertices[cdx].pop_back();
 			comp_vertices[target].push_back(vertex_to_move);
 
 			partition[vertex_to_move] = target;
 
 			vw_t vertex_weight = graph.getVertexWeight(vertex_to_move);
-			comp_weight[c_idx] -= vertex_weight;
+			comp_weight[cdx] -= vertex_weight;
 			comp_weight[target] += vertex_weight;
 
-			heap.changePriority(comp_weight[c_idx], c_idx);
+			heap.changePriority(comp_weight[cdx], cdx);
 			heap.changePriority(comp_weight[target], target);
         }
 	}
@@ -101,7 +101,7 @@ public:
         }
 
         vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = c<vw_t>((c<real_t>(total_weight) / c<real_t>(k)) * (1.0_r + ProgramConfig::accuracy + EPS));
+        vw_t max_allowed = c<vw_t>((c<real_t>(total_weight) / c<real_t>(k)) * (1.0 + ProgramConfig::accuracy + EPS));
 
 
 		while (max_allowed * c<vw_t>(k) < total_weight) {

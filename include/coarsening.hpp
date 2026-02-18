@@ -20,32 +20,28 @@ public:
 		const int_t k
 	) {
 		Vector<CoarseLevel<vw_t, ew_t>> levels;
-		levels.reserve(ProgramConfig::coarsening_itarations_limit + 1_i);
+		levels.reserve(ProgramConfig::coarsening_itarations_limit + 1);
 
 		// Entry-level initialization
 		Vector<int_t> base_uncoarse_to_coarse(graph.n);
-		std::iota(base_uncoarse_to_coarse.begin(), base_uncoarse_to_coarse.end(), 0_i);
+		std::iota(base_uncoarse_to_coarse.begin(), base_uncoarse_to_coarse.end(), 0);
 
 		Vector<Vector<int_t>> base_coarse_to_uncoarse(graph.n);
-		for (int_t i = 0_i; i < graph.n; ++i) {
-			base_coarse_to_uncoarse[i] = Vector<int_t>(1_i, i);
+		for (int_t i = 0; i < graph.n; ++i) {
+			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<ew_t> base_vertex_importance(graph.n, c<ew_t>(0));
+		Vector<ew_t> base_vertexmportance(graph.n, c<ew_t>(0));
 
-		levels.push_back(CoarseLevel<vw_t, ew_t>(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertex_importance));
+		levels.push_back(CoarseLevel<vw_t, ew_t>(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance));
 
-		for (int_t i = 0_i; i < ProgramConfig::coarsening_itarations_limit && levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertix_count_limit; ++i) {
+		for (int_t i = 0; i < ProgramConfig::coarsening_itarations_limit && levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertix_count_limit; ++i) {
 
 			CoarseLevel<vw_t, ew_t> new_level;
 
 			FillLevel(levels[i], levels[i].coarsed_graph, new_level, k);
 
 			levels.push_back(new_level);
-
-			if (ProgramConfig::collect_mathing_statistics){
-				ProgramStatistics::UpdateMatchingStatistics(new_level.coarsed_graph.vertex_weights, i + 1_i);
-			}
 		}
 		return std::move(levels);
 	}
@@ -89,7 +85,7 @@ public:
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
-		Vector<int_t> matching(graph.n, -1_i);
+		Vector<int_t> matching(graph.n, -1);
 		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
@@ -98,9 +94,9 @@ public:
 		}
 
 		for (int_t curr_V : permutation) {
-			if (matching[curr_V] != -1_i) continue;
+			if (matching[curr_V] != -1) continue;
 			for (auto [next_V, w] : graph[curr_V]) {
-				if (matching[next_V] == -1_i && graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] <= max_allowed_size) {
+				if (matching[next_V] == -1 && graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] <= max_allowed_size) {
 					matching[next_V] = curr_V;
 					matching[curr_V] = next_V;
 					matching_edge_weights[next_V] = w;
@@ -123,7 +119,7 @@ public:
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
-		Vector<int_t> matching(graph.n, -1_i);
+		Vector<int_t> matching(graph.n, -1);
 		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
@@ -132,7 +128,7 @@ public:
 		}
 
 		for (int_t curr_V : permutation) {
-			if (matching[curr_V] != -1_i) {
+			if (matching[curr_V] != -1) {
 				continue;
 			}
 			int_t best_V;
@@ -141,7 +137,7 @@ public:
 
 			for (auto [next_V, w] : graph[curr_V]) {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size) continue;
-				if (matching[next_V] == -1_i && (!found || w < min_W)) {
+				if (matching[next_V] == -1 && (!found || w < min_W)) {
 					min_W = w;
 					best_V = next_V;
 					found = true;
@@ -169,7 +165,7 @@ public:
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
-		Vector<int_t> matching(graph.n, -1_i);
+		Vector<int_t> matching(graph.n, -1);
 		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
@@ -178,7 +174,7 @@ public:
 		}
 
 		for (int_t curr_V : permutation) {
-			if (matching[curr_V] != -1_i) {
+			if (matching[curr_V] != -1) {
 				continue;
 			}
 			int_t best_V;
@@ -187,7 +183,7 @@ public:
 
 			for (auto [next_V, w] : graph[curr_V]) {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size) continue;
-				if (matching[next_V] == -1_i && (!found || w > max_W)) {
+				if (matching[next_V] == -1 && (!found || w > max_W)) {
 					max_W = w;
 					best_V = next_V;
 					found = true;
@@ -215,7 +211,7 @@ public:
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
-		Vector<int_t> matching(graph.n, -1_i);
+		Vector<int_t> matching(graph.n, -1);
 		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
@@ -224,7 +220,7 @@ public:
 		}
 
 		for (int_t curr_V : permutation) {
-			if (matching[curr_V] != -1_i) {
+			if (matching[curr_V] != -1) {
 				continue;
 			}
 			int_t best_V;
@@ -234,9 +230,9 @@ public:
 
 			for (auto [next_V, w] : graph[curr_V]) {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size) continue;
-				if (matching[next_V] == -1_i) {
+				if (matching[next_V] == -1) {
 					ew_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
-					ew_t F = (w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) / (total_W * (total_W - c<ew_t>(1)));
+					ew_t F = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) / (total_W * (total_W - c<ew_t>(1)));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -268,20 +264,20 @@ public:
 	) {
 		// 1. Filling coarse vectors
 
-		Vector<int_t> uncoarse_to_coarse(graph.n, -1_i);
+		Vector<int_t> uncoarse_to_coarse(graph.n, -1);
 
 		Vector<Vector<int_t>> coarse_to_uncoarse;
-		coarse_to_uncoarse.reserve(graph.n / 2_i + 1_i);
+		coarse_to_uncoarse.reserve(graph.n / 2 + 1);
 
-		int_t vertex_count = 0_i;
+		int_t vertex_count = 0;
 
-		for (int_t curr_V = 0_i; curr_V < graph.n; ++curr_V) {
-			if (uncoarse_to_coarse[curr_V] != -1_i) continue;
+		for (int_t curr_V = 0; curr_V < graph.n; ++curr_V) {
+			if (uncoarse_to_coarse[curr_V] != -1) continue;
 
 			int_t next_V = matching[curr_V];
 			Vector<int_t> component;
 
-			if (next_V == -1_i) {
+			if (next_V == -1) {
 				uncoarse_to_coarse[curr_V] = vertex_count;
 				component.push_back(curr_V);
 			}
@@ -302,7 +298,7 @@ public:
 		coarsed_graph.n = coarse_to_uncoarse.size();
 		coarsed_graph.vertex_weights.resize(coarsed_graph.n, c<vw_t>(0));
 
-		for (int_t curr_V = 0_i; curr_V < coarsed_graph.n; ++curr_V) {
+		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t next_V : coarse_to_uncoarse[curr_V]) {
 				coarsed_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
 			}
@@ -311,7 +307,7 @@ public:
 		// 3. Edges
 		Vector<std::unordered_map<int_t, ew_t>> tmp_edges(coarsed_graph.n);
 
-		for (int_t c_curr_V = 0_i; c_curr_V < coarsed_graph.n; ++c_curr_V) {
+		for (int_t c_curr_V = 0; c_curr_V < coarsed_graph.n; ++c_curr_V) {
 			for (int_t u_curr_V : coarse_to_uncoarse[c_curr_V]) {
 				for (auto [u_next_V, w] : graph[u_curr_V]) {
 					int_t c_next_V = uncoarse_to_coarse[u_next_V];
@@ -323,20 +319,20 @@ public:
 			}
 		}
 
-		int_t total_edges = 0_i;
-		Vector<int_t> edge_count(coarsed_graph.n, 0_i);
-		for (int_t i = 0_i; i < coarsed_graph.n; ++i) {
+		int_t total_edges = 0;
+		Vector<int_t> edge_count(coarsed_graph.n, 0);
+		for (int_t i = 0; i < coarsed_graph.n; ++i) {
 			edge_count[i] = tmp_edges[i].size();
 			total_edges += edge_count[i];
 		}
 
 		coarsed_graph.m = total_edges;
-		coarsed_graph.xadj.resize(coarsed_graph.n + 1_i);
+		coarsed_graph.xadj.resize(coarsed_graph.n + 1);
 		coarsed_graph.adjncy.resize(total_edges);
 		coarsed_graph.edge_weights.resize(total_edges);
 
-		int_t pos = 0_i;
-		for (int_t curr_V = 0_i; curr_V < coarsed_graph.n; ++curr_V) {
+		int_t pos = 0;
+		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			coarsed_graph.xadj[curr_V] = pos;
 			for (auto& [next_V, weight] : tmp_edges[curr_V]) {
 				coarsed_graph.adjncy[pos] = next_V;
@@ -348,13 +344,13 @@ public:
 
 		// 4. Importance
 
-		Vector<ew_t> vertex_importance(coarsed_graph.n, c<ew_t>(0));
-		for (int_t curr_V = 0_i; curr_V < coarsed_graph.n; ++curr_V) {
+		Vector<ew_t> vertexmportance(coarsed_graph.n, c<ew_t>(0));
+		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
-				vertex_importance[curr_V] += level.vertex_importance[prev_V];
+				vertexmportance[curr_V] += level.vertexmportance[prev_V];
 			}
-			if (coarse_to_uncoarse[curr_V].size() == 2_i) {
-				vertex_importance[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0_i]];
+			if (coarse_to_uncoarse[curr_V].size() == 2) {
+				vertexmportance[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
 			}
 		}
 
@@ -363,6 +359,6 @@ public:
 		new_level.uncoarse_to_coarse = std::move(uncoarse_to_coarse);
 		new_level.coarse_to_uncoarse = std::move(coarse_to_uncoarse);
 		new_level.coarsed_graph = std::move(coarsed_graph);
-		new_level.vertex_importance = std::move(vertex_importance);
+		new_level.vertexmportance = std::move(vertexmportance);
 	}
 };

@@ -26,7 +26,7 @@ public:
 	) {
 		ew_t edge_cut = c<ew_t>(0);
 
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
+		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {
 				if (curr_V < next_V && partition[curr_V] != partition[next_V]) {
 					edge_cut += w;
@@ -57,15 +57,15 @@ public:
 		const int_t				 k,
 		const Vector<int_t>&	 partition
 	) {
-		Vector<real_t> balances(k, 0.0_r);
+		Vector<real_t> balances(k, 0.0);
 
 		vw_t total_W = graph.getSumOfVertexWeights();
 
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
+		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			balances[partition[curr_V]] += static_cast<real_t>(graph.vertex_weights[curr_V]);
 		}
 
-		for (int_t curr_V = 0_i; curr_V < k; ++curr_V) {
+		for (int_t curr_V = 0; curr_V < k; ++curr_V) {
 			balances[curr_V] = balances[curr_V] / total_W;
 		}
 
@@ -94,10 +94,10 @@ public:
 	) {
 		Vector<real_t> balances = GetBalances(graph, k, partition);
 
-		real_t accuracy = balances[0] - 1.0_r / k;
-		for (int_t curr_V = 1_i; curr_V < k; ++curr_V) {
-			if (balances[curr_V] - 1.0_r / k > accuracy) {
-				accuracy = balances[curr_V] - 1.0_r / k;
+		real_t accuracy = balances[0] - 1.0 / k;
+		for (int_t curr_V = 1; curr_V < k; ++curr_V) {
+			if (balances[curr_V] - 1.0 / k > accuracy) {
+				accuracy = balances[curr_V] - 1.0 / k;
 			}
 		}
 		return accuracy * k;
@@ -109,14 +109,14 @@ public:
 		const int_t				 k,
 		const Vector<int_t>& partition
 	) {
-		Vector<vw_t> weights(k, 0_i);
+		Vector<vw_t> weights(k, 0);
 
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
+		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			weights[partition[curr_V]] += graph.getVertexWeight(curr_V);
 		}
 
-		vw_t max_weight = 0_i;
-		for (int_t i = 0_i; i < k; ++i) {
+		vw_t max_weight = 0;
+		for (int_t i = 0; i < k; ++i) {
 			if (max_weight < weights[i]) {
 				max_weight = weights[i];
 			}
