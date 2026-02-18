@@ -25,6 +25,8 @@
 #include <climits>
 #include <stack>
 
+using namespace std;
+
 using int_t = long long;
 using real_t = double;
 

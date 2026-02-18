@@ -6,13 +6,26 @@
 
 #include "heap.hpp"
 
-class Bipartitioner {
-public:
+namespace Bipartitioner {
 
-    template <typename vw_t, typename ew_t>
-    static void GetGraphBipartition(
-        const Graph<vw_t, ew_t>& graph,
-              Vector<int_t>&     partition
+    void GetGraphBipartition(
+        const Graph& graph,
+        Vector<int_t>& partition
+    );
+
+    Vector<int_t> GraphGrowingAlgorithm(
+        const Graph& graph
+    );
+
+    Vector<int_t> GreedyGraphGrowingAlgorithm(
+        const Graph& graph
+    );
+
+    // --- CODE ---
+
+    void GetGraphBipartition(
+        const Graph&          graph,
+              Vector<int_t>&  partition
     ) {
         switch (ProgramConfig::bipartitioning_method) {
         case ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm:
@@ -28,19 +41,18 @@ public:
 
 	}
 
-    template <typename vw_t, typename ew_t>
-    static Vector<int_t> GraphGrowingAlgorithm(
-        const Graph<vw_t, ew_t>& graph
+    Vector<int_t> GraphGrowingAlgorithm(
+        const Graph& graph
     ) {
         const int_t n = graph.n;
 
-        vw_t total_weight = graph.getSumOfVertexWeights();
+        int_t total_weight = graph.getSumOfVertexWeights();
 
-        vw_t ideal_weight = total_weight / (vw_t)(2);
-        vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
+        int_t ideal_weight = total_weight / (int_t)(2);
+        int_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
-        ew_t best_edge_cut;
+        int_t best_edge_cut;
 
         bool found = false;
 
@@ -62,7 +74,7 @@ public:
                 }
             }
 
-            vw_t current_weight = (vw_t)(0);
+            int_t current_weight = (int_t)(0);
 
             while (!q.empty()) {
                 int_t curr_V = q.front(); q.pop();
@@ -82,7 +94,7 @@ public:
                 }
             }
 
-            ew_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
+            int_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
 
             if (!found || edge_cut < best_edge_cut) {
                 found = true;
@@ -93,17 +105,16 @@ public:
         return best_partition;
     }
 
-    template <typename vw_t, typename ew_t>
-    static Vector<int_t> GreedyGraphGrowingAlgorithm(
-        const Graph<vw_t, ew_t>& graph
+    Vector<int_t> GreedyGraphGrowingAlgorithm(
+        const Graph& graph
     ) {
         const int_t n = graph.n;
 
-        vw_t ideal_weight = graph.getSumOfVertexWeights() / (vw_t)(2);
-        vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
+        int_t ideal_weight = graph.getSumOfVertexWeights() / (int_t)(2);
+        int_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
-        ew_t best_edge_cut;
+        int_t best_edge_cut;
 
         bool found = false;
 
@@ -112,8 +123,8 @@ public:
             Vector<int_t> partition(n, 0);
 			Vector<bool> blocked(n, false);
             
-            vw_t current_weight = (vw_t)(0);
-			IndexedHeap<ew_t> heap(n); // sort values in increasing order by value
+            int_t current_weight = (int_t)(0);
+			IndexedHeap<int_t> heap(n); // sort values in increasing order by value
 
 			Vector<int_t> order = GetRandomPermutation(n);
 
@@ -128,8 +139,8 @@ public:
                         blocked[V] = true;
 
                         for (auto [next_V, w1] : graph[V]) {
-                            ew_t inc_w = (ew_t)(0);
-                            ew_t dec_w = w1;
+                            int_t inc_w = (int_t)(0);
+                            int_t dec_w = w1;
                             for (auto [near_V, w2] : graph[next_V]) {
                                 if (partition[near_V] == 0) {
                                     inc_w += w2;
@@ -156,8 +167,8 @@ public:
                     partition[curr_V] = 1;
                     for (auto [next_V, w1] : graph[curr_V]) {
                         if (blocked[next_V]) continue;
-                        ew_t inc_w = (ew_t)(0);
-                        ew_t dec_w = (ew_t)(0);
+                        int_t inc_w = (int_t)(0);
+                        int_t dec_w = (int_t)(0);
 
                         for (auto [near_V, w2] : graph[next_V]) {
                             if (partition[near_V] == 0) {
@@ -173,7 +184,7 @@ public:
                 }
             }
 
-            ew_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
+            int_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
 
             if (!found || edge_cut < best_edge_cut) {
                 found = true;

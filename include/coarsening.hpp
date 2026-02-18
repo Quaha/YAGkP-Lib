@@ -7,15 +7,63 @@
 
 #include "coarse_level.hpp"
 
-class Coarser {
-public:
+namespace Coarser {
 
-	template <typename vw_t, typename ew_t>
-	Vector<CoarseLevel<vw_t, ew_t>> static GetCoarseLevels(
-		const Graph<vw_t, ew_t>& graph,
-		const int_t k
+	Vector<CoarseLevel> GetCoarseLevels(
+		const Graph& graph,
+		const int_t  k
+	);
+
+	void FillLevel(
+		const CoarseLevel& level,
+		const Graph&       graph,
+		      CoarseLevel& new_level,
+		const int_t        k
+	);
+
+	void RandomMatching(
+		const CoarseLevel& level,
+		const Graph&       graph,
+		      CoarseLevel& new_level,
+		const int_t        k
+	);
+
+	void LightEdgeMatching(
+		const CoarseLevel& level,
+		const Graph&       graph,
+		      CoarseLevel& new_level,
+		const int_t        k
+	);
+
+	void HeavyEdgeMatching(
+		const CoarseLevel& level,
+		const Graph&       graph,
+		      CoarseLevel& new_level,
+		const int_t        k
+	);
+
+	void HeavyCliqueMatching(
+		const CoarseLevel& level,
+		const Graph&       graph,
+		      CoarseLevel& new_level,
+		const int_t        k
+	);
+
+	void ProcessMatching(
+		const CoarseLevel&   level,
+		const Graph&         graph,
+		      CoarseLevel&   new_level,
+		const Vector<int_t>& matching,
+		const Vector<int_t>& matching_edge_weights
+	);
+
+	// --- CODE ---
+
+	Vector<CoarseLevel> GetCoarseLevels(
+		const Graph& graph,
+		const int_t  k
 	) {
-		Vector<CoarseLevel<vw_t, ew_t>> levels;
+		Vector<CoarseLevel> levels;
 		levels.reserve(ProgramConfig::coarsening_itarations_limit + 1);
 
 		// Entry-level initialization
@@ -27,13 +75,13 @@ public:
 			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<ew_t> base_vertexmportance(graph.n, (ew_t)(0));
+		Vector<int_t> base_vertexmportance(graph.n, (int_t)(0));
 
-		levels.push_back(CoarseLevel<vw_t, ew_t>(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance));
+		levels.push_back(CoarseLevel(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance));
 
 		for (int_t i = 0; i < ProgramConfig::coarsening_itarations_limit && levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertix_count_limit; ++i) {
 
-			CoarseLevel<vw_t, ew_t> new_level;
+			CoarseLevel new_level;
 
 			FillLevel(levels[i], levels[i].coarsed_graph, new_level, k);
 
@@ -42,12 +90,11 @@ public:
 		return std::move(levels);
 	}
 
-	template <typename vw_t, typename ew_t>
-	void static FillLevel(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&	   graph,
-			  CoarseLevel<vw_t, ew_t>& new_level,
-		const int_t                    k
+	void FillLevel(
+		const CoarseLevel& level,
+		const Graph&	   graph,
+			  CoarseLevel& new_level,
+		const int_t        k
 	) {
 		switch (ProgramConfig::coarsening_method) {
 		case ProgramConfig::CoarseningMethod::RandomMatching:
@@ -71,22 +118,21 @@ public:
 		}
 	}
 
-	template <typename vw_t, typename ew_t>
-	void static RandomMatching(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&	   graph,
-			  CoarseLevel<vw_t, ew_t>& new_level,
-		const int_t                    k
+	void RandomMatching(
+		const CoarseLevel& level,
+		const Graph&	   graph,
+			  CoarseLevel& new_level,
+		const int_t        k
 	) {
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
-		vw_t max_allowed_size = graph.getSumOfVertexWeights();
+		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -105,22 +151,21 @@ public:
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	template <typename vw_t, typename ew_t>
-	void static LightEdgeMatching(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&	   graph,
-			  CoarseLevel<vw_t, ew_t>& new_level,
-		const int_t                    k
+	void LightEdgeMatching(
+		const CoarseLevel& level,
+		const Graph&	   graph,
+			  CoarseLevel& new_level,
+		const int_t        k
 	) {
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
-		vw_t max_allowed_size = graph.getSumOfVertexWeights();
+		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -128,7 +173,7 @@ public:
 				continue;
 			}
 			int_t best_V;
-			ew_t min_W;
+			int_t min_W;
 			bool found = false;
 
 			for (auto [next_V, w] : graph[curr_V]) {
@@ -151,22 +196,21 @@ public:
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	template <typename vw_t, typename ew_t>
-	void static HeavyEdgeMatching(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&	   graph,
-		CoarseLevel<vw_t, ew_t>&	   new_level,
-		const int_t                    k
+	void HeavyEdgeMatching(
+		const CoarseLevel& level,
+		const Graph&	   graph,
+		CoarseLevel&	   new_level,
+		const int_t        k
 	) {
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
-		vw_t max_allowed_size = graph.getSumOfVertexWeights();
+		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -174,7 +218,7 @@ public:
 				continue;
 			}
 			int_t best_V;
-			ew_t max_W;
+			int_t max_W;
 			bool found = false;
 
 			for (auto [next_V, w] : graph[curr_V]) {
@@ -197,22 +241,21 @@ public:
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	template <typename vw_t, typename ew_t>
-	void static HeavyCliqueMatching(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&	   graph,
-			  CoarseLevel<vw_t, ew_t>& new_level,
-		const int_t                    k
+	void HeavyCliqueMatching(
+		const CoarseLevel& level,
+		const Graph&	   graph,
+			  CoarseLevel& new_level,
+		const int_t        k
 	) {
 
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
-		vw_t max_allowed_size = graph.getSumOfVertexWeights();
+		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -220,15 +263,15 @@ public:
 				continue;
 			}
 			int_t best_V;
-			ew_t best_F;
-			ew_t edge_W;
+			int_t best_F;
+			int_t edge_W;
 			bool found = false;
 
 			for (auto [next_V, w] : graph[curr_V]) {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size) continue;
 				if (matching[next_V] == -1) {
-					ew_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
-					ew_t F = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) / (total_W * (total_W - (ew_t)(1)));
+					int_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
+					int_t F = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) / (total_W * (total_W - (int_t)(1)));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -250,13 +293,12 @@ public:
 	}
 
 	// This function builds the coarse level based on the found matching
-	template <typename vw_t, typename ew_t>
-	void static ProcessMatching(
-		const CoarseLevel<vw_t, ew_t>& level,
-		const Graph<vw_t, ew_t>&       graph,
-			  CoarseLevel<vw_t, ew_t>& new_level,
-		const Vector<int_t>&		   matching,
-		const Vector<ew_t>&			   matching_edge_weights
+	void ProcessMatching(
+		const CoarseLevel&   level,
+		const Graph&         graph,
+			  CoarseLevel&   new_level,
+		const Vector<int_t>& matching,
+		const Vector<int_t>& matching_edge_weights
 	) {
 		// 1. Filling coarse vectors
 
@@ -290,9 +332,9 @@ public:
 
 		// 2. Building graph
 
-		Graph<vw_t, ew_t> coarsed_graph;
+		Graph coarsed_graph;
 		coarsed_graph.n = coarse_to_uncoarse.size();
-		coarsed_graph.vertex_weights.resize(coarsed_graph.n, (vw_t)(0));
+		coarsed_graph.vertex_weights.resize(coarsed_graph.n, (int_t)(0));
 
 		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t next_V : coarse_to_uncoarse[curr_V]) {
@@ -301,7 +343,7 @@ public:
 		}
 
 		// 3. Edges
-		Vector<std::unordered_map<int_t, ew_t>> tmp_edges(coarsed_graph.n);
+		Vector<std::unordered_map<int_t, int_t>> tmp_edges(coarsed_graph.n);
 
 		for (int_t c_curr_V = 0; c_curr_V < coarsed_graph.n; ++c_curr_V) {
 			for (int_t u_curr_V : coarse_to_uncoarse[c_curr_V]) {
@@ -340,7 +382,7 @@ public:
 
 		// 4. Importance
 
-		Vector<ew_t> vertexmportance(coarsed_graph.n, (ew_t)(0));
+		Vector<int_t> vertexmportance(coarsed_graph.n, (int_t)(0));
 		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
 				vertexmportance[curr_V] += level.vertexmportance[prev_V];

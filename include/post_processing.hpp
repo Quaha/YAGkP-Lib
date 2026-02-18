@@ -6,30 +6,42 @@
 #include "config.hpp"
 #include "heap.hpp"
 
-class PostProcessor {
-public:
+namespace PostProcessor {
 
-	template <typename vw_t, typename ew_t>
-	static void FixPartitionDisbalance(
-		const Graph<vw_t, ew_t>& graph,
-		const int_t              k,
-		Vector<int_t>&			 partition
+	void FixPartitionDisbalance(
+		const Graph&         graph,
+		const int_t          k,
+		      Vector<int_t>& partition
+	);
+
+	void ImproveFinalPartition(
+		const Graph&         graph,
+		const int_t          k,
+		      Vector<int_t>& partition
+	);
+
+// --- CODE ---
+
+	void FixPartitionDisbalance(
+		const Graph&   graph,
+		const int_t    k,
+		Vector<int_t>& partition
 	) {
 		if (!ProgramConfig::post_processing_disbalance_fix) {
 			return;
 		}
 
-		Vector<vw_t> comp_weight(k, 0);
+		Vector<int_t> comp_weight(k, 0);
 		int_t n = graph.getVerticesCount();
 		for (int_t v = 0; v < n; ++v) {
 			comp_weight[partition[v]] += graph.getVertexWeight(v);
 		}
 
-		vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = (vw_t)((real_t)(total_weight) / (real_t)(k) * (1.0 + ProgramConfig::accuracy + EPS));
+		int_t total_weight = graph.getSumOfVertexWeights();
+        int_t max_allowed = (int_t)((real_t)(total_weight) / (real_t)(k) * (1.0 + ProgramConfig::accuracy + EPS));
 
-		while (max_allowed * (vw_t)(k) < total_weight) {
-			max_allowed += (vw_t)(1);
+		while (max_allowed * (int_t)(k) < total_weight) {
+			max_allowed += (int_t)(1);
 		}
 
         Vector<Vector<int_t>> comp_vertices(k);
@@ -37,17 +49,17 @@ public:
             comp_vertices[partition[v]].push_back(v);
         }
 
-        IndexedHeap<vw_t, std::greater<vw_t>> heap(k);
+        IndexedHeap<int_t, std::greater<int_t>> heap(k);
         for (int_t c = 0; c < k; ++c) {
             heap.push(comp_weight[c], c);
         }
 
         while (!heap.empty() && heap.top().first > max_allowed) {
-			vw_t weight = heap.top().first;
+			int_t weight = heap.top().first;
 			int_t cdx = heap.top().second;
 
             int_t target = -1;
-            vw_t min_w = std::numeric_limits<vw_t>::max();
+            int_t min_w = std::numeric_limits<int_t>::max();
 
 			for (int_t t = 0; t < k; ++t) {
 				if (t == cdx) continue;
@@ -72,7 +84,7 @@ public:
 
 			partition[vertex_to_move] = target;
 
-			vw_t vertex_weight = graph.getVertexWeight(vertex_to_move);
+			int_t vertex_weight = graph.getVertexWeight(vertex_to_move);
 			comp_weight[cdx] -= vertex_weight;
 			comp_weight[target] += vertex_weight;
 
@@ -81,9 +93,8 @@ public:
         }
 	}
 
-	template <typename vw_t, typename ew_t>
-	static void ImproveFinalPartition(
-		const Graph<vw_t, ew_t>& graph,
+	void ImproveFinalPartition(
+		const Graph& graph,
 		const int_t              k,
 		Vector<int_t>& partition
 	) {
@@ -92,17 +103,17 @@ public:
 		}
         int_t n = graph.getVerticesCount();
 
-        Vector<vw_t> comp_weight(k, 0);
+        Vector<int_t> comp_weight(k, 0);
         for (int_t v = 0; v < n; ++v) {
             comp_weight[partition[v]] += graph.getVertexWeight(v);
         }
 
-        vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = (vw_t)(((real_t)(total_weight) / (real_t)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
+        int_t total_weight = graph.getSumOfVertexWeights();
+        int_t max_allowed = (int_t)(((real_t)(total_weight) / (real_t)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
 
 
-		while (max_allowed * (vw_t)(k) < total_weight) {
-			max_allowed += (vw_t)(1);
+		while (max_allowed * (int_t)(k) < total_weight) {
+			max_allowed += (int_t)(1);
 		}
 
 		std::queue<int_t> vertices_queue;
@@ -113,24 +124,24 @@ public:
         while (!vertices_queue.empty()) {
 			int_t v = vertices_queue.front(); vertices_queue.pop();
             int_t curr_comp = partition[v];
-            vw_t vertex_w = graph.getVertexWeight(v);
+            int_t vertex_w = graph.getVertexWeight(v);
 
             int_t best_target = curr_comp;
-            ew_t best_gain = 0;
+            int_t best_gain = 0;
 
             for (int_t t = 0; t < k; ++t) {
                 if (t == curr_comp) continue;
                 if (comp_weight[t] + vertex_w > max_allowed) continue;
 
-                ew_t cut_before = 0;
-                ew_t cut_after = 0;
+                int_t cut_before = 0;
+                int_t cut_after = 0;
 
                 for (auto [u, w] : graph[v]) {
                     if (partition[u] == curr_comp) cut_before += w;
                     if (partition[u] == t)         cut_after += w;
                 }
 
-                ew_t gain = (ew_t)(cut_after - cut_before);
+                int_t gain = (int_t)(cut_after - cut_before);
                 if (gain > best_gain) {
                     best_gain = gain;
                     best_target = t;

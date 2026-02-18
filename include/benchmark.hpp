@@ -33,7 +33,7 @@ void PrintBenchmark() {
         std::cout << "==============================================\n";
         std::cout << "Graph: " << filename << "\n";
 
-        Graph<int_t, real_t> g(path, "mtx", true);
+        Graph g(path, "mtx", true);
 
         std::cout << "n = " << g.getVerticesCount() << ", m = " << g.getEdgesCount() << "\n";
 

@@ -11,24 +11,36 @@
 
 #include "metrics.hpp"
 
-class Partitioner {
-public:
+namespace Partitioner {
 
-	template <typename vw_t, typename ew_t>
-	static void GetGraphKPartition(
-		const Graph<vw_t, ew_t>& graph,
-		const int_t              k,
-		      Vector<int_t>&     partition
+    void GetGraphKPartition(
+        const Graph&         graph,
+        const int_t          k,
+              Vector<int_t>& partition
+    );
+
+    void RecursivePartition(
+        const Graph&         graph,
+        const int_t          k,
+              Vector<int_t>& partition,
+              int_t          offset
+    );
+
+    // --- CODE ---
+
+	void GetGraphKPartition(
+		const Graph&         graph,
+		const int_t          k,
+		      Vector<int_t>& partition
 	) {
 		partition.resize(graph.n, -1);
-		RecursivePartition<vw_t, ew_t>(graph, k, partition, 0);
+		RecursivePartition(graph, k, partition, 0);
 
-		PostProcessor::FixPartitionDisbalance<vw_t, ew_t>(graph, k, partition);
+		PostProcessor::FixPartitionDisbalance(graph, k, partition);
 	}
 
-    template <typename vw_t, typename ew_t>
-    static void RecursivePartition(
-        const Graph<vw_t, ew_t>& graph,
+    void RecursivePartition(
+        const Graph& graph,
         const int_t              k,
               Vector<int_t>&     partition,
               int_t              offset
@@ -38,14 +50,14 @@ public:
             return;
         }
 
-        Vector<CoarseLevel<vw_t, ew_t>> levels = Coarser::GetCoarseLevels(graph, k);
+        Vector<CoarseLevel> levels = Coarser::GetCoarseLevels(graph, k);
 
-        const Graph<vw_t, ew_t>& coarse_graph = levels.back().coarsed_graph;
+        const Graph& coarse_graph = levels.back().coarsed_graph;
 
         Vector<int_t> coarse_partition;
    
         Bipartitioner::GetGraphBipartition(coarse_graph, coarse_partition);
-		Uncoarser::RestorePartition<vw_t, ew_t>(levels, coarse_partition);
+		Uncoarser::RestorePartition(levels, coarse_partition);
 
         Vector<int_t> left_part_vertices, right_part_vertices;
         for (int_t i = 0; i < graph.n; ++i) {
@@ -57,12 +69,12 @@ public:
             }
         }
 
-        Graph<vw_t, ew_t> left_graph = graph.selectSubgraph(left_part_vertices);
-        Graph<vw_t, ew_t> right_graph = graph.selectSubgraph(right_part_vertices);
+        Graph left_graph = graph.selectSubgraph(left_part_vertices);
+        Graph right_graph = graph.selectSubgraph(right_part_vertices);
 
 
-        vw_t total_W = graph.getSumOfVertexWeights();
-        vw_t left_W = left_graph.getSumOfVertexWeights();
+        int_t total_W = graph.getSumOfVertexWeights();
+        int_t left_W = left_graph.getSumOfVertexWeights();
 
         real_t total_parts = static_cast<real_t>(k);
         real_t ratio_left = static_cast<real_t>(left_W) / static_cast<real_t>(total_W);
@@ -74,8 +86,8 @@ public:
         Vector<int_t> left_part(left_graph.n, -1);
         Vector<int_t> right_part(right_graph.n, -1);
 
-        RecursivePartition<vw_t, ew_t>(left_graph, left_k, left_part, offset);
-        RecursivePartition<vw_t, ew_t>(right_graph, right_k, right_part, offset + left_k);
+        RecursivePartition(left_graph, left_k, left_part, offset);
+        RecursivePartition(right_graph, right_k, right_part, offset + left_k);
 
         for (int_t i = 0; i < left_part_vertices.size(); ++i) {
             partition[left_part_vertices[i]] = left_part[i];

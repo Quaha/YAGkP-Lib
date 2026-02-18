@@ -5,12 +5,6 @@
 
 // Graph stored in Compressed Row Storage (CRS/CSR) format.
 // Vertices are numbered starting from 0.
-// 
-// Template parameters:
-//   vw_t � type of vertex weights
-//   ew_t - type of edge weights
-//
-template <typename vw_t, typename ew_t>
 struct Graph {
 
 	int_t n = 0; // Number of vertices
@@ -26,10 +20,10 @@ struct Graph {
 	Vector<int_t> xadj;
 
 	// Vertex weights (size = n).
-	Vector<vw_t> vertex_weights;
+	Vector<int_t> vertex_weights;
 
 	// Edge weights (size = m).
-	Vector<ew_t> edge_weights;
+	Vector<int_t> edge_weights;
 
 	struct AdjacentIterator {
 		const Graph& g;
@@ -49,7 +43,7 @@ struct Graph {
 				++pos;
 			}
 
-			std::pair<int_t, ew_t> operator*() const {
+			std::pair<int_t, int_t> operator*() const {
 				return std::make_pair(g.adjncy[pos], g.edge_weights[pos]);
 			}
 		};
@@ -67,7 +61,7 @@ struct Graph {
 		return AdjacentIterator{ *this, v };
 	}
 
-	void buildGraph(const spMtx<ew_t>& matrix, bool ignore_eweights) {
+	void buildGraph(const spMtx<int_t>& matrix, bool ignore_eweights) {
 		n = static_cast<int_t>(matrix.m);
 		m = static_cast<int_t>(matrix.nz);
 
@@ -83,7 +77,7 @@ struct Graph {
 
 		vertex_weights.resize(n);
 		for (int_t i = 0; i < n; ++i) {
-			vertex_weights[i] = (vw_t)(1);
+			vertex_weights[i] = (int_t)(1);
 		}
 
 		edge_weights.resize(m);
@@ -94,7 +88,7 @@ struct Graph {
 		}
 		else {
 			for (int_t i = 0; i < m; ++i) {
-				edge_weights[i] = (ew_t)(1);
+				edge_weights[i] = (int_t)(1);
 			}
 		}
 	}
@@ -104,19 +98,19 @@ struct Graph {
 	}
 
 	// Requires a matrix corresponding to an undirected graph
-	Graph(const spMtx<ew_t>& matrix, bool ignore_eweights = false) {
+	Graph(const spMtx<int_t>& matrix, bool ignore_eweights = false) {
 		buildGraph(matrix, ignore_eweights);
 	}
 
 	// Requires a matrix corresponding to an undirected graph
 	Graph(const String& file_name, const String& format, bool ignore_eweights = false) {
-		spMtx<ew_t> matrix(file_name.c_str(), format);
+		spMtx<int_t> matrix(file_name.c_str(), format);
 		buildGraph(matrix, ignore_eweights);
 	}
 
 	Graph(
-		const Vector<vw_t>& vertex_weights,
-		const Vector<std::tuple<int_t, int_t, ew_t>>& edges
+		const Vector<int_t>& vertex_weights,
+		const Vector<std::tuple<int_t, int_t, int_t>>& edges
 	) {
 		n = static_cast<int_t>(vertex_weights.size());
 		this->vertex_weights = vertex_weights;
@@ -160,8 +154,8 @@ struct Graph {
 
 	// This function returns a subgraph of the current graph, where
 	// the vertices were mapped according to the order in vertices.
-	Graph<vw_t, ew_t> selectSubgraph(const Vector<int_t>& vertices) const {
-		Graph<vw_t, ew_t> subgraph;
+	Graph selectSubgraph(const Vector<int_t>& vertices) const {
+		Graph subgraph;
 
 		std::unordered_map<int_t, int_t> original_to_sub;
 		for (int_t i = 0; i < vertices.size(); ++i) {
@@ -209,7 +203,7 @@ struct Graph {
 
 					int_t j = original_to_sub[next_V];
 
-					ew_t weight = edge_weights[k];
+					int_t weight = edge_weights[k];
 
 					++subgraph.xadj[i + 1];
 					subgraph.adjncy[edge_pos] = j;
@@ -227,13 +221,13 @@ struct Graph {
 		for (int_t curr_V = 0; curr_V < n; ++curr_V) {
 			for (int_t i = xadj[curr_V]; i < xadj[curr_V + 1]; ++i) {
 				int_t next_V = adjncy[i];
-				ew_t w = edge_weights[i];
+				int_t w = edge_weights[i];
 				std::cout << curr_V << " " << next_V << " " << w << "\n";
 			}
 		}
 	}
 
-	bool operator==(const Graph<vw_t, ew_t>& other) const {
+	bool operator==(const Graph& other) const {
 		if (n != other.n || m != other.m) {
 			return false;
 		}
@@ -253,7 +247,7 @@ struct Graph {
 			}
 		}
 
-		std::map<std::pair<int_t, int_t>, ew_t> edges;
+		std::map<std::pair<int_t, int_t>, int_t> edges;
 
 		for (int_t curr_V = 0; curr_V < n; ++curr_V) {
 			for (int_t i = xadj[curr_V]; i < xadj[curr_V + 1]; ++i) {
@@ -285,19 +279,19 @@ struct Graph {
 		return edges.empty();
 	}
 
-	bool operator!=(const Graph<vw_t, ew_t>& other) const {
+	bool operator!=(const Graph& other) const {
 		return !(*this == other);
 	}
 
-	vw_t getSumOfVertexWeights() const {
-		vw_t result = (vw_t)(0);
+	int_t getSumOfVertexWeights() const {
+		int_t result = (int_t)(0);
 		for (int_t i = 0; i < n; ++i) {
 			result += vertex_weights[i];
 		}
 		return result;
 	}
 
-	vw_t getVertexWeight(int_t v) const {
+	int_t getVertexWeight(int_t v) const {
 		return vertex_weights[v];
 	}
 };
