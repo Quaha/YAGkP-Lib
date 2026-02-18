@@ -1,9 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <functional>
-
-#include "types.hpp"
+#include "utils.hpp"
 
 template <
 	typename HeapType,

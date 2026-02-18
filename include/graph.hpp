@@ -3,19 +3,6 @@
 #include "matrix.hpp"
 #include "utils.hpp"
 
-#include <map>
-#include <unordered_map>
-
-class Partitioner;
-class Coarser;
-class Bipartitioner;
-
-class PartitionMetrics;
-
-class CoarseTest;
-
-template <typename vw_t, typename ew_t> class GraphTester;
-
 // Graph stored in Compressed Row Storage (CRS/CSR) format.
 // Vertices are numbered starting from 0.
 // 
@@ -24,18 +11,8 @@ template <typename vw_t, typename ew_t> class GraphTester;
 //   ew_t - type of edge weights
 //
 template <typename vw_t, typename ew_t>
-class Graph {
+struct Graph {
 
-	friend class Partitioner;
-	friend class Coarser;
-	friend class Bipartitioner;
-
-	friend class PartitionMetrics;
-
-	friend class CoarseTest;
-	friend class GraphTester<vw_t, ew_t>;
-
-private:
 	int_t n = 0; // Number of vertices
 	int_t m = 0; // Number of edges
 
@@ -53,8 +30,6 @@ private:
 
 	// Edge weights (size = m).
 	Vector<ew_t> edge_weights;
-
-public:
 
 	struct AdjacentIterator {
 		const Graph& g;
@@ -92,7 +67,6 @@ public:
 		return AdjacentIterator{ *this, v };
 	}
 
-private:
 	void buildGraph(const spMtx<ew_t>& matrix, bool ignore_eweights) {
 		n = static_cast<int_t>(matrix.m);
 		m = static_cast<int_t>(matrix.nz);
@@ -124,8 +98,6 @@ private:
 			}
 		}
 	}
-
-public:
 
 	Graph() {
 
@@ -327,24 +299,5 @@ public:
 
 	vw_t getVertexWeight(int_t v) const {
 		return vertex_weights[v];
-	}
-};
-
-template <typename vw_t, typename ew_t>
-struct GraphTester {
-	static const Vector<int_t>& getAdjncy(const Graph<vw_t, ew_t>& g) {
-		return g.adjncy;
-	}
-
-	static const Vector<int_t>& getXadj(const Graph<vw_t, ew_t>& g) {
-		return g.xadj;
-	}
-
-	static const Vector<vw_t>& getVertexWeights(const Graph<vw_t, ew_t>& g) {
-		return g.vertex_weights;
-	}
-
-	static const Vector<vw_t>& getEdgeWeights(const Graph<vw_t, ew_t>& g) {
-		return g.edge_weights;
 	}
 };

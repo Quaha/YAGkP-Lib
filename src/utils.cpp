@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <random>
-#include <numeric>
-
 #include "utils.hpp"
 
 std::random_device rd;

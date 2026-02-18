@@ -1,11 +1,37 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
+#include <numeric>
 #include <filesystem>
+#include <map>
+#include <unordered_map>
+#include <functional>
+#include <set>
+#include <unordered_set>
+#include <cmath>
+#include <algorithm>
+#include <deque>
+#include <bitset>
+#include <random>
+#include <fstream>
+#include <iomanip>
+#include <chrono>
+#include <cassert>
+#include <cstring>
+#include <list>
+#include <climits>
+#include <stack>
 
-#include "types.hpp"
-#include "dynamic_array.hpp"
+using int_t = long long;
+using real_t = double;
+
+template <typename T>
+constexpr T c(T x) noexcept {
+    return x;
+}
 
 inline constexpr real_t EPS = 1e-8;
 

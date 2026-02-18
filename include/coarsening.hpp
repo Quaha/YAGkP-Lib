@@ -1,13 +1,9 @@
 #pragma once
 
-#include <numeric>
-
 #include "config.hpp"
 
 #include "utils.hpp"
 #include "graph.hpp"
-
-#include "program_statistics.hpp"
 
 #include "coarse_level.hpp"
 

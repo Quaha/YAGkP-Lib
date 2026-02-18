@@ -1,7 +1,5 @@
 #pragma once
 
-#include <numeric>
-
 #include "config.hpp"
 
 #include "utils.hpp"

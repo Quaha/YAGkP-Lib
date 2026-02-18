@@ -6,9 +6,6 @@
 #include "config.hpp"
 #include "heap.hpp"
 
-#include <unordered_set>
-#include <queue>
-
 class PostProcessor {
 public:
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "graph.hpp"
 #include "partitioner.hpp"
 #include "metrics.hpp"

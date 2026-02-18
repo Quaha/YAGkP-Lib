@@ -26,8 +26,3 @@ target_include_directories(${PROJECT_NAME}_library
 # Apps
 add_executable(${PROJECT_NAME}_app apps/main.cpp)
 target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)
-
-# gtest
-enable_testing()
-add_subdirectory(external/gtest EXCLUDE_FROM_ALL)
-add_subdirectory(tests)
