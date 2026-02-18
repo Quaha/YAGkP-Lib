@@ -28,11 +28,6 @@
 using int_t = long long;
 using real_t = double;
 
-template <typename T>
-constexpr T c(T x) noexcept {
-    return x;
-}
-
 inline constexpr real_t EPS = 1e-8;
 
 template <typename T> 

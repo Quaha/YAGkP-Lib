@@ -27,7 +27,7 @@ public:
 			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<ew_t> base_vertexmportance(graph.n, c<ew_t>(0));
+		Vector<ew_t> base_vertexmportance(graph.n, (ew_t)(0));
 
 		levels.push_back(CoarseLevel<vw_t, ew_t>(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance));
 
@@ -82,11 +82,11 @@ public:
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
+		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = c<vw_t>((c<real_t>(max_allowed_size) / c<real_t>(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -116,11 +116,11 @@ public:
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
+		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = c<vw_t>((c<real_t>(max_allowed_size) / c<real_t>(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -162,11 +162,11 @@ public:
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
+		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = c<vw_t>((c<real_t>(max_allowed_size) / c<real_t>(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -208,11 +208,11 @@ public:
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<ew_t> matching_edge_weights(graph.n, c<ew_t>(0));
+		Vector<ew_t> matching_edge_weights(graph.n, (ew_t)(0));
 
 		vw_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = c<vw_t>((c<real_t>(max_allowed_size) / c<real_t>(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (vw_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V : permutation) {
@@ -228,7 +228,7 @@ public:
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size) continue;
 				if (matching[next_V] == -1) {
 					ew_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
-					ew_t F = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) / (total_W * (total_W - c<ew_t>(1)));
+					ew_t F = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) / (total_W * (total_W - (ew_t)(1)));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -292,7 +292,7 @@ public:
 
 		Graph<vw_t, ew_t> coarsed_graph;
 		coarsed_graph.n = coarse_to_uncoarse.size();
-		coarsed_graph.vertex_weights.resize(coarsed_graph.n, c<vw_t>(0));
+		coarsed_graph.vertex_weights.resize(coarsed_graph.n, (vw_t)(0));
 
 		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t next_V : coarse_to_uncoarse[curr_V]) {
@@ -340,7 +340,7 @@ public:
 
 		// 4. Importance
 
-		Vector<ew_t> vertexmportance(coarsed_graph.n, c<ew_t>(0));
+		Vector<ew_t> vertexmportance(coarsed_graph.n, (ew_t)(0));
 		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
 				vertexmportance[curr_V] += level.vertexmportance[prev_V];

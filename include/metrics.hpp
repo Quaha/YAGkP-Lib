@@ -24,7 +24,7 @@ public:
 		const Graph<vw_t, ew_t>& graph,
 		const Vector<int_t>		 partition
 	) {
-		ew_t edge_cut = c<ew_t>(0);
+		ew_t edge_cut = (ew_t)(0);
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {

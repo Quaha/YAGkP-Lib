@@ -36,7 +36,7 @@ public:
 
         vw_t total_weight = graph.getSumOfVertexWeights();
 
-        vw_t ideal_weight = total_weight / c<vw_t>(2);
+        vw_t ideal_weight = total_weight / (vw_t)(2);
         vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
@@ -62,7 +62,7 @@ public:
                 }
             }
 
-            vw_t current_weight = c<vw_t>(0);
+            vw_t current_weight = (vw_t)(0);
 
             while (!q.empty()) {
                 int_t curr_V = q.front(); q.pop();
@@ -99,7 +99,7 @@ public:
     ) {
         const int_t n = graph.n;
 
-        vw_t ideal_weight = graph.getSumOfVertexWeights() / c<vw_t>(2);
+        vw_t ideal_weight = graph.getSumOfVertexWeights() / (vw_t)(2);
         vw_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;
@@ -112,7 +112,7 @@ public:
             Vector<int_t> partition(n, 0);
 			Vector<bool> blocked(n, false);
             
-            vw_t current_weight = c<vw_t>(0);
+            vw_t current_weight = (vw_t)(0);
 			IndexedHeap<ew_t> heap(n); // sort values in increasing order by value
 
 			Vector<int_t> order = GetRandomPermutation(n);
@@ -128,7 +128,7 @@ public:
                         blocked[V] = true;
 
                         for (auto [next_V, w1] : graph[V]) {
-                            ew_t inc_w = c<ew_t>(0);
+                            ew_t inc_w = (ew_t)(0);
                             ew_t dec_w = w1;
                             for (auto [near_V, w2] : graph[next_V]) {
                                 if (partition[near_V] == 0) {
@@ -156,8 +156,8 @@ public:
                     partition[curr_V] = 1;
                     for (auto [next_V, w1] : graph[curr_V]) {
                         if (blocked[next_V]) continue;
-                        ew_t inc_w = c<ew_t>(0);
-                        ew_t dec_w = c<ew_t>(0);
+                        ew_t inc_w = (ew_t)(0);
+                        ew_t dec_w = (ew_t)(0);
 
                         for (auto [near_V, w2] : graph[next_V]) {
                             if (partition[near_V] == 0) {

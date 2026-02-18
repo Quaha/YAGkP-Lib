@@ -64,8 +64,8 @@ public:
 
 		if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
 
-			vw_t total_weight0 = c<vw_t>(0);
-			vw_t total_weight1 = c<vw_t>(0);
+			vw_t total_weight0 = (vw_t)(0);
+			vw_t total_weight1 = (vw_t)(0);
 
 			for (int_t i = 0; i < n; ++i) {
 				if (prev_partition[i] == 0) {
@@ -90,8 +90,8 @@ public:
 		IndexedHeap<ew_t> heap(n);
 
 		for (int_t start_V = 0; start_V < n; ++start_V) {
-			ew_t inc_w = c<ew_t>(0);
-			ew_t dec_w = c<ew_t>(0);
+			ew_t inc_w = (ew_t)(0);
+			ew_t dec_w = (ew_t)(0);
 
 			if (blocked[start_V]) continue;
 
@@ -111,7 +111,7 @@ public:
 			auto [priority, curr_V] = heap.extract();
 			blocked[curr_V] = true;
 
-			if (priority > c<ew_t>(0)) {
+			if (priority > (ew_t)(0)) {
 				break;
 			}
 
@@ -119,8 +119,8 @@ public:
 
 			for (auto [next_V, w1] : graph[curr_V]) {
 				if (!blocked[next_V]) {
-					ew_t inc_w = c<ew_t>(0);
-					ew_t dec_w = c<ew_t>(0);
+					ew_t inc_w = (ew_t)(0);
+					ew_t dec_w = (ew_t)(0);
 					for (auto [near_V, w2] : graph[next_V]) {
 						if (prev_partition[near_V] == prev_partition[next_V]) {
 							inc_w += w2;

@@ -47,7 +47,7 @@ void PrintBenchmark() {
 
             std::cout << "k = " << k << " | edge cut = " << edge_cut << " | real imbalance = " << real_accuracy * 100.0 << "%" << "\n";
             std::cout << "Max part size = " << PartitionMetrics::GetMaxPartWeight(g, k, partition);
-            std::cout << " | Optimal part size = " << c<real_t>(g.getSumOfVertexWeights()) / c<real_t>(k) << "\n\n";
+            std::cout << " | Optimal part size = " << (real_t)(g.getSumOfVertexWeights()) / (real_t)(k) << "\n\n";
         }
     }
 }

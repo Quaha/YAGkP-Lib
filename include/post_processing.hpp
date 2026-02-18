@@ -26,10 +26,10 @@ public:
 		}
 
 		vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = c<vw_t>(c<real_t>(total_weight) / c<real_t>(k) * (1.0 + ProgramConfig::accuracy + EPS));
+        vw_t max_allowed = (vw_t)((real_t)(total_weight) / (real_t)(k) * (1.0 + ProgramConfig::accuracy + EPS));
 
-		while (max_allowed * c<vw_t>(k) < total_weight) {
-			max_allowed += c<vw_t>(1);
+		while (max_allowed * (vw_t)(k) < total_weight) {
+			max_allowed += (vw_t)(1);
 		}
 
         Vector<Vector<int_t>> comp_vertices(k);
@@ -98,11 +98,11 @@ public:
         }
 
         vw_t total_weight = graph.getSumOfVertexWeights();
-        vw_t max_allowed = c<vw_t>((c<real_t>(total_weight) / c<real_t>(k)) * (1.0 + ProgramConfig::accuracy + EPS));
+        vw_t max_allowed = (vw_t)(((real_t)(total_weight) / (real_t)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
 
 
-		while (max_allowed * c<vw_t>(k) < total_weight) {
-			max_allowed += c<vw_t>(1);
+		while (max_allowed * (vw_t)(k) < total_weight) {
+			max_allowed += (vw_t)(1);
 		}
 
 		std::queue<int_t> vertices_queue;
@@ -130,7 +130,7 @@ public:
                     if (partition[u] == t)         cut_after += w;
                 }
 
-                ew_t gain = c<ew_t>(cut_after - cut_before);
+                ew_t gain = (ew_t)(cut_after - cut_before);
                 if (gain > best_gain) {
                     best_gain = gain;
                     best_target = t;

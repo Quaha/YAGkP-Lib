@@ -83,7 +83,7 @@ struct Graph {
 
 		vertex_weights.resize(n);
 		for (int_t i = 0; i < n; ++i) {
-			vertex_weights[i] = c<vw_t>(1);
+			vertex_weights[i] = (vw_t)(1);
 		}
 
 		edge_weights.resize(m);
@@ -94,7 +94,7 @@ struct Graph {
 		}
 		else {
 			for (int_t i = 0; i < m; ++i) {
-				edge_weights[i] = c<ew_t>(1);
+				edge_weights[i] = (ew_t)(1);
 			}
 		}
 	}
@@ -290,7 +290,7 @@ struct Graph {
 	}
 
 	vw_t getSumOfVertexWeights() const {
-		vw_t result = c<vw_t>(0);
+		vw_t result = (vw_t)(0);
 		for (int_t i = 0; i < n; ++i) {
 			result += vertex_weights[i];
 		}
