@@ -1,14 +1,11 @@
 #pragma once
 
 #include "config.hpp"
-
 #include "utils.hpp"
 #include "graph.hpp"
-
 #include "coarse_level.hpp"
 
 namespace Coarser {
-
 	Vector<CoarseLevel> GetCoarseLevels(
 		const Graph& graph,
 		const int_t  k

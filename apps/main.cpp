@@ -33,7 +33,7 @@ int main() {
 	ProgramConfig::post_processing_disbalance_fix = false;
 	ProgramConfig::post_processing_improvement = false;
 
-    PrintBenchmark();
+    Benchmark::PrintBenchmark();
 
     return 0;
 }

@@ -1,25 +1,20 @@
-#pragma once
-
 #include "bipartitioner.hpp"
 
 namespace Bipartitioner {
 
-    void GetGraphBipartition(
-        const Graph&          graph,
-              Vector<int_t>&  partition
+    Vector<int_t> GetGraphBipartition(
+        const Graph& graph
     ) {
         switch (ProgramConfig::bipartitioning_method) {
-        case ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm:
-            partition = GraphGrowingAlgorithm(graph);
-            break;
-        case ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm:
-            partition = GreedyGraphGrowingAlgorithm(graph);
-            break;
+        case (ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm):
+            return GraphGrowingAlgorithm(graph);
+
+        case (ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm):
+            return GreedyGraphGrowingAlgorithm(graph);
 
         default:
             throw std::runtime_error("Unknown bipartitioning method in ProgramConfig.");
         }
-
 	}
 
     Vector<int_t> GraphGrowingAlgorithm(
@@ -29,7 +24,7 @@ namespace Bipartitioner {
 
         int_t total_weight = graph.getSumOfVertexWeights();
 
-        int_t ideal_weight = total_weight / (int_t)(2);
+        int_t ideal_weight = total_weight / 2;
         int_t max_allowed = (ProgramConfig::accuracy + 1.0) * ideal_weight;
 
         Vector<int_t> best_partition;

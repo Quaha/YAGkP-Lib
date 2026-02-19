@@ -1,11 +1,9 @@
 #pragma once
 
 #include "config.hpp"
-
 #include "utils.hpp"
 #include "graph.hpp"
 #include "heap.hpp"
-
 #include "coarse_level.hpp"
 
 namespace Uncoarser {

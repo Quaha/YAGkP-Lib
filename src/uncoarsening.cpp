@@ -1,5 +1,3 @@
-#pragma once
-
 #include "uncoarsening.hpp"
 
 namespace Uncoarser {
@@ -10,12 +8,12 @@ namespace Uncoarser {
 	) {
 		switch (ProgramConfig::uncoarsening_method) {
 		case ProgramConfig::UncoarseningMethod::DirectMapping:
-			for (int_t i = levels.size() - 1; i > 0; --i) {
+			for (int_t i = levels.size() - 1; i > 0; i--) {
 				partition = Uncoarser::DirectMapping(levels[i - 1], levels[i], partition);
 			}
 			break;
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
-			for (int_t i = levels.size() - 1; i > 0; --i) {
+			for (int_t i = levels.size() - 1; i > 0; i--) {
 				partition = Uncoarser::KernighanLin(levels[i - 1], levels[i], partition);
 			}
 			break;
@@ -33,7 +31,7 @@ namespace Uncoarser {
 		const int_t n = level.uncoarse_to_coarse.size();
 		Vector<int_t> prev_partition(n);
 
-		for (int_t i = 0; i < n; ++i) {
+		for (int_t i = 0; i < n; i++) {
 			prev_partition[i] = coarse_partition[level.uncoarse_to_coarse[i]];
 		}
 
@@ -45,20 +43,17 @@ namespace Uncoarser {
 		const CoarseLevel&   level,
 		const Vector<int_t>& coarse_partition
 	) {
-		const int_t n = level.uncoarse_to_coarse.size();
-
+		int_t n = level.uncoarse_to_coarse.size();
 		Vector<int_t> prev_partition = DirectMapping(prev_level, level, coarse_partition);
-
 		const Graph& graph = prev_level.coarsed_graph;
 
 		Vector<bool> blocked(n, false);
-
 		if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
 
-			int_t total_weight0 = (int_t)(0);
-			int_t total_weight1 = (int_t)(0);
+			int_t total_weight0 = 0;
+			int_t total_weight1 = 0;
 
-			for (int_t i = 0; i < n; ++i) {
+			for (int_t i = 0; i < n; i++) {
 				if (prev_partition[i] == 0) {
 					total_weight0 += graph.getVertexWeight(i);
 				}
@@ -67,7 +62,7 @@ namespace Uncoarser {
 				}
 			}
 
-			for (int_t i = 0; i < n; ++i) {
+			for (int_t i = 0; i < n; i++) {
 				if (prev_partition[i] == 0 && total_weight0 < total_weight1) {
 					blocked[i] = true;
 
@@ -80,29 +75,28 @@ namespace Uncoarser {
 
 		IndexedHeap<int_t> heap(n);
 
-		for (int_t start_V = 0; start_V < n; ++start_V) {
-			int_t inc_w = (int_t)(0);
-			int_t dec_w = (int_t)(0);
+		for (int_t start_V = 0; start_V < n; start_V++) {
+			int_t gain = 0;
 
 			if (blocked[start_V]) continue;
 
 			for (auto [next_V, w] : graph[start_V]) {
 				if (prev_partition[next_V] == prev_partition[start_V]) {
-					inc_w += w;
+					gain += w;
 				}
 				else {
-					dec_w += w;
+					gain -= w;
 				}
 			}
 
-			heap.push(inc_w - dec_w, start_V);
+			heap.push(gain, start_V);
 		}
 
 		while (!heap.empty()) {
 			auto [priority, curr_V] = heap.extract();
 			blocked[curr_V] = true;
 
-			if (priority > (int_t)(0)) {
+			if (priority > 0) {
 				break;
 			}
 
@@ -110,17 +104,16 @@ namespace Uncoarser {
 
 			for (auto [next_V, w1] : graph[curr_V]) {
 				if (!blocked[next_V]) {
-					int_t inc_w = (int_t)(0);
-					int_t dec_w = (int_t)(0);
+					int_t gain = 0;
 					for (auto [near_V, w2] : graph[next_V]) {
 						if (prev_partition[near_V] == prev_partition[next_V]) {
-							inc_w += w2;
+							gain += w2;
 						}
 						else {
-							dec_w += w2;
+							gain -= w2;
 						}
 					}
-					heap.push(inc_w - dec_w, next_V);
+					heap.push(gain, next_V);
 				}
 			}
 		}

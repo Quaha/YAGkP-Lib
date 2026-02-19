@@ -1,76 +1,62 @@
-#pragma once
-
 #include "partitioner.hpp"
 
 namespace Partitioner {
-
-	void GetGraphKPartition(
-		const Graph&         graph,
-		const int_t          k,
-		      Vector<int_t>& partition
+	Vector<int_t> GetGraphKPartition(
+		const Graph& graph,
+		const int_t  k
 	) {
-		partition.resize(graph.n, -1);
-		RecursivePartition(graph, k, partition, 0);
-
+		vector<int_t> partition = RecursivePartition(graph, k, 0);
 		PostProcessor::FixPartitionDisbalance(graph, k, partition);
+        return partition;
 	}
 
-    void RecursivePartition(
+    Vector<int_t> RecursivePartition(
         const Graph& graph,
-        const int_t              k,
-              Vector<int_t>&     partition,
-              int_t              offset
+        const int_t  k,
+              int_t  offset
     ) {
+        Vector<int_t> partition(graph.n, offset);
         if (k == 1) {
-            std::fill(partition.begin(), partition.end(), offset);
-            return;
+            return partition;
         }
 
-        Vector<CoarseLevel> levels = Coarser::GetCoarseLevels(graph, k);
+        Vector<CoarseLevel> coarse_levels = Coarser::GetCoarseLevels(graph, k);
+        const Graph& coarsed_graph = coarse_levels.back().coarsed_graph;
 
-        const Graph& coarse_graph = levels.back().coarsed_graph;
+        Vector<int_t> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
+		Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
-        Vector<int_t> coarse_partition;
-   
-        Bipartitioner::GetGraphBipartition(coarse_graph, coarse_partition);
-		Uncoarser::RestorePartition(levels, coarse_partition);
-
-        Vector<int_t> left_part_vertices, right_part_vertices;
+        Vector<int_t> first_part_vertices, second_part_vertices;
         for (int_t i = 0; i < graph.n; ++i) {
-            if (coarse_partition[i] == 0) {
-                left_part_vertices.push_back(i);
+            if (initial_partition[i] == 0) {
+                first_part_vertices.push_back(i);
             }
             else {
-                right_part_vertices.push_back(i);
+                second_part_vertices.push_back(i);
             }
         }
 
-        Graph left_graph = graph.selectSubgraph(left_part_vertices);
-        Graph right_graph = graph.selectSubgraph(right_part_vertices);
-
+        Graph first_graph = graph.selectSubgraph(first_part_vertices);
+        Graph second_graph = graph.selectSubgraph(second_part_vertices);
 
         int_t total_W = graph.getSumOfVertexWeights();
-        int_t left_W = left_graph.getSumOfVertexWeights();
+        int_t first_graph_W = first_graph.getSumOfVertexWeights();
 
-        real_t total_parts = static_cast<real_t>(k);
-        real_t ratio_left = static_cast<real_t>(left_W) / static_cast<real_t>(total_W);
+        real_t ratio_left = (real_t)(first_graph_W) / (real_t)(total_W);
 
-        int_t left_k = std::min(k - 1, std::max<int_t>(1, std::round(total_parts * ratio_left)));
-        int_t right_k = k - left_k;
+        int_t k1 = std::min(k - 1, std::max<int_t>(1, std::round((real_t)(k) * ratio_left)));
+        int_t k2 = k - k1;
 
+        Vector<int_t> partition1 = RecursivePartition(first_graph, k1, offset);
+        Vector<int_t> partition2 = RecursivePartition(second_graph, k2, offset + k1);
 
-        Vector<int_t> left_part(left_graph.n, -1);
-        Vector<int_t> right_part(right_graph.n, -1);
-
-        RecursivePartition(left_graph, left_k, left_part, offset);
-        RecursivePartition(right_graph, right_k, right_part, offset + left_k);
-
-        for (int_t i = 0; i < left_part_vertices.size(); ++i) {
-            partition[left_part_vertices[i]] = left_part[i];
+        for (int_t i = 0; i < first_part_vertices.size(); i++) {
+            partition[first_part_vertices[i]] = partition1[i];
+        }
+        for (int_t i = 0; i < second_part_vertices.size(); i++) {
+            partition[second_part_vertices[i]] = partition2[i];
         }
 
-        for (int_t i = 0; i < right_part_vertices.size(); ++i) {
-            partition[right_part_vertices[i]] = right_part[i];
-        }
+        return partition;
     }
 };

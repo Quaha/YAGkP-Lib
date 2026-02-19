@@ -1,13 +1,11 @@
-#pragma once
-
 #include "post_processing.hpp"
 
 namespace PostProcessor {
 
 	void FixPartitionDisbalance(
-		const Graph&   graph,
-		const int_t    k,
-		Vector<int_t>& partition
+		const Graph&         graph,
+		const int_t          k,
+		      Vector<int_t>& partition
 	) {
 		if (!ProgramConfig::post_processing_disbalance_fix) {
 			return;
@@ -15,24 +13,24 @@ namespace PostProcessor {
 
 		Vector<int_t> comp_weight(k, 0);
 		int_t n = graph.getVerticesCount();
-		for (int_t v = 0; v < n; ++v) {
+		for (int_t v = 0; v < n; v++) {
 			comp_weight[partition[v]] += graph.getVertexWeight(v);
 		}
 
 		int_t total_weight = graph.getSumOfVertexWeights();
         int_t max_allowed = (int_t)((real_t)(total_weight) / (real_t)(k) * (1.0 + ProgramConfig::accuracy + EPS));
 
-		while (max_allowed * (int_t)(k) < total_weight) {
-			max_allowed += (int_t)(1);
+		while (max_allowed * k < total_weight) {
+			max_allowed += 1;
 		}
 
         Vector<Vector<int_t>> comp_vertices(k);
-        for (int_t v = 0; v < n; ++v) {
+        for (int_t v = 0; v < n; v++) {
             comp_vertices[partition[v]].push_back(v);
         }
 
         IndexedHeap<int_t, std::greater<int_t>> heap(k);
-        for (int_t c = 0; c < k; ++c) {
+        for (int_t c = 0; c < k; c++) {
             heap.push(comp_weight[c], c);
         }
 
@@ -76,9 +74,9 @@ namespace PostProcessor {
 	}
 
 	void ImproveFinalPartition(
-		const Graph& graph,
-		const int_t              k,
-		Vector<int_t>& partition
+		const Graph&         graph,
+		const int_t          k,
+		      Vector<int_t>& partition
 	) {
 		if (!ProgramConfig::post_processing_improvement) {
 			return;
@@ -86,7 +84,7 @@ namespace PostProcessor {
         int_t n = graph.getVerticesCount();
 
         Vector<int_t> comp_weight(k, 0);
-        for (int_t v = 0; v < n; ++v) {
+        for (int_t v = 0; v < n; v++) {
             comp_weight[partition[v]] += graph.getVertexWeight(v);
         }
 
@@ -94,12 +92,12 @@ namespace PostProcessor {
         int_t max_allowed = (int_t)(((real_t)(total_weight) / (real_t)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
 
 
-		while (max_allowed * (int_t)(k) < total_weight) {
-			max_allowed += (int_t)(1);
+		while (max_allowed * k < total_weight) {
+			max_allowed++;
 		}
 
 		std::queue<int_t> vertices_queue;
-		for (int_t i = 0; i < n; ++i) {
+		for (int_t i = 0; i < n; i++) {
 			vertices_queue.push(i);
 		}
 
@@ -111,7 +109,7 @@ namespace PostProcessor {
             int_t best_target = curr_comp;
             int_t best_gain = 0;
 
-            for (int_t t = 0; t < k; ++t) {
+            for (int_t t = 0; t < k; t++) {
                 if (t == curr_comp) continue;
                 if (comp_weight[t] + vertex_w > max_allowed) continue;
 
@@ -123,7 +121,7 @@ namespace PostProcessor {
                     if (partition[u] == t)         cut_after += w;
                 }
 
-                int_t gain = (int_t)(cut_after - cut_before);
+                int_t gain = cut_after - cut_before;
                 if (gain > best_gain) {
                     best_gain = gain;
                     best_target = t;
