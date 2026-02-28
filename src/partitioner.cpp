@@ -23,12 +23,12 @@ namespace Partitioner {
         Vector<CoarseLevel> coarse_levels = Coarser::GetCoarseLevels(graph, k);
         const Graph& coarsed_graph = coarse_levels.back().coarsed_graph;
 
-        Vector<int_t> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
-		Uncoarser::RestorePartition(coarse_levels, initial_partition);
+        Vector<Part> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
+		Vector<Part> restored_partition = Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
         Vector<int_t> first_part_vertices, second_part_vertices;
         for (int_t i = 0; i < graph.n; ++i) {
-            if (initial_partition[i] == 0) {
+            if (restored_partition[i] == Part::First) {
                 first_part_vertices.push_back(i);
             }
             else {

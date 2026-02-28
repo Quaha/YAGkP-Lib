@@ -7,15 +7,15 @@
 #include "heap.hpp"
 
 namespace Bipartitioner {
-    Vector<int_t> GetGraphBipartition(
+    Vector<Part> GetGraphBipartition(
         const Graph& graph
     );
 
-    Vector<int_t> GraphGrowingAlgorithm(
+    Vector<Part> GraphGrowingAlgorithm(
         const Graph& graph
     );
 
-    Vector<int_t> GreedyGraphGrowingAlgorithm(
+    Vector<Part> GreedyGraphGrowingAlgorithm(
         const Graph& graph
     );
 };

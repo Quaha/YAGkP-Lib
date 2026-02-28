@@ -2,50 +2,46 @@
 
 namespace Uncoarser {
 
-	void RestorePartition(
+	Vector<Part> RestorePartition(
 		const Vector<CoarseLevel>& levels,
-			  Vector<int_t>&       partition
+			  Vector<Part>         partition
 	) {
 		switch (ProgramConfig::uncoarsening_method) {
 		case ProgramConfig::UncoarseningMethod::DirectMapping:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
-				partition = Uncoarser::DirectMapping(levels[i - 1], levels[i], partition);
+				partition = Uncoarser::DirectMapping(levels[i], partition);
 			}
 			break;
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
-				partition = Uncoarser::KernighanLin(levels[i - 1], levels[i], partition);
+				partition = Uncoarser::KernighanLin(levels[i - 1].coarsed_graph, levels[i], partition);
 			}
 			break;
-
-		default:
-			throw std::runtime_error("Unknown uncoarsening method in ProgramConfig.");
 		}
+		return partition;
 	}
 
-	Vector<int_t> DirectMapping(
-		const CoarseLevel&   prev_level,
-		const CoarseLevel&   level,
-		const Vector<int_t>& coarse_partition
+	Vector<Part> DirectMapping(
+		const CoarseLevel&   coarse_level,
+		const Vector<Part>& coarse_partition
 	) {
-		const int_t n = level.uncoarse_to_coarse.size();
-		Vector<int_t> prev_partition(n);
+		const int_t n = coarse_level.uncoarse_to_coarse.size();
+		Vector<Part> prev_partition(n);
 
 		for (int_t i = 0; i < n; i++) {
-			prev_partition[i] = coarse_partition[level.uncoarse_to_coarse[i]];
+			prev_partition[i] = coarse_partition[coarse_level.uncoarse_to_coarse[i]];
 		}
 
 		return prev_partition;
 	}
 
-	Vector<int_t> KernighanLin(
-		const CoarseLevel&   prev_level,
-		const CoarseLevel&   level,
-		const Vector<int_t>& coarse_partition
+	Vector<Part> KernighanLin(
+		const Graph&         previous_graph,
+		const CoarseLevel&   coarse_level,
+		const Vector<Part>& coarse_partition
 	) {
-		int_t n = level.uncoarse_to_coarse.size();
-		Vector<int_t> prev_partition = DirectMapping(prev_level, level, coarse_partition);
-		const Graph& graph = prev_level.coarsed_graph;
+		int_t n = previous_graph.n;
+		Vector<Part> prev_partition = DirectMapping(coarse_level, coarse_partition);
 
 		Vector<bool> blocked(n, false);
 		if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
@@ -54,20 +50,20 @@ namespace Uncoarser {
 			int_t total_weight1 = 0;
 
 			for (int_t i = 0; i < n; i++) {
-				if (prev_partition[i] == 0) {
-					total_weight0 += graph.getVertexWeight(i);
+				if (prev_partition[i] == Part::First) {
+					total_weight0 += previous_graph.getVertexWeight(i);
 				}
 				else {
-					total_weight1 += graph.getVertexWeight(i);
+					total_weight1 += previous_graph.getVertexWeight(i);
 				}
 			}
 
 			for (int_t i = 0; i < n; i++) {
-				if (prev_partition[i] == 0 && total_weight0 < total_weight1) {
+				if (prev_partition[i] == Part::First && total_weight0 < total_weight1) {
 					blocked[i] = true;
 
 				}
-				if (prev_partition[i] == 1 && total_weight1 < total_weight0) {
+				if (prev_partition[i] == Part::Second && total_weight1 < total_weight0) {
 					blocked[i] = true;
 				}
 			}
@@ -80,7 +76,7 @@ namespace Uncoarser {
 
 			if (blocked[start_V]) continue;
 
-			for (auto [next_V, w] : graph[start_V]) {
+			for (auto [next_V, w] : previous_graph[start_V]) {
 				if (prev_partition[next_V] == prev_partition[start_V]) {
 					gain += w;
 				}
@@ -100,12 +96,12 @@ namespace Uncoarser {
 				break;
 			}
 
-			prev_partition[curr_V] = 1 - prev_partition[curr_V];
+			prev_partition[curr_V] = GetOtherPart(prev_partition[curr_V]);
 
-			for (auto [next_V, w1] : graph[curr_V]) {
+			for (auto [next_V, w1] : previous_graph[curr_V]) {
 				if (!blocked[next_V]) {
 					int_t gain = 0;
-					for (auto [near_V, w2] : graph[next_V]) {
+					for (auto [near_V, w2] : previous_graph[next_V]) {
 						if (prev_partition[near_V] == prev_partition[next_V]) {
 							gain += w2;
 						}

@@ -11,6 +11,14 @@ namespace PartitionMetrics {
 		const Vector<int_t> partition
 	);
 
+	// graph: input graph                                                   | graph
+	// partition: vector of parts for each vertex (size = |V|)              | {Part::First, Part::Second, Part::First}
+	// returns: total weight of edges connecting different parts (edge cut) | 4
+	int_t GetEdgeCut(
+		const Graph&       graph,
+		const Vector<Part> partition
+	);
+
 	// graph: input graph                                                                 | graph (|V| = 6, weight(Ui) = 1)
 	// k: number of parts                                                                 | 4
 	// partition: vector of part indices for each vertex                                  | {0, 1, 0, 2, 3, 1}

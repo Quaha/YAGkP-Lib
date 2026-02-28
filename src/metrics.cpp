@@ -18,6 +18,23 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
+	int_t GetEdgeCut(
+		const Graph&       graph,
+		const Vector<Part> partition
+	) {
+		int_t edge_cut = 0;
+
+		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
+			for (auto [next_V, w]: graph[curr_V]) {
+				if (curr_V < next_V && partition[curr_V] != partition[next_V]) {
+					edge_cut += w;
+				}
+			}
+		}
+
+		return edge_cut;
+	}
+
 	Vector<real_t> GetBalances(
 		const Graph&         graph,
 		const int_t		     k,

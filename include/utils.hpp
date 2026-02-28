@@ -30,12 +30,21 @@ using namespace std;
 using int_t = long long;
 using real_t = double;
 
+enum class Part {
+    First,
+    Second
+};
+
 inline constexpr real_t EPS = 1e-8;
 
 template <typename T> 
 using Vector = std::vector<T>;
 
 using String = std::string;
+
+// part: current part  | Part::Second
+// returns: other part | Part::First
+Part GetOtherPart(Part part);
 
 // folder: path to folder         | "../data/"
 // format: extension with dot     | ".mtx"

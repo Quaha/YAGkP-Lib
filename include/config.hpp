@@ -24,31 +24,31 @@ namespace ProgramConfig {
     };
 
     // --- Global parameters ---
-    inline real_t accuracy = 0.05;
+    extern real_t accuracy;
 
     // --- Coarsening parameters ---
-    inline CoarseningMethod coarsening_method = CoarseningMethod::HeavyEdgeMatching;
+    extern CoarseningMethod coarsening_method;
 
-    inline int_t coarsening_itarations_limit = 40;
-    inline int_t coarsening_vertix_count_limit = 100;
+    extern int_t coarsening_itarations_limit;
+    extern int_t coarsening_vertix_count_limit;
 
-    inline bool coarsening_clusterization_prohibition = false;
-	inline real_t coarsening_clusterization_size_factor = 0.5;
+    extern bool coarsening_clusterization_prohibition;
+	extern real_t coarsening_clusterization_size_factor;
 
     // --- Bipartitioning parameters ---
-    inline BipartitioningMethod bipartitioning_method = BipartitioningMethod::GraphGrowingAlgorithm;
+    extern BipartitioningMethod bipartitioning_method;
 
-    inline int_t bipartitioning_GraphGrowingAlgorithm_launches_count = 100;
-    inline int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100;
+    extern int_t bipartitioning_GraphGrowingAlgorithm_launches_count;
+    extern int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count;
 
     // --- Uncoarsening parameters ---
-	inline UncoarseningMethod uncoarsening_method = UncoarseningMethod::DirectMapping;   
+	extern UncoarseningMethod uncoarsening_method;   
 
-	inline bool uncoarsening_KernighanLin_use_blocking = true;
+	extern bool uncoarsening_KernighanLin_use_blocking;
 
 	// --- Post processing parameters ---
 
     // Correctness is guaranteed only for graphs with vertex weights equal to 1
-	inline bool post_processing_disbalance_fix = true;
-	inline bool post_processing_improvement = true;
+	extern bool post_processing_disbalance_fix;
+	extern bool post_processing_improvement;
 }
