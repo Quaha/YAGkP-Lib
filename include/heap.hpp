@@ -180,3 +180,44 @@ public:
 		siftDown(position);
 	}
 };
+
+
+template <
+	typename DataType,
+	typename IndexType,
+	typename Comparator = std::greater<std::pair<DataType, IndexType>> // >=
+>
+struct IndexedHeap2 {
+
+	std::set<std::pair<DataType, IndexType>, Comparator> data;
+	std::unordered_map<IndexType, DataType> info;
+
+	void insert(DataType V, IndexType id) {
+		if (info.contains(id)) {
+			throw "Something went wrong";
+		}
+		info[id] = V;
+		data.insert(make_pair(V, id));
+	}
+
+	void change(DataType delta, IndexType id) {
+		if (!info.contains(id)) {
+			return;
+		}
+		DataType was = info[id];
+		data.erase(make_pair(was, id));
+		info[id] = was + delta;
+		data.insert(make_pair(was + delta, id));
+	}
+
+	std::pair<DataType, IndexType> extract() {
+		auto result = *data.begin();
+		data.erase(data.begin());
+		info.erase(result.second);
+		return result;
+	}
+
+	bool empty() const {
+		return data.empty();
+	}
+};

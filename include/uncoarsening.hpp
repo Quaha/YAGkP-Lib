@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include "graph.hpp"
 #include "heap.hpp"
+#include "metrics.hpp"
 #include "coarse_level.hpp"
 
 namespace Uncoarser {
@@ -28,6 +29,12 @@ namespace Uncoarser {
 	// coarse_partition: partition of the coarse graph                             | {Part::First, Part::Second}
 	// returns: refined partition of the finer graph using Kernighan-Lin algorithm | {Part::First, Part::Second, Part::First, Part::Second}
 	Vector<Part> KernighanLin(
+		const Graph&        previous_graph,
+		const CoarseLevel&  coarse_level,
+		const Vector<Part>& coarse_partition
+	);
+
+	Vector<Part> KernighanLinBlocking(
 		const Graph&        previous_graph,
 		const CoarseLevel&  coarse_level,
 		const Vector<Part>& coarse_partition

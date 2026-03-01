@@ -22,11 +22,14 @@ namespace ProgramConfig {
     // --- Uncoarsening parameters ---
 	UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;   
 
-	bool uncoarsening_KernighanLin_use_blocking = true;
+    bool uncoarsening_KernighanLin_use_blocking = true;
+
+    int_t uncoarsening_KernighanLin_runs = 3;
+	int_t uncoarsening_KernighanLin_waste_limit = 50;
 
 	// --- Post processing parameters ---
 
     // Correctness is guaranteed only for graphs with vertex weights equal to 1
-	bool post_processing_disbalance_fix = true;
-	bool post_processing_improvement = true;
+	bool post_processing_disbalance_fix = false;
+	bool post_processing_improvement = false;
 }

@@ -44,7 +44,10 @@ namespace ProgramConfig {
     // --- Uncoarsening parameters ---
 	extern UncoarseningMethod uncoarsening_method;   
 
-	extern bool uncoarsening_KernighanLin_use_blocking;
+    extern bool uncoarsening_KernighanLin_use_blocking;
+
+    extern int_t uncoarsening_KernighanLin_runs;
+	extern int_t uncoarsening_KernighanLin_waste_limit;
 
 	// --- Post processing parameters ---
 

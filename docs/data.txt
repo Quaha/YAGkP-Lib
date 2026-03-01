@@ -1,0 +1,513 @@
+accuracy (imbalance): 5.0000000000%
+==============================================
+Graph: 144.mtx
+n = 144649, m = 2148786
+k = 2 | edge cut = 6833.0000000000 | real imbalance = 0.0006913287%
+Max part size = 72325 | Optimal part size = 72324.5000000000
+
+k = 4 | edge cut = 17417.0000000000 | real imbalance = 0.0020739860%
+Max part size = 36163 | Optimal part size = 36162.2500000000
+
+k = 8 | edge cut = 28513.0000000000 | real imbalance = 0.0048393007%
+Max part size = 18082 | Optimal part size = 18081.1250000000
+
+k = 16 | edge cut = 44044.0000000000 | real imbalance = 0.0159005593%
+Max part size = 9042 | Optimal part size = 9040.5625000000
+
+k = 32 | edge cut = 63597.0000000000 | real imbalance = 0.0159005593%
+Max part size = 4521 | Optimal part size = 4520.2812500000
+
+k = 64 | edge cut = 89472.0000000000 | real imbalance = 0.0822681111%
+Max part size = 2262 | Optimal part size = 2260.1406250000
+
+k = 128 | edge cut = 120936.0000000000 | real imbalance = 0.0822681111%
+Max part size = 1131 | Optimal part size = 1130.0703125000
+
+k = 256 | edge cut = 162766.0000000000 | real imbalance = 0.5247184564%
+Max part size = 568 | Optimal part size = 565.0351562500
+
+==============================================
+Graph: 598a.mtx
+n = 110971, m = 1483868
+k = 2 | edge cut = 2559.0000000000 | real imbalance = 0.0009011363%
+Max part size = 55486 | Optimal part size = 55485.5000000000
+
+k = 4 | edge cut = 8512.0000000000 | real imbalance = 0.0009011363%
+Max part size = 27743 | Optimal part size = 27742.7500000000
+
+k = 8 | edge cut = 17239.0000000000 | real imbalance = 0.0117147723%
+Max part size = 13873 | Optimal part size = 13871.3750000000
+
+k = 16 | edge cut = 30051.0000000000 | real imbalance = 0.0189238630%
+Max part size = 6937 | Optimal part size = 6935.6875000000
+
+k = 32 | edge cut = 44270.0000000000 | real imbalance = 0.0333420443%
+Max part size = 3469 | Optimal part size = 3467.8437500000
+
+k = 64 | edge cut = 64315.0000000000 | real imbalance = 0.0621784070%
+Max part size = 1735 | Optimal part size = 1733.9218750000
+
+k = 128 | edge cut = 88872.0000000000 | real imbalance = 0.1198511323%
+Max part size = 868 | Optimal part size = 866.9609375000
+
+k = 256 | edge cut = 118874.0000000000 | real imbalance = 3.8109055519%
+Max part size = 450 | Optimal part size = 433.4804687500
+
+==============================================
+Graph: add20.mtx
+n = 2395, m = 0
+k = 2 | edge cut = 0.0000000000 | real imbalance = 100.0000000000%
+Max part size = 2395 | Optimal part size = 1197.5000000000
+
+k = 4 | edge cut = 0.0000000000 | real imbalance = 300.0000000000%
+Max part size = 2395 | Optimal part size = 598.7500000000
+
+k = 8 | edge cut = 0.0000000000 | real imbalance = 700.0000000000%
+Max part size = 2395 | Optimal part size = 299.3750000000
+
+k = 16 | edge cut = 0.0000000000 | real imbalance = 1500.0000000000%
+Max part size = 2395 | Optimal part size = 149.6875000000
+
+k = 32 | edge cut = 0.0000000000 | real imbalance = 3100.0000000000%
+Max part size = 2395 | Optimal part size = 74.8437500000
+
+k = 64 | edge cut = 0.0000000000 | real imbalance = 6300.0000000000%
+Max part size = 2395 | Optimal part size = 37.4218750000
+
+k = 128 | edge cut = 0.0000000000 | real imbalance = 12700.0000000000%
+Max part size = 2395 | Optimal part size = 18.7109375000
+
+k = 256 | edge cut = 0.0000000000 | real imbalance = 25500.0000000000%
+Max part size = 2395 | Optimal part size = 9.3554687500
+
+==============================================
+Graph: add32.mtx
+n = 4960, m = 0
+k = 2 | edge cut = 0.0000000000 | real imbalance = 100.0000000000%
+Max part size = 4960 | Optimal part size = 2480.0000000000
+
+k = 4 | edge cut = 0.0000000000 | real imbalance = 300.0000000000%
+Max part size = 4960 | Optimal part size = 1240.0000000000
+
+k = 8 | edge cut = 0.0000000000 | real imbalance = 700.0000000000%
+Max part size = 4960 | Optimal part size = 620.0000000000
+
+k = 16 | edge cut = 0.0000000000 | real imbalance = 1500.0000000000%
+Max part size = 4960 | Optimal part size = 310.0000000000
+
+k = 32 | edge cut = 0.0000000000 | real imbalance = 3100.0000000000%
+Max part size = 4960 | Optimal part size = 155.0000000000
+
+k = 64 | edge cut = 0.0000000000 | real imbalance = 6300.0000000000%
+Max part size = 4960 | Optimal part size = 77.5000000000
+
+k = 128 | edge cut = 0.0000000000 | real imbalance = 12700.0000000000%
+Max part size = 4960 | Optimal part size = 38.7500000000
+
+k = 256 | edge cut = 0.0000000000 | real imbalance = 25500.0000000000%
+Max part size = 4960 | Optimal part size = 19.3750000000
+
+==============================================
+Graph: auto.mtx
+n = 448695, m = 6629222
+k = 2 | edge cut = 11043.0000000000 | real imbalance = 0.0002228685%
+Max part size = 224348 | Optimal part size = 224347.5000000000
+
+k = 4 | edge cut = 30849.0000000000 | real imbalance = 0.0002228685%
+Max part size = 112174 | Optimal part size = 112173.7500000000
+
+k = 8 | edge cut = 55732.0000000000 | real imbalance = 0.0020058169%
+Max part size = 56088 | Optimal part size = 56086.8750000000
+
+k = 16 | edge cut = 86623.0000000000 | real imbalance = 0.0020058169%
+Max part size = 28044 | Optimal part size = 28043.4375000000
+
+k = 32 | edge cut = 136084.0000000000 | real imbalance = 0.0091376102%
+Max part size = 14023 | Optimal part size = 14021.7187500000
+
+k = 64 | edge cut = 194916.0000000000 | real imbalance = 0.0162694035%
+Max part size = 7012 | Optimal part size = 7010.8593750000
+
+k = 128 | edge cut = 270364.0000000000 | real imbalance = 0.0447965767%
+Max part size = 3507 | Optimal part size = 3505.4296875000
+
+k = 256 | edge cut = 362857.0000000000 | real imbalance = 0.0733237500%
+Max part size = 1754 | Optimal part size = 1752.7148437500
+
+==============================================
+Graph: cs4.mtx
+n = 22499, m = 87716
+k = 2 | edge cut = 418.0000000000 | real imbalance = 0.0044446420%
+Max part size = 11250 | Optimal part size = 11249.5000000000
+
+k = 4 | edge cut = 1133.0000000000 | real imbalance = 0.0222232099%
+Max part size = 5626 | Optimal part size = 5624.7500000000
+
+k = 8 | edge cut = 1852.0000000000 | real imbalance = 0.0222232099%
+Max part size = 2813 | Optimal part size = 2812.3750000000
+
+k = 16 | edge cut = 2545.0000000000 | real imbalance = 0.1288946175%
+Max part size = 1408 | Optimal part size = 1406.1875000000
+
+k = 32 | edge cut = 3525.0000000000 | real imbalance = 1.2667229655%
+Max part size = 712 | Optimal part size = 703.0937500000
+
+k = 64 | edge cut = 4734.0000000000 | real imbalance = 4.6802080092%
+Max part size = 368 | Optimal part size = 351.5468750000
+
+k = 128 | edge cut = 6521.0000000000 | real imbalance = 10.3693497489%
+Max part size = 194 | Optimal part size = 175.7734375000
+
+k = 256 | edge cut = 8472.0000000000 | real imbalance = 14.9206631406%
+Max part size = 101 | Optimal part size = 87.8867187500
+
+==============================================
+Graph: cti.mtx
+n = 16840, m = 96464
+k = 2 | edge cut = 366.0000000000 | real imbalance = 0.0000000000%
+Max part size = 8420 | Optimal part size = 8420.0000000000
+
+k = 4 | edge cut = 1155.0000000000 | real imbalance = 0.0000000000%
+Max part size = 4210 | Optimal part size = 4210.0000000000
+
+k = 8 | edge cut = 1973.0000000000 | real imbalance = 0.0475059382%
+Max part size = 2106 | Optimal part size = 2105.0000000000
+
+k = 16 | edge cut = 3178.0000000000 | real imbalance = 0.0475059382%
+Max part size = 1053 | Optimal part size = 1052.5000000000
+
+k = 32 | edge cut = 4497.0000000000 | real imbalance = 0.1425178147%
+Max part size = 527 | Optimal part size = 526.2500000000
+
+k = 64 | edge cut = 6335.0000000000 | real imbalance = 5.6532066508%
+Max part size = 278 | Optimal part size = 263.1250000000
+
+k = 128 | edge cut = 8316.0000000000 | real imbalance = 10.2137767221%
+Max part size = 145 | Optimal part size = 131.5625000000
+
+k = 256 | edge cut = 11439.0000000000 | real imbalance = 15.5344418052%
+Max part size = 76 | Optimal part size = 65.7812500000
+
+==============================================
+Graph: data.mtx
+n = 2851, m = 30186
+k = 2 | edge cut = 230.0000000000 | real imbalance = 0.0350754121%
+Max part size = 1426 | Optimal part size = 1425.5000000000
+
+k = 4 | edge cut = 407.0000000000 | real imbalance = 0.1753770607%
+Max part size = 714 | Optimal part size = 712.7500000000
+
+k = 8 | edge cut = 790.0000000000 | real imbalance = 0.1753770607%
+Max part size = 357 | Optimal part size = 356.3750000000
+
+k = 16 | edge cut = 1326.0000000000 | real imbalance = 11.1189056471%
+Max part size = 198 | Optimal part size = 178.1875000000
+
+k = 32 | edge cut = 2049.0000000000 | real imbalance = 11.1189056471%
+Max part size = 99 | Optimal part size = 89.0937500000
+
+k = 64 | edge cut = 3088.0000000000 | real imbalance = 21.2206243423%
+Max part size = 54 | Optimal part size = 44.5468750000
+
+k = 128 | edge cut = 4619.0000000000 | real imbalance = 66.1171518765%
+Max part size = 37 | Optimal part size = 22.2734375000
+
+k = 256 | edge cut = 6813.0000000000 | real imbalance = 61.6274991231%
+Max part size = 18 | Optimal part size = 11.1367187500
+
+==============================================
+Graph: fe_4elt2.mtx
+n = 11143, m = 65636
+k = 2 | edge cut = 130.0000000000 | real imbalance = 0.0089742439%
+Max part size = 5572 | Optimal part size = 5571.5000000000
+
+k = 4 | edge cut = 411.0000000000 | real imbalance = 0.0448712196%
+Max part size = 2787 | Optimal part size = 2785.7500000000
+
+k = 8 | edge cut = 745.0000000000 | real imbalance = 0.0807681953%
+Max part size = 1394 | Optimal part size = 1392.8750000000
+
+k = 16 | edge cut = 1161.0000000000 | real imbalance = 3.5268778605%
+Max part size = 721 | Optimal part size = 696.4375000000
+
+k = 32 | edge cut = 1824.0000000000 | real imbalance = 3.6704657633%
+Max part size = 361 | Optimal part size = 348.2187500000
+
+k = 64 | edge cut = 2722.0000000000 | real imbalance = 10.8498608992%
+Max part size = 193 | Optimal part size = 174.1093750000
+
+k = 128 | edge cut = 4086.0000000000 | real imbalance = 17.1677286189%
+Max part size = 102 | Optimal part size = 87.0546875000
+
+k = 256 | edge cut = 5954.0000000000 | real imbalance = 70.0080768195%
+Max part size = 74 | Optimal part size = 43.5273437500
+
+==============================================
+Graph: fe_body.mtx
+n = 45087, m = 327468
+k = 2 | edge cut = 447.0000000000 | real imbalance = 0.0022179342%
+Max part size = 22544 | Optimal part size = 22543.5000000000
+
+k = 4 | edge cut = 814.0000000000 | real imbalance = 6.4342271608%
+Max part size = 11997 | Optimal part size = 11271.7500000000
+
+k = 8 | edge cut = 1308.0000000000 | real imbalance = 10.1159979595%
+Max part size = 6206 | Optimal part size = 5635.8750000000
+
+k = 16 | edge cut = 2356.0000000000 | real imbalance = 15.6874487103%
+Max part size = 3260 | Optimal part size = 2817.9375000000
+
+k = 32 | edge cut = 3649.0000000000 | real imbalance = 23.3526293610%
+Max part size = 1738 | Optimal part size = 1408.9687500000
+
+k = 64 | edge cut = 6097.0000000000 | real imbalance = 28.7466453745%
+Max part size = 907 | Optimal part size = 704.4843750000
+
+k = 128 | edge cut = 9177.0000000000 | real imbalance = 76.5830505467%
+Max part size = 622 | Optimal part size = 352.2421875000
+
+k = 256 | edge cut = 14219.0000000000 | real imbalance = 79.4220063433%
+Max part size = 316 | Optimal part size = 176.1210937500
+
+==============================================
+Graph: fe_ocean.mtx
+n = 143437, m = 819186
+k = 2 | edge cut = 596.0000000000 | real imbalance = 0.0006971702%
+Max part size = 71719 | Optimal part size = 71718.5000000000
+
+k = 4 | edge cut = 2202.0000000000 | real imbalance = 0.0020915106%
+Max part size = 35860 | Optimal part size = 35859.2500000000
+
+k = 8 | edge cut = 4782.0000000000 | real imbalance = 0.0076688720%
+Max part size = 17931 | Optimal part size = 17929.6250000000
+
+k = 16 | edge cut = 9238.0000000000 | real imbalance = 0.0132462335%
+Max part size = 8966 | Optimal part size = 8964.8125000000
+
+k = 32 | edge cut = 14803.0000000000 | real imbalance = 0.6602201663%
+Max part size = 4512 | Optimal part size = 4482.4062500000
+
+k = 64 | edge cut = 22762.0000000000 | real imbalance = 1.0617901936%
+Max part size = 2265 | Optimal part size = 2241.2031250000
+
+k = 128 | edge cut = 33487.0000000000 | real imbalance = 3.4265914652%
+Max part size = 1159 | Optimal part size = 1120.6015625000
+
+k = 256 | edge cut = 44499.0000000000 | real imbalance = 97.5724534116%
+Max part size = 1107 | Optimal part size = 560.3007812500
+
+==============================================
+Graph: fe_rotor.mtx
+n = 99617, m = 1324862
+k = 2 | edge cut = 2212.0000000000 | real imbalance = 0.0010038447%
+Max part size = 49809 | Optimal part size = 49808.5000000000
+
+k = 4 | edge cut = 8124.0000000000 | real imbalance = 0.0030115342%
+Max part size = 24905 | Optimal part size = 24904.2500000000
+
+k = 8 | edge cut = 14472.0000000000 | real imbalance = 0.0070269131%
+Max part size = 12453 | Optimal part size = 12452.1250000000
+
+k = 16 | edge cut = 24179.0000000000 | real imbalance = 0.0150576709%
+Max part size = 6227 | Optimal part size = 6226.0625000000
+
+k = 32 | edge cut = 37281.0000000000 | real imbalance = 0.0311191865%
+Max part size = 3114 | Optimal part size = 3113.0312500000
+
+k = 64 | edge cut = 53265.0000000000 | real imbalance = 2.0869931839%
+Max part size = 1589 | Optimal part size = 1556.5156250000
+
+k = 128 | edge cut = 74244.0000000000 | real imbalance = 3.5646526195%
+Max part size = 806 | Optimal part size = 778.2578125000
+
+k = 256 | edge cut = 103443.0000000000 | real imbalance = 5.1065581176%
+Max part size = 409 | Optimal part size = 389.1289062500
+
+==============================================
+Graph: fe_sphere.mtx
+n = 16386, m = 98304
+k = 2 | edge cut = 460.0000000000 | real imbalance = 0.0122055413%
+Max part size = 8194 | Optimal part size = 8193.0000000000
+
+k = 4 | edge cut = 1013.0000000000 | real imbalance = 0.0366166239%
+Max part size = 4098 | Optimal part size = 4096.5000000000
+
+k = 8 | edge cut = 1429.0000000000 | real imbalance = 0.0366166239%
+Max part size = 2049 | Optimal part size = 2048.2500000000
+
+k = 16 | edge cut = 2071.0000000000 | real imbalance = 0.0854387892%
+Max part size = 1025 | Optimal part size = 1024.1250000000
+
+k = 32 | edge cut = 2969.0000000000 | real imbalance = 0.3783717808%
+Max part size = 514 | Optimal part size = 512.0625000000
+
+k = 64 | edge cut = 4159.0000000000 | real imbalance = 5.4558769681%
+Max part size = 270 | Optimal part size = 256.0312500000
+
+k = 128 | edge cut = 5801.0000000000 | real imbalance = 10.9239594776%
+Max part size = 142 | Optimal part size = 128.0156250000
+
+k = 256 | edge cut = 8176.0000000000 | real imbalance = 17.1731966313%
+Max part size = 75 | Optimal part size = 64.0078125000
+
+==============================================
+Graph: fe_tooth.mtx
+n = 78136, m = 905182
+k = 2 | edge cut = 4272.0000000000 | real imbalance = 0.0025596396%
+Max part size = 39069 | Optimal part size = 39068.0000000000
+
+k = 4 | edge cut = 8023.0000000000 | real imbalance = 0.0051192792%
+Max part size = 19535 | Optimal part size = 19534.0000000000
+
+k = 8 | edge cut = 14929.0000000000 | real imbalance = 0.0102385584%
+Max part size = 9768 | Optimal part size = 9767.0000000000
+
+k = 16 | edge cut = 20581.0000000000 | real imbalance = 0.0307156752%
+Max part size = 4885 | Optimal part size = 4883.5000000000
+
+k = 32 | edge cut = 29699.0000000000 | real imbalance = 0.0511927921%
+Max part size = 2443 | Optimal part size = 2441.7500000000
+
+k = 64 | edge cut = 40228.0000000000 | real imbalance = 2.0579502406%
+Max part size = 1246 | Optimal part size = 1220.8750000000
+
+k = 128 | edge cut = 53840.0000000000 | real imbalance = 0.4197808948%
+Max part size = 613 | Optimal part size = 610.4375000000
+
+k = 256 | edge cut = 72560.0000000000 | real imbalance = 4.5152042592%
+Max part size = 319 | Optimal part size = 305.2187500000
+
+==============================================
+Graph: m14b.mtx
+n = 214765, m = 3358036
+k = 2 | edge cut = 4096.0000000000 | real imbalance = 0.0004656252%
+Max part size = 107383 | Optimal part size = 107382.5000000000
+
+k = 4 | edge cut = 13793.0000000000 | real imbalance = 0.0013968757%
+Max part size = 53692 | Optimal part size = 53691.2500000000
+
+k = 8 | edge cut = 28795.0000000000 | real imbalance = 0.0051218774%
+Max part size = 26847 | Optimal part size = 26845.6250000000
+
+k = 16 | edge cut = 51571.0000000000 | real imbalance = 0.0088468791%
+Max part size = 13424 | Optimal part size = 13422.8125000000
+
+k = 32 | edge cut = 75510.0000000000 | real imbalance = 0.0237468861%
+Max part size = 6713 | Optimal part size = 6711.4062500000
+
+k = 64 | edge cut = 109855.0000000000 | real imbalance = 0.0386468931%
+Max part size = 3357 | Optimal part size = 3355.7031250000
+
+k = 128 | edge cut = 153727.0000000000 | real imbalance = 0.0684469071%
+Max part size = 1679 | Optimal part size = 1677.8515625000
+
+k = 256 | edge cut = 212497.0000000000 | real imbalance = 0.1280469350%
+Max part size = 840 | Optimal part size = 838.9257812500
+
+==============================================
+Graph: t60k.mtx
+n = 60005, m = 178880
+k = 2 | edge cut = 123.0000000000 | real imbalance = 0.0016665278%
+Max part size = 30003 | Optimal part size = 30002.5000000000
+
+k = 4 | edge cut = 281.0000000000 | real imbalance = 0.0049995834%
+Max part size = 15002 | Optimal part size = 15001.2500000000
+
+k = 8 | edge cut = 601.0000000000 | real imbalance = 1.9515040413%
+Max part size = 7647 | Optimal part size = 7500.6250000000
+
+k = 16 | edge cut = 1070.0000000000 | real imbalance = 0.9515873677%
+Max part size = 3786 | Optimal part size = 3750.3125000000
+
+k = 32 | edge cut = 1633.0000000000 | real imbalance = 3.1380718273%
+Max part size = 1934 | Optimal part size = 1875.1562500000
+
+k = 64 | edge cut = 2517.0000000000 | real imbalance = 4.8445962836%
+Max part size = 983 | Optimal part size = 937.5781250000
+
+k = 128 | edge cut = 3727.0000000000 | real imbalance = 5.3778851762%
+Max part size = 494 | Optimal part size = 468.7890625000
+
+k = 256 | edge cut = 6130.0000000000 | real imbalance = 98.3834680443%
+Max part size = 465 | Optimal part size = 234.3945312500
+
+==============================================
+Graph: uk.mtx
+n = 4824, m = 13674
+k = 2 | edge cut = 33.0000000000 | real imbalance = 2.4875621891%
+Max part size = 2472 | Optimal part size = 2412.0000000000
+
+k = 4 | edge cut = 51.0000000000 | real imbalance = 4.1459369818%
+Max part size = 1256 | Optimal part size = 1206.0000000000
+
+k = 8 | edge cut = 110.0000000000 | real imbalance = 2.9850746269%
+Max part size = 621 | Optimal part size = 603.0000000000
+
+k = 16 | edge cut = 188.0000000000 | real imbalance = 10.1160862355%
+Max part size = 332 | Optimal part size = 301.5000000000
+
+k = 32 | edge cut = 330.0000000000 | real imbalance = 16.0862354892%
+Max part size = 175 | Optimal part size = 150.7500000000
+
+k = 64 | edge cut = 515.0000000000 | real imbalance = 76.4510779436%
+Max part size = 133 | Optimal part size = 75.3750000000
+
+k = 128 | edge cut = 799.0000000000 | real imbalance = 56.5505804312%
+Max part size = 59 | Optimal part size = 37.6875000000
+
+k = 256 | edge cut = 1217.0000000000 | real imbalance = 69.8175787728%
+Max part size = 32 | Optimal part size = 18.8437500000
+
+==============================================
+Graph: wing.mtx
+n = 62032, m = 243088
+k = 2 | edge cut = 923.0000000000 | real imbalance = 0.0032241424%
+Max part size = 31017 | Optimal part size = 31016.0000000000
+
+k = 4 | edge cut = 1978.0000000000 | real imbalance = 0.0064482848%
+Max part size = 15509 | Optimal part size = 15508.0000000000
+
+k = 8 | edge cut = 3167.0000000000 | real imbalance = 0.0128965695%
+Max part size = 7755 | Optimal part size = 7754.0000000000
+
+k = 16 | edge cut = 4714.0000000000 | real imbalance = 0.0257931390%
+Max part size = 3878 | Optimal part size = 3877.0000000000
+
+k = 32 | edge cut = 6713.0000000000 | real imbalance = 0.0257931390%
+Max part size = 1939 | Optimal part size = 1938.5000000000
+
+k = 64 | edge cut = 9296.0000000000 | real imbalance = 0.1805519732%
+Max part size = 971 | Optimal part size = 969.2500000000
+
+k = 128 | edge cut = 12189.0000000000 | real imbalance = 3.1725561001%
+Max part size = 500 | Optimal part size = 484.6250000000
+
+k = 256 | edge cut = 16872.0000000000 | real imbalance = 6.8867681197%
+Max part size = 259 | Optimal part size = 242.3125000000
+
+==============================================
+Graph: wing_nodal.mtx
+n = 10937, m = 150976
+k = 2 | edge cut = 1743.0000000000 | real imbalance = 0.0091432751%
+Max part size = 5469 | Optimal part size = 5468.5000000000
+
+k = 4 | edge cut = 3795.0000000000 | real imbalance = 0.0274298254%
+Max part size = 2735 | Optimal part size = 2734.2500000000
+
+k = 8 | edge cut = 6203.0000000000 | real imbalance = 0.0640029258%
+Max part size = 1368 | Optimal part size = 1367.1250000000
+
+k = 16 | edge cut = 9137.0000000000 | real imbalance = 0.2102953278%
+Max part size = 685 | Optimal part size = 683.5625000000
+
+k = 32 | edge cut = 13202.0000000000 | real imbalance = 2.1120965530%
+Max part size = 349 | Optimal part size = 341.7812500000
+
+k = 64 | edge cut = 17878.0000000000 | real imbalance = 5.3305293956%
+Max part size = 180 | Optimal part size = 170.8906250000
+
+k = 128 | edge cut = 23290.0000000000 | real imbalance = 14.6932431197%
+Max part size = 98 | Optimal part size = 85.4453125000
+
+k = 256 | edge cut = 29835.0000000000 | real imbalance = 17.0339215507%
+Max part size = 50 | Optimal part size = 42.7226562500

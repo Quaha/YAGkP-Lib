@@ -15,9 +15,9 @@ namespace Benchmark {
         ks.push_back(8);
         ks.push_back(16);
         ks.push_back(32);
-        //ks.push_back(64);
-        //ks.push_back(128);
-        //ks.push_back(256);
+        ks.push_back(64);
+        ks.push_back(128);
+        ks.push_back(256);
 
         std::cout << "accuracy (imbalance): " << ProgramConfig::accuracy * 100.0 << "%" << "\n";
 
