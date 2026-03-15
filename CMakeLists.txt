@@ -26,3 +26,6 @@ target_include_directories(${PROJECT_NAME}_library
 # Apps
 add_executable(${PROJECT_NAME}_app apps/main.cpp)
 target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)
+
+find_package(OpenMP REQUIRED)
+target_link_libraries(${PROJECT_NAME}_library PUBLIC OpenMP::OpenMP_CXX)

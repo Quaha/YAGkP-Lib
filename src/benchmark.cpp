@@ -10,26 +10,26 @@ namespace Benchmark {
 
         Vector<int_t> ks;
 
-        ks.push_back(2);
-        ks.push_back(4);
-        ks.push_back(8);
-        ks.push_back(16);
-        ks.push_back(32);
-        ks.push_back(64);
-        ks.push_back(128);
-        ks.push_back(256);
+        //ks.push_back(2);
+        // ks.push_back(4);
+        // ks.push_back(8);
+        // ks.push_back(16);
+        // ks.push_back(32);
+        // ks.push_back(64);
+        // ks.push_back(128);
+        // ks.push_back(256);
 
-        std::cout << "accuracy (imbalance): " << ProgramConfig::accuracy * 100.0 << "%" << "\n";
+        std::cout << "accuracy (imbalance): " << ProgramConfig::accuracy * 100.0 << "%" << std::endl;
 
         for (const auto& path : files) {
             String filename = std::filesystem::path(path).filename().string();
 
-            std::cout << "==============================================\n";
-            std::cout << "Graph: " << filename << "\n";
+            std::cout << "==============================================" << std::endl;
+            std::cout << "Graph: " << filename << std::endl;
 
             Graph g(path, "mtx", true);
 
-            std::cout << "n = " << g.getVerticesCount() << ", m = " << g.getEdgesCount() << "\n";
+            std::cout << "n = " << g.getVerticesCount() << ", m = " << g.getEdgesCount() << std::endl;
 
             auto start_t = std::chrono::steady_clock::now();
 
@@ -40,15 +40,14 @@ namespace Benchmark {
 
                 real_t real_accuracy = PartitionMetrics::GetAccuracy(g, k, partition);
 
-                std::cout << "k = " << k << " | edge cut = " << edge_cut << " | real imbalance = " << real_accuracy * 100.0 << "%" << "\n";
+                std::cout << "k = " << k << " | edge cut = " << edge_cut << " | real imbalance = " << real_accuracy * 100.0 << "%" << std::endl;
                 std::cout << "Max part size = " << PartitionMetrics::GetMaxPartWeight(g, k, partition);
-                std::cout << " | Optimal part size = " << (real_t)(g.getSumOfVertexWeights()) / (real_t)(k) << "\n\n";
+                std::cout << " | Optimal part size = " << (real_t)(g.getSumOfVertexWeights()) / (real_t)(k) << std::endl << std::endl;
             }
 
             auto end_t = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_t - start_t);
-            std::cout << "Time = " << elapsed << "\n";
+            std::cout << "Time = " << elapsed << std::endl;
         }
     }
-
 };
