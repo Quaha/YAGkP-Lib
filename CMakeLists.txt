@@ -29,3 +29,10 @@ target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(${PROJECT_NAME}_library PUBLIC OpenMP::OpenMP_CXX)
+
+target_compile_options(${PROJECT_NAME}_library PRIVATE
+    -O3
+    -march=native
+    -funroll-loops
+    -ffast-math
+)

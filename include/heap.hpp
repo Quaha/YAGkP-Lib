@@ -2,37 +2,28 @@
 
 #include "utils.hpp"
 
-template <
-	typename HeapType,
-	typename Comparator = std::less<HeapType>
->
+template <typename HeapType, typename Comparator = std::less<HeapType>>
 class IndexedHeap {
-protected:
-
+  protected:
 	int_t capacity = 0;
-	int_t sz = 0;
+	int_t sz       = 0;
 
 	std::pair<HeapType, int_t>* data = nullptr;
-	int_t* index_to_position = nullptr;
+	int_t* index_to_position         = nullptr;
 
 	Comparator comp;
 
-public:
-
+  public:
 	IndexedHeap() = delete;
 
-	IndexedHeap(int_t cap): 
-		capacity(cap), 
-		sz(0),
-		data(new std::pair<HeapType, int_t>[cap]),
-		index_to_position(new int_t[cap])
-	{
+	IndexedHeap(int_t cap)
+	    : capacity(cap), sz(0), data(new std::pair<HeapType, int_t>[cap]), index_to_position(new int_t[cap]) {
 		std::fill(index_to_position, index_to_position + cap, -1);
 	}
 
 	IndexedHeap(const IndexedHeap& other) {
 		capacity = other.capacity;
-		sz = other.sz;
+		sz       = other.sz;
 
 		data = new std::pair<HeapType, int_t>[capacity];
 		std::copy(other.data, other.data + sz, data);
@@ -42,14 +33,14 @@ public:
 	}
 
 	IndexedHeap(IndexedHeap&& other) noexcept {
-		capacity = other.capacity;
-		sz = other.sz;
-		data = other.data;
+		capacity          = other.capacity;
+		sz                = other.sz;
+		data              = other.data;
 		index_to_position = other.index_to_position;
 
-		other.capacity = 0;
-		other.sz = 0;
-		other.data = nullptr;
+		other.capacity          = 0;
+		other.sz                = 0;
+		other.data              = nullptr;
 		other.index_to_position = nullptr;
 	}
 
@@ -59,7 +50,7 @@ public:
 			delete[] index_to_position;
 
 			capacity = other.capacity;
-			sz = other.sz;
+			sz       = other.sz;
 
 			data = new std::pair<HeapType, int_t>[capacity];
 			std::copy(other.data, other.data + sz, data);
@@ -76,15 +67,15 @@ public:
 			delete[] index_to_position;
 
 			capacity = other.capacity;
-			sz = other.sz;
+			sz       = other.sz;
 
 			index_to_position = other.index_to_position;
-			data = other.data;
+			data              = other.data;
 
-			other.capacity = 0;
-			other.sz = 0;
+			other.capacity          = 0;
+			other.sz                = 0;
 			other.index_to_position = nullptr;
-			other.data = nullptr;
+			other.data              = nullptr;
 		}
 		return *this;
 	}
@@ -94,15 +85,14 @@ public:
 		delete[] index_to_position;
 	}
 
-protected:
-
+  protected:
 	void siftUp(int_t position) {
 		while (position > 0) {
 			int_t parent = (position - 1) / 2;
 			if (comp(data[position].first, data[parent].first)) {
 				hswap(position, parent);
 				position = parent;
-			} 
+			}
 			else {
 				break;
 			}
@@ -111,8 +101,8 @@ protected:
 
 	void siftDown(int_t position) {
 		while (position * 2 + 1 < sz) {
-			int_t left_child = position * 2 + 1;
-			int_t right_child = position * 2 + 2;
+			int_t left_child     = position * 2 + 1;
+			int_t right_child    = position * 2 + 2;
 			int_t swap_candidate = left_child;
 			if (right_child < sz && comp(data[right_child].first, data[left_child].first)) {
 				swap_candidate = right_child;
@@ -120,7 +110,7 @@ protected:
 			if (comp(data[swap_candidate].first, data[position].first)) {
 				hswap(position, swap_candidate);
 				position = swap_candidate;
-			} 
+			}
 			else {
 				break;
 			}
@@ -132,8 +122,7 @@ protected:
 		std::swap(index_to_position[data[position1].second], index_to_position[data[position2].second]);
 	}
 
-public:
-
+  public:
 	bool empty() const {
 		return sz == 0;
 	}
@@ -146,7 +135,7 @@ public:
 			changePriority(value, index);
 		}
 		else {
-			data[sz] = std::make_pair(value, index);
+			data[sz]                 = std::make_pair(value, index);
 			index_to_position[index] = sz;
 			siftUp(sz++);
 		}
@@ -181,12 +170,9 @@ public:
 	}
 };
 
-
-template <
-	typename DataType,
-	typename IndexType,
-	typename Comparator = std::greater<std::pair<DataType, IndexType>> // >=
->
+template <typename DataType, typename IndexType,
+          typename Comparator = std::greater<std::pair<DataType, IndexType>> // >=
+          >
 struct IndexedHeap2 {
 
 	std::set<std::pair<DataType, IndexType>, Comparator> data;

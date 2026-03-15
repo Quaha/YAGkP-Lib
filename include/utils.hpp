@@ -1,43 +1,43 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <queue>
-#include <numeric>
-#include <filesystem>
-#include <map>
-#include <unordered_map>
-#include <functional>
-#include <set>
-#include <unordered_set>
-#include <cmath>
 #include <algorithm>
-#include <deque>
 #include <bitset>
-#include <random>
-#include <fstream>
-#include <iomanip>
-#include <chrono>
 #include <cassert>
-#include <cstring>
-#include <list>
+#include <chrono>
 #include <climits>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <filesystem>
+#include <fstream>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <list>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <random>
+#include <set>
 #include <stack>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 using namespace std;
 
-using int_t = long long;
+using int_t  = long long;
 using real_t = double;
 
 enum class Part {
-    First,
-    Second
+	First,
+	Second
 };
 
 inline constexpr real_t EPS = 1e-8;
 
-template <typename T> 
+template <typename T>
 using Vector = std::vector<T>;
 
 using String = std::string;

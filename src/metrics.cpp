@@ -1,11 +1,8 @@
 #include "metrics.hpp"
 
 namespace PartitionMetrics {
-	int_t GetEdgeCut(
-		const Graph&        graph,
-		const Vector<int_t> partition
-	) {
-		int_t edge_cut = 0;
+	real_t GetEdgeCut(const Graph& graph, const Vector<int_t> partition) {
+		real_t edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {
@@ -18,11 +15,8 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	int_t GetEdgeCut(
-		const Graph&       graph,
-		const Vector<Part> partition
-	) {
-		int_t edge_cut = 0;
+	real_t GetEdgeCut(const Graph& graph, const Vector<Part> partition) {
+		real_t edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {
@@ -35,11 +29,7 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	Vector<real_t> GetBalances(
-		const Graph&         graph,
-		const int_t		     k,
-		const Vector<int_t>& partition
-	) {
+	Vector<real_t> GetBalances(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
 		Vector<real_t> balances(k, 0.0);
 
 		int_t total_W = graph.getSumOfVertexWeights();
@@ -55,11 +45,7 @@ namespace PartitionMetrics {
 		return balances;
 	}
 
-	real_t GetAccuracy(
-		const Graph&         graph,
-		const int_t		     k,
-		const Vector<int_t>& partition
-	) {
+	real_t GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
 		Vector<real_t> balances = GetBalances(graph, k, partition);
 
 		real_t accuracy = balances[0] - 1.0 / k;
@@ -71,11 +57,7 @@ namespace PartitionMetrics {
 		return accuracy * k;
 	}
 
-	int_t GetMaxPartWeight(
-		const Graph&         graph,
-		const int_t			 k,
-		const Vector<int_t>& partition
-	) {
+	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
 		Vector<int_t> weights(k, 0);
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
@@ -91,4 +73,4 @@ namespace PartitionMetrics {
 
 		return max_weight;
 	}
-};
+}; // namespace PartitionMetrics
