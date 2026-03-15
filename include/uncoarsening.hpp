@@ -36,6 +36,11 @@ namespace Uncoarser {
 
 	Vector<Part> KernighanLinBlocking(
 		const Graph&        previous_graph,
+		      Vector<Part> current_partition
+	);
+
+	Vector<Part> KernighanLinBlocking(
+		const Graph&        previous_graph,
 		const CoarseLevel&  coarse_level,
 		const Vector<Part>& coarse_partition
 	);

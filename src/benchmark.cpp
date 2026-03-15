@@ -31,6 +31,8 @@ namespace Benchmark {
 
             std::cout << "n = " << g.getVerticesCount() << ", m = " << g.getEdgesCount() << "\n";
 
+            auto start_t = std::chrono::steady_clock::now();
+
             for (int_t k : ks) {
                 Vector<int_t> partition = Partitioner::GetGraphKPartition(g, k);
 
@@ -42,6 +44,10 @@ namespace Benchmark {
                 std::cout << "Max part size = " << PartitionMetrics::GetMaxPartWeight(g, k, partition);
                 std::cout << " | Optimal part size = " << (real_t)(g.getSumOfVertexWeights()) / (real_t)(k) << "\n\n";
             }
+
+            auto end_t = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_t - start_t);
+            std::cout << "Time = " << elapsed << "\n";
         }
     }
 

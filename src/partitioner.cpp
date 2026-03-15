@@ -26,6 +26,9 @@ namespace Partitioner {
         Vector<Part> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
 		Vector<Part> restored_partition = Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
+        //Vector<Part> restored_partition = Bipartitioner::GetGraphBipartition(graph);
+        //restored_partition = Uncoarser::KernighanLinBlocking(graph, restored_partition);
+
         Vector<int_t> first_part_vertices, second_part_vertices;
         for (int_t i = 0; i < graph.n; ++i) {
             if (restored_partition[i] == Part::First) {
