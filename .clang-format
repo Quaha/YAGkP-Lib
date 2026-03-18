@@ -1,0 +1,31 @@
+BasedOnStyle: LLVM
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: false
+  BeforeElse: true
+
+ColumnLimit: 0
+
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+SpaceInEmptyBlock: false
+
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: false
+
+SortIncludes: true
+IncludeBlocks: Regroup
+
+Cpp11BracedListStyle: true
+PointerAlignment: Left
+
+SpaceBeforeRangeBasedForLoopColon: false
+
+AllowShortFunctionsOnASingleLine: None
+
+NamespaceIndentation: All
