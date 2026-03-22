@@ -9,9 +9,9 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
+            "preLaunchTask": "cmake-build",
             "MIMode": "gdb",
             "externalConsole": false,
-            "preLaunchTask": "cmake-build"
         }
     ]
 }

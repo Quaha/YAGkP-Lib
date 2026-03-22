@@ -11,7 +11,8 @@
             "type": "shell",
             "command": "bash ${workspaceFolder}/build_gcc_x64_debug_wsl.sh",
             "group": "build",
-            "dependsOn": "clang-format"
+            "dependsOn": "clang-format",
+            "problemMatcher": "$gcc"
         }
     ]
 }

@@ -27,7 +27,7 @@
 
 using namespace std;
 
-using int_t  = long long;
+using int_t  = int;
 using real_t = double;
 
 enum class Part {

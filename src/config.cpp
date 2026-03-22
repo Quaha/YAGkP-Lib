@@ -3,7 +3,7 @@
 namespace ProgramConfig {
 	// --- Global parameters ---
 	real_t accuracy            = 0.05;
-	bool use_multilevel_scheme = false;
+	bool use_multilevel_scheme = true;
 
 	// --- Coarsening parameters ---
 	CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
