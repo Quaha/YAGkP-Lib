@@ -1,17 +1,26 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(PROJECT_NAME YAGkP)
-project(${PROJECT_NAME} LANGUAGES CXX)
+project(${PROJECT_NAME} LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# === KaHIP ===
 include(ExternalProject)
 
+# === METIS ===
+set(DEPS_DIR ${CMAKE_SOURCE_DIR}/deps)
+
+add_library(GKlib STATIC IMPORTED GLOBAL)
+set_target_properties(GKlib PROPERTIES IMPORTED_LOCATION ${DEPS_DIR}/lib/libGKlib.a)
+
+add_library(metis STATIC IMPORTED GLOBAL)
+set_target_properties(metis PROPERTIES IMPORTED_LOCATION ${DEPS_DIR}/lib/libmetis.a)
+
+# === KaHIP ===
 set(KAHIP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/KaHIP)
 set(KAHIP_BUILD_DIR  ${CMAKE_BINARY_DIR}/kahip_build)
-set(KAHIP_LIB ${KAHIP_BUILD_DIR}/libkahip_static.a)
+set(KAHIP_LIB        ${KAHIP_BUILD_DIR}/libkahip_static.a)
 
 ExternalProject_Add(
     kahip_external
@@ -24,7 +33,6 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-# Импортируемая цель для удобного линкования
 add_library(kahip STATIC IMPORTED GLOBAL)
 set_target_properties(kahip PROPERTIES IMPORTED_LOCATION ${KAHIP_LIB})
 add_dependencies(kahip kahip_external)
@@ -42,7 +50,8 @@ target_include_directories(${PROJECT_NAME}_library
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/external/matrix
-        ${KAHIP_SOURCE_DIR}/interface   # kaHIP_interface.h
+        ${KAHIP_SOURCE_DIR}/interface
+        ${DEPS_DIR}/include   # metis.h
 )
 
 find_package(OpenMP REQUIRED)
@@ -51,6 +60,8 @@ target_link_libraries(${PROJECT_NAME}_library
     PUBLIC
         OpenMP::OpenMP_CXX
         kahip
+        metis
+        GKlib
 )
 
 target_compile_options(${PROJECT_NAME}_library PRIVATE

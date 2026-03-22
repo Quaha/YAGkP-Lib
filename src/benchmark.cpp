@@ -1,9 +1,7 @@
 #include "benchmark.hpp"
 
 #include "kaHIP_interface.h"
-
-#include <iomanip>
-#include <iostream>
+#include "metis_bridge.hpp"
 
 namespace Benchmark {
 
@@ -94,6 +92,33 @@ namespace Benchmark {
 				std::cout << std::fixed << std::setprecision(2) << std::left
 				          << std::setw(6) << k
 				          << std::setw(16) << "KaHIP"
+				          << std::setw(12) << time_ms
+				          << std::setw(14) << PartitionMetrics::GetEdgeCut(g, partition)
+				          << std::setw(11) << PartitionMetrics::GetAccuracy(g, k, partition) * 100.0 << "%"
+				          << std::setw(14) << PartitionMetrics::GetMaxPartWeight(g, k, partition)
+				          << std::setw(14) << opt
+				          << std::endl;
+			}
+
+			std::cout << std::string(88, '-') << std::endl;
+
+			// Потом все k для METIS
+			for (int_t k: ks) {
+				auto start    = std::chrono::steady_clock::now();
+				auto part_vec = RunMETIS_impl(
+				    g.n, k,
+				    std::vector<int>(g.xadj.begin(), g.xadj.end()),
+				    std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
+				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()));
+				auto end          = std::chrono::steady_clock::now();
+				long long time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+				Vector<int_t> partition(part_vec.begin(), part_vec.end());
+				real_t opt = static_cast<real_t>(g.getSumOfVertexWeights()) / static_cast<real_t>(k);
+
+				std::cout << std::fixed << std::setprecision(2) << std::left
+				          << std::setw(6) << k
+				          << std::setw(16) << "METIS"
 				          << std::setw(12) << time_ms
 				          << std::setw(14) << PartitionMetrics::GetEdgeCut(g, partition)
 				          << std::setw(11) << PartitionMetrics::GetAccuracy(g, k, partition) * 100.0 << "%"
