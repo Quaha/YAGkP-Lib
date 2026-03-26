@@ -10,3 +10,6 @@
 [submodule "external/METIS"]
 	path = external/METIS
 	url = https://github.com/KarypisLab/METIS
+[submodule "external/scotch"]
+	path = external/scotch
+	url = https://github.com/live-clones/scotch
