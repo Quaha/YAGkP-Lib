@@ -8,14 +8,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(ExternalProject)
 
-# === METIS ===
-set(DEPS_DIR ${CMAKE_SOURCE_DIR}/deps)
+# === Пути к зависимостям (собираются скриптом) ===
+set(DEPS_DIR   ${CMAKE_SOURCE_DIR}/deps)
+set(GKLIB_DIR  ${DEPS_DIR}/gklib)
+set(METIS_DIR  ${DEPS_DIR}/metis)
+set(SCOTCH_DIR ${DEPS_DIR}/scotch)
 
 add_library(GKlib STATIC IMPORTED GLOBAL)
-set_target_properties(GKlib PROPERTIES IMPORTED_LOCATION ${DEPS_DIR}/lib/libGKlib.a)
+set_target_properties(GKlib PROPERTIES IMPORTED_LOCATION ${GKLIB_DIR}/lib/libGKlib.a)
 
 add_library(metis STATIC IMPORTED GLOBAL)
-set_target_properties(metis PROPERTIES IMPORTED_LOCATION ${DEPS_DIR}/lib/libmetis.a)
+set_target_properties(metis PROPERTIES IMPORTED_LOCATION ${METIS_DIR}/lib/libmetis.a)
+
+add_library(scotch STATIC IMPORTED GLOBAL)
+set_target_properties(scotch PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotch.a)
+
+add_library(scotcherr STATIC IMPORTED GLOBAL)
+set_target_properties(scotcherr PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotcherr.a)
 
 # === KaHIP ===
 set(KAHIP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/KaHIP)
@@ -51,7 +60,8 @@ target_include_directories(${PROJECT_NAME}_library
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/external/matrix
         ${KAHIP_SOURCE_DIR}/interface
-        ${DEPS_DIR}/include   # metis.h
+        ${METIS_DIR}/include
+        ${SCOTCH_DIR}/include
 )
 
 find_package(OpenMP REQUIRED)
@@ -62,6 +72,8 @@ target_link_libraries(${PROJECT_NAME}_library
         kahip
         metis
         GKlib
+        scotch
+        scotcherr
 )
 
 target_compile_options(${PROJECT_NAME}_library PRIVATE

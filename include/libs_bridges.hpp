@@ -6,3 +6,9 @@ std::vector<int> RunMETIS_impl(
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
     const std::vector<int>& vwgt);
+
+std::vector<int> RunSCOTCH_impl(
+    int n, int nparts,
+    const std::vector<int>& xadj,
+    const std::vector<int>& adjncy,
+    const std::vector<int>& vwgt);
