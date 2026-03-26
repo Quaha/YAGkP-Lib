@@ -20,6 +20,11 @@ AlignConsecutiveDeclarations: false
 
 SortIncludes: true
 IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<'
+    Priority: 1
+  - Regex: '^"'
+    Priority: 2
 
 Cpp11BracedListStyle: true
 PointerAlignment: Left
