@@ -1,8 +1,8 @@
 #include "metrics.hpp"
 
 namespace PartitionMetrics {
-	real_t GetEdgeCut(const Graph& graph, const Vector<int_t> partition) {
-		real_t edge_cut = 0;
+	double GetEdgeCut(const Graph& graph, const Vector<int_t> partition) {
+		double edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {
@@ -15,8 +15,8 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	real_t GetEdgeCut(const Graph& graph, const Vector<Part> partition) {
-		real_t edge_cut = 0;
+	double GetEdgeCut(const Graph& graph, const Vector<Part> partition) {
+		double edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			for (auto [next_V, w]: graph[curr_V]) {
@@ -29,13 +29,13 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	Vector<real_t> GetBalances(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
-		Vector<real_t> balances(k, 0.0);
+	Vector<double> GetBalances(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
+		Vector<double> balances(k, 0.0);
 
 		int_t total_W = graph.getSumOfVertexWeights();
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
-			balances[partition[curr_V]] += static_cast<real_t>(graph.vertex_weights[curr_V]);
+			balances[partition[curr_V]] += static_cast<double>(graph.vertex_weights[curr_V]);
 		}
 
 		for (int_t curr_V = 0; curr_V < k; ++curr_V) {
@@ -45,10 +45,10 @@ namespace PartitionMetrics {
 		return balances;
 	}
 
-	real_t GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
-		Vector<real_t> balances = GetBalances(graph, k, partition);
+	double GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
+		Vector<double> balances = GetBalances(graph, k, partition);
 
-		real_t accuracy = balances[0] - 1.0 / k;
+		double accuracy = balances[0] - 1.0 / k;
 		for (int_t curr_V = 1; curr_V < k; ++curr_V) {
 			if (balances[curr_V] - 1.0 / k > accuracy) {
 				accuracy = balances[curr_V] - 1.0 / k;

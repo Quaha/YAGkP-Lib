@@ -14,7 +14,7 @@ void Graph::AdjacentIterator::Iterator::operator++() {
 	++pos;
 }
 
-std::pair<int_t, real_t> Graph::AdjacentIterator::Iterator::operator*() const {
+std::pair<int_t, double> Graph::AdjacentIterator::Iterator::operator*() const {
 	return std::make_pair(g.adjncy[pos], g.edge_weights[pos]);
 }
 
@@ -35,16 +35,16 @@ Graph::AdjacentIterator Graph::operator[](int_t v) const {
 Graph::Graph() {
 }
 
-Graph::Graph(const spMtx<real_t>& matrix, bool ignore_eweights) {
+Graph::Graph(const spMtx<double>& matrix, bool ignore_eweights) {
 	buildGraph(matrix, ignore_eweights);
 }
 
 Graph::Graph(const String& file_name, const String& format, bool ignore_eweights) {
-	spMtx<real_t> matrix(file_name.c_str(), format);
+	spMtx<double> matrix(file_name.c_str(), format);
 	buildGraph(matrix, ignore_eweights);
 }
 
-void Graph::buildGraph(const spMtx<real_t>& matrix, bool ignore_eweights) {
+void Graph::buildGraph(const spMtx<double>& matrix, bool ignore_eweights) {
 	n = static_cast<int_t>(matrix.m);
 	m = static_cast<int_t>(matrix.nz);
 
@@ -139,7 +139,7 @@ Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 
 				int_t j = original_to_sub[next_V];
 
-				real_t weight = edge_weights[k];
+				double weight = edge_weights[k];
 
 				++subgraph.xadj[i + 1];
 				subgraph.adjncy[edge_pos]       = j;

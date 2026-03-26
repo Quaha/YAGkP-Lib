@@ -2,8 +2,7 @@
 
 namespace ProgramConfig {
 	// --- Global parameters ---
-	real_t accuracy            = 0.05;
-	bool use_multilevel_scheme = true;
+	double accuracy            = 0.05;
 
 	// --- Coarsening parameters ---
 	CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
@@ -12,7 +11,7 @@ namespace ProgramConfig {
 	int_t coarsening_vertix_count_limit = 500;
 
 	bool coarsening_clusterization_prohibition   = false;
-	real_t coarsening_clusterization_size_factor = 0.5;
+	double coarsening_clusterization_size_factor = 0.5;
 
 	// --- Bipartitioning parameters ---
 	BipartitioningMethod bipartitioning_method = BipartitioningMethod::GreedyGraphGrowingAlgorithm;

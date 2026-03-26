@@ -18,14 +18,8 @@ namespace Partitioner {
 
 		Vector<Part> restored_partition;
 
-		if (ProgramConfig::use_multilevel_scheme) {
-			Vector<Part> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
-			restored_partition             = Uncoarser::RestorePartition(coarse_levels, initial_partition);
-		}
-		else {
-			restored_partition = Bipartitioner::GetGraphBipartition(graph);
-			restored_partition = Uncoarser::KernighanLinBlocking(graph, restored_partition);
-		}
+		Vector<Part> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
+		restored_partition             = Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
 		Vector<int_t> first_part_vertices, second_part_vertices;
 		for (int_t i = 0; i < graph.n; ++i) {
@@ -43,9 +37,9 @@ namespace Partitioner {
 		int_t total_W       = graph.getSumOfVertexWeights();
 		int_t first_graph_W = first_graph.getSumOfVertexWeights();
 
-		real_t ratio_left = (real_t)(first_graph_W) / (real_t)(total_W);
+		double ratio_left = (double)(first_graph_W) / (double)(total_W);
 
-		int_t k1 = std::min(k - 1, std::max<int_t>(1, std::round((real_t)(k)*ratio_left)));
+		int_t k1 = std::min(k - 1, std::max<int_t>(1, std::round((double)(k)*ratio_left)));
 		int_t k2 = k - k1;
 
 		Vector<int_t> partition1 = RecursivePartition(first_graph, k1, offset);

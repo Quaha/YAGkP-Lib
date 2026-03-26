@@ -3,10 +3,12 @@
 #include <cstdio>
 #include <vector>
 
+#include "config.hpp"
+#include "kaHIP_interface.h"
 #include "metis.h"
 #include "scotch.h"
 
-std::vector<int> RunMETIS_impl(
+std::vector<int> RunMETIS(
     int n, int nparts,
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
@@ -31,7 +33,39 @@ std::vector<int> RunMETIS_impl(
 	return std::vector<int>(partition.begin(), partition.end());
 }
 
-std::vector<int> RunSCOTCH_impl(
+std::vector<int> RunKaHIP(
+    int n, int nparts,
+    const std::vector<int>& xadj,
+    const std::vector<int>& adjncy,
+    const std::vector<int>& vwgt) {
+
+	int edge_cut     = 0;
+	double imbalance = ProgramConfig::accuracy;
+
+	std::vector<int> _xadj(xadj.begin(), xadj.end());
+	std::vector<int> _adjncy(adjncy.begin(), adjncy.end());
+	std::vector<int> _vwgt(vwgt.begin(), vwgt.end());
+
+	std::vector<int_t> partition(n);
+
+	kaffpa(
+	    &n,
+	    _vwgt.data(),
+	    _xadj.data(),
+	    nullptr,
+	    _adjncy.data(),
+	    &nparts,
+	    &imbalance,
+	    true,
+	    0,
+	    STRONG,
+	    &edge_cut,
+	    partition.data());
+
+	return partition;
+}
+
+std::vector<int> RunSCOTCH(
     int n, int nparts,
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,

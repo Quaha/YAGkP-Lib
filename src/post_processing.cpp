@@ -14,7 +14,7 @@ namespace PostProcessor {
 		}
 
 		int_t total_weight = graph.getSumOfVertexWeights();
-		int_t max_allowed  = (int_t)((real_t)(total_weight) / (real_t)(k) * (1.0 + ProgramConfig::accuracy + EPS));
+		int_t max_allowed  = (int_t)((double)(total_weight) / (double)(k) * (1.0 + ProgramConfig::accuracy + EPS));
 
 		while (max_allowed * k < total_weight) {
 			max_allowed += 1;
@@ -82,7 +82,7 @@ namespace PostProcessor {
 		}
 
 		int_t total_weight = graph.getSumOfVertexWeights();
-		int_t max_allowed  = (int_t)(((real_t)(total_weight) / (real_t)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
+		int_t max_allowed  = (int_t)(((double)(total_weight) / (double)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
 
 		while (max_allowed * k < total_weight) {
 			max_allowed++;

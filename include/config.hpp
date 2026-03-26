@@ -24,9 +24,7 @@ namespace ProgramConfig {
 	};
 
 	// --- Global parameters ---
-	extern real_t accuracy;
-
-	extern bool use_multilevel_scheme;
+	extern double accuracy;
 
 	// --- Coarsening parameters ---
 	extern CoarseningMethod coarsening_method;
@@ -35,7 +33,7 @@ namespace ProgramConfig {
 	extern int_t coarsening_vertix_count_limit;
 
 	extern bool coarsening_clusterization_prohibition;
-	extern real_t coarsening_clusterization_size_factor;
+	extern double coarsening_clusterization_size_factor;
 
 	// --- Bipartitioning parameters ---
 	extern BipartitioningMethod bipartitioning_method;

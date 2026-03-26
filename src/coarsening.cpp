@@ -65,7 +65,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -96,7 +96,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -138,7 +138,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (!ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -180,7 +180,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((real_t)(max_allowed_size) / (real_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {

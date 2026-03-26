@@ -11,7 +11,7 @@ struct Graph {
 	Vector<int_t> adjncy;
 	Vector<int_t> xadj;
 	Vector<int_t> vertex_weights;
-	Vector<real_t> edge_weights;
+	Vector<double> edge_weights;
 
 	struct AdjacentIterator {
 		const Graph& g;
@@ -24,7 +24,7 @@ struct Graph {
 			Iterator(const Graph& g, int_t pos);
 			bool operator!=(const Iterator& other) const;
 			void operator++();
-			std::pair<int_t, real_t> operator*() const;
+			std::pair<int_t, double> operator*() const;
 		};
 
 		Iterator begin() const;
@@ -34,10 +34,10 @@ struct Graph {
 	AdjacentIterator operator[](int_t v) const;
 
 	Graph();
-	Graph(const spMtx<real_t>& matrix, bool ignore_eweights = false);
+	Graph(const spMtx<double>& matrix, bool ignore_eweights = false);
 	Graph(const String& file_name, const String& format, bool ignore_eweights = false);
 
-	void buildGraph(const spMtx<real_t>& matrix, bool ignore_eweights);
+	void buildGraph(const spMtx<double>& matrix, bool ignore_eweights);
 
 	int_t getVerticesCount() const noexcept;
 	int_t getEdgesCount() const noexcept;

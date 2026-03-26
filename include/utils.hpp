@@ -27,15 +27,14 @@
 
 using namespace std;
 
-using int_t  = int;
-using real_t = double;
+using int_t = int;
 
 enum class Part {
 	First,
 	Second
 };
 
-inline constexpr real_t EPS = 1e-8;
+inline constexpr double EPS = 1e-8;
 
 template <typename T>
 using Vector = std::vector<T>;
