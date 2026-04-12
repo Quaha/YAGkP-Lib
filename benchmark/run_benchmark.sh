@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# =============================================================================
+# Paths
+# SCRIPT_DIR is always the directory where this script lives (benchmark/),
+# ROOT_DIR is the project root regardless of where the script is called from
+# =============================================================================
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
@@ -15,48 +20,57 @@ KS=(2 4 8 16 32 64)
 
 mkdir -p "$DATA_DIR" "$CACHE_DIR" "$OUTPUT_DIR"
 
-# === Читаем список нужных графов из graphs.txt ===
-declare -A NEEDED  # имя -> полный путь (GROUP/NAME)
+# =============================================================================
+# Read the list of required graphs from graphs.txt
+# Lines starting with # and empty lines are ignored
+# Builds an associative array: name -> GROUP/NAME
+# =============================================================================
+declare -A NEEDED
 while IFS= read -r line; do
-    # Пропускаем комментарии и пустые строки
     [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
     name=$(basename "$line")
     NEEDED["$name"]="$line"
 done < "$GRAPHS_FILE"
 
-# === Перемещаем лишние графы из data/ в кэш ===
+# =============================================================================
+# Move graphs that are no longer in graphs.txt from data/ to cache
+# =============================================================================
 for mtx_file in "$DATA_DIR"/*.mtx; do
     [ -f "$mtx_file" ] || continue
     name=$(basename "$mtx_file" .mtx)
     if [ -z "${NEEDED[$name]+x}" ]; then
-        echo "[cache] $name не в списке → перемещаем в кэш"
+        echo "[cache] $name is not in the list → moving to cache"
         mv "$mtx_file" "$CACHE_DIR/"
     fi
 done
 
-# === Обеспечиваем наличие нужных графов ===
+# =============================================================================
+# Ensure all required graphs are present in data/
+# Order of lookup: data/ → cache/ → download
+# =============================================================================
 for name in "${!NEEDED[@]}"; do
     matrix="${NEEDED[$name]}"
     mtx_file="$DATA_DIR/${name}.mtx"
 
+    # Already in data/
     if [ -f "$mtx_file" ]; then
-        continue  # уже есть
+        continue
     fi
 
-    # Ищем в кэше
+    # Found in cache — restore to data/
     if [ -f "$CACHE_DIR/${name}.mtx" ]; then
-        echo "[$name] Найден в кэше → перемещаем в data/"
+        echo "[$name] Found in cache → moving to data/"
         mv "$CACHE_DIR/${name}.mtx" "$DATA_DIR/"
         continue
     fi
 
-    # Скачиваем
+    # Not found anywhere — download from SuiteSparse Matrix Collection
     group=$(dirname "$matrix")
-    echo "[$name] Скачиваем..."
+    echo "[$name] Downloading..."
     url="https://suitesparse-collection-website.herokuapp.com/MM/${group}/${name}.tar.gz"
 
     if ! wget -q --show-progress -O "/tmp/${name}.tar.gz" "$url"; then
-        echo "[$name] ОШИБКА: не удалось скачать $url"
+        echo "[$name] ERROR: failed to download"
         rm -f "/tmp/${name}.tar.gz"
         continue
     fi
@@ -64,10 +78,14 @@ for name in "${!NEEDED[@]}"; do
     tar -xzf "/tmp/${name}.tar.gz" -C "/tmp/"
     mv "/tmp/${name}/${name}.mtx" "$DATA_DIR/"
     rm -rf "/tmp/${name}" "/tmp/${name}.tar.gz"
-    echo "[$name] Готово"
+    echo "[$name] Done"
 done
 
-# === Бенчмарк ===
+# =============================================================================
+# Benchmark
+# For each graph and each k, run all algorithms sequentially
+# Results are written to OUTPUT_DIR by the binary itself
+# =============================================================================
 graphs=("$DATA_DIR"/*.mtx)
 total=${#graphs[@]}
 current=0
@@ -80,7 +98,7 @@ for graph in "${graphs[@]}"; do
 
     for k in "${KS[@]}"; do
         echo "  k = $k"
-        rm -f "$OUTPUT_DIR/txt/${graph_name}_k${k}.txt"   # чистим перед запуском
+        rm -f "$OUTPUT_DIR/${graph_name}_k${k}.txt"  # clear previous results for this (graph, k)
 
         for algo in "${ALGOS[@]}"; do
             echo "    algo = $algo"

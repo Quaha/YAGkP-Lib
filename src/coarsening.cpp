@@ -17,7 +17,7 @@ namespace Coarser {
 
 		Vector<int_t> base_vertexmportance(graph.n, (int_t)(0));
 
-		levels.push_back(CoarseLevel(base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance));
+		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance});
 
 		for (int_t i = 0; i < ProgramConfig::coarsening_itarations_limit &&
 		                  levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertix_count_limit;
