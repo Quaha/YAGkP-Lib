@@ -9,6 +9,9 @@ namespace Bipartitioner {
 
 		case (ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm):
 			return GreedyGraphGrowingAlgorithm(graph);
+
+		default:
+			throw std::logic_error("Unknown processing method");
 		}
 	}
 
@@ -162,4 +165,4 @@ namespace Bipartitioner {
 		}
 		return best_partition;
 	}
-}; // namespace Bipartitioner
+} // namespace Bipartitioner

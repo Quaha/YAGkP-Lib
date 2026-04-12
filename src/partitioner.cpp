@@ -54,4 +54,4 @@ namespace Partitioner {
 
 		return partition;
 	}
-}; // namespace Partitioner
+} // namespace Partitioner

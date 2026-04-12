@@ -73,4 +73,4 @@ namespace PartitionMetrics {
 
 		return max_weight;
 	}
-}; // namespace PartitionMetrics
+} // namespace PartitionMetrics

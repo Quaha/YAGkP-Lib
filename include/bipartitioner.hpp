@@ -12,4 +12,4 @@ namespace Bipartitioner {
 	Vector<Part> GraphGrowingAlgorithm(const Graph& graph);
 
 	Vector<Part> GreedyGraphGrowingAlgorithm(const Graph& graph);
-}; // namespace Bipartitioner
+} // namespace Bipartitioner

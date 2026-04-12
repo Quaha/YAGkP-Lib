@@ -19,4 +19,4 @@ namespace Coarser {
 	void HeavyCliqueMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k);
 
 	void ProcessMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const Vector<int_t>& matching, const Vector<int_t>& matching_edge_weights);
-}; // namespace Coarser
+} // namespace Coarser

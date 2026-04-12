@@ -30,4 +30,4 @@ namespace PartitionMetrics {
 	// partition: vector of part indices                    | {0, 1, 0, 2, 3, 1}
 	// returns: maximum total vertex weight among all parts | 2
 	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const Vector<int_t>& partition);
-}; // namespace PartitionMetrics
+} // namespace PartitionMetrics

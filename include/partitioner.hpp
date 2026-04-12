@@ -19,4 +19,4 @@ namespace Partitioner {
 	// offset: starting index for parts in this call        | 2
 	// returns: vector of part indices (offset..offset+k-1) | {2, 2, 3, 3}
 	Vector<int_t> RecursivePartition(const Graph& graph, const int_t k, int_t offset = 0);
-}; // namespace Partitioner
+} // namespace Partitioner

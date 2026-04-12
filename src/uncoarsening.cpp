@@ -9,6 +9,7 @@ namespace Uncoarser {
 				partition = Uncoarser::DirectMapping(levels[i], partition);
 			}
 			break;
+			
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
 				for (int_t i = levels.size() - 1; i > 0; i--) {
@@ -21,7 +22,11 @@ namespace Uncoarser {
 				}
 			}
 			break;
+
+		default:
+			throw std::logic_error("Unknown processing method");
 		}
+
 		return partition;
 	}
 
@@ -401,4 +406,4 @@ namespace Uncoarser {
 		return prev_partition;
 	}
 
-}; // namespace Uncoarser
+} // namespace Uncoarser

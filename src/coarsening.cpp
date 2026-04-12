@@ -51,7 +51,7 @@ namespace Coarser {
 			break;
 
 		default:
-			throw std::runtime_error("Unknown coarsening method in ProgramConfig.");
+			throw std::logic_error("Unknown processing method");
 		}
 	}
 
@@ -322,4 +322,4 @@ namespace Coarser {
 		new_level.coarsed_graph      = std::move(coarsed_graph);
 		new_level.vertex_importance  = std::move(vertex_importance);
 	}
-}; // namespace Coarser
+} // namespace Coarser
