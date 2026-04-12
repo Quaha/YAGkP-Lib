@@ -197,7 +197,7 @@ namespace Coarser {
 					continue;
 				if (matching[next_V] == -1) {
 					int_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
-					int_t F       = (w + level.vertexmportance[curr_V] + level.vertexmportance[next_V]) /
+					int_t F       = (w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
 					          (total_W * (total_W - (int_t)(1)));
 					if (!found || F > best_F) {
 						edge_W = w;
@@ -305,13 +305,13 @@ namespace Coarser {
 
 		// 4. Importance
 
-		Vector<int_t> vertexmportance(coarsed_graph.n, (int_t)(0));
+		Vector<int_t> vertex_importance(coarsed_graph.n, (int_t)(0));
 		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
-				vertexmportance[curr_V] += level.vertexmportance[prev_V];
+				vertex_importance[curr_V] += level.vertex_importance[prev_V];
 			}
 			if (coarse_to_uncoarse[curr_V].size() == 2) {
-				vertexmportance[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
+				vertex_importance[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
 			}
 		}
 
@@ -320,6 +320,6 @@ namespace Coarser {
 		new_level.uncoarse_to_coarse = std::move(uncoarse_to_coarse);
 		new_level.coarse_to_uncoarse = std::move(coarse_to_uncoarse);
 		new_level.coarsed_graph      = std::move(coarsed_graph);
-		new_level.vertexmportance    = std::move(vertexmportance);
+		new_level.vertex_importance    = std::move(vertex_importance);
 	}
 }; // namespace Coarser

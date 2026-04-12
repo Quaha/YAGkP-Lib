@@ -8,25 +8,35 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(ExternalProject)
 
-# === Пути к зависимостям (собираются скриптом) ===
+# =============================================================================
+# Dependency paths
+# All libraries are built in advance by build.sh and placed into deps/
+# =============================================================================
 set(DEPS_DIR   ${CMAKE_SOURCE_DIR}/deps)
 set(GKLIB_DIR  ${DEPS_DIR}/gklib)
 set(METIS_DIR  ${DEPS_DIR}/metis)
 set(SCOTCH_DIR ${DEPS_DIR}/scotch)
 
+# GKlib — helper library required by METIS
 add_library(GKlib STATIC IMPORTED GLOBAL)
 set_target_properties(GKlib PROPERTIES IMPORTED_LOCATION ${GKLIB_DIR}/lib/libGKlib.a)
 
+# METIS — graph partitioning library
 add_library(metis STATIC IMPORTED GLOBAL)
 set_target_properties(metis PROPERTIES IMPORTED_LOCATION ${METIS_DIR}/lib/libmetis.a)
 
+# SCOTCH — graph partitioning library
 add_library(scotch STATIC IMPORTED GLOBAL)
 set_target_properties(scotch PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotch.a)
 
+# scotcherr — SCOTCH error handling library, must be linked alongside scotch
 add_library(scotcherr STATIC IMPORTED GLOBAL)
 set_target_properties(scotcherr PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotcherr.a)
 
-# === KaHIP ===
+# =============================================================================
+# KaHIP — built as an ExternalProject during the main build
+# MPI_HOME is set explicitly because on the cluster MPI is not in standard paths
+# =============================================================================
 set(KAHIP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/KaHIP)
 set(KAHIP_BUILD_DIR  ${CMAKE_BINARY_DIR}/kahip_build)
 set(KAHIP_LIB        ${KAHIP_BUILD_DIR}/libkahip_static.a)
@@ -38,6 +48,7 @@ ExternalProject_Add(
     CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        -DMPI_HOME=/common/openmpi/openmpi-4.1.1
     BUILD_BYPRODUCTS ${KAHIP_LIB}
     INSTALL_COMMAND ""
 )
@@ -46,7 +57,9 @@ add_library(kahip STATIC IMPORTED GLOBAL)
 set_target_properties(kahip PROPERTIES IMPORTED_LOCATION ${KAHIP_LIB})
 add_dependencies(kahip kahip_external)
 
-# === Твоя библиотека ===
+# =============================================================================
+# Main project library
+# =============================================================================
 file(GLOB_RECURSE SRC_FILES    CONFIGURE_DEPENDS src/*.cpp external/matrix/*.cpp)
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS include/*.hpp external/matrix/*.hpp)
 
@@ -76,10 +89,17 @@ target_link_libraries(${PROJECT_NAME}_library
         scotcherr
 )
 
-target_compile_options(${PROJECT_NAME}_library PRIVATE
-    -O3 -march=native -funroll-loops -ffast-math
-)
+# On older GCC (< 9) std::filesystem is a separate library
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    target_link_libraries(${PROJECT_NAME}_library PUBLIC stdc++fs)
+endif()
 
-# === App ===
+# Compile flags are kept in a separate file for easy switching between environments
+file(STRINGS ${CMAKE_SOURCE_DIR}/compile_options.txt COMPILE_OPTIONS_LIST)
+target_compile_options(${PROJECT_NAME}_library PRIVATE ${COMPILE_OPTIONS_LIST})
+
+# =============================================================================
+# Executable
+# =============================================================================
 add_executable(${PROJECT_NAME}_app apps/main.cpp)
 target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)

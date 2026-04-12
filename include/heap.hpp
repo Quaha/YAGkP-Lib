@@ -179,7 +179,7 @@ struct IndexedHeap2 {
 	std::unordered_map<IndexType, DataType> info;
 
 	void insert(DataType V, IndexType id) {
-		if (info.contains(id)) {
+		if (info.find(id) != info.end()) {
 			throw "Something went wrong";
 		}
 		info[id] = V;
@@ -187,7 +187,7 @@ struct IndexedHeap2 {
 	}
 
 	void change(DataType delta, IndexType id) {
-		if (!info.contains(id)) {
+		if (info.find(id) == info.end()) {
 			return;
 		}
 		DataType was = info[id];
