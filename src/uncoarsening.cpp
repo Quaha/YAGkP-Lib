@@ -9,16 +9,16 @@ namespace Uncoarser {
 				partition = Uncoarser::DirectMapping(levels[i], partition);
 			}
 			break;
-			
+
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
 				for (int_t i = levels.size() - 1; i > 0; i--) {
-					partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsed_graph, levels[i], partition);
+					partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition);
 				}
 			}
 			else {
 				for (int_t i = levels.size() - 1; i > 0; i--) {
-					partition = Uncoarser::KernighanLin(levels[i - 1].coarsed_graph, levels[i], partition);
+					partition = Uncoarser::KernighanLin(levels[i - 1].coarsened_graph, levels[i], partition);
 				}
 			}
 			break;

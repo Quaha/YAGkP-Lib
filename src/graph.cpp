@@ -98,14 +98,14 @@ Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 	Graph subgraph;
 
 	Vector<int_t> original_to_sub(n, -1);
-	for (int_t i = 0; i < sub_vertices.size(); ++i) {
+	for (int_t i = 0; i < (int_t)sub_vertices.size(); ++i) {
 		original_to_sub[sub_vertices[i]] = i;
 	}
 
 	subgraph.n = sub_vertices.size();
 
 	subgraph.vertex_weights.resize(subgraph.n);
-	for (int_t i = 0; i < sub_vertices.size(); ++i) {
+	for (int_t i = 0; i < (int_t)sub_vertices.size(); ++i) {
 		subgraph.vertex_weights[i] = vertex_weights[sub_vertices[i]];
 	}
 
@@ -133,7 +133,7 @@ Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 
 	int_t edge_pos = 0;
 
-	for (int_t i = 0; i < sub_vertices.size(); ++i) {
+	for (int_t i = 0; i < (int_t)sub_vertices.size(); ++i) {
 		int_t curr_V         = sub_vertices[i];
 		subgraph.xadj[i + 1] = subgraph.xadj[i];
 		for (int_t k = xadj[curr_V]; k < xadj[curr_V + 1]; ++k) {

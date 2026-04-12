@@ -40,7 +40,7 @@ std::vector<int> RunKaHIP(
     const std::vector<int>& vwgt) {
 
 	int edge_cut     = 0;
-	double imbalance = ProgramConfig::accuracy;
+	double imbalance = ProgramConfig::imbalance;
 
 	std::vector<int> _xadj(xadj.begin(), xadj.end());
 	std::vector<int> _adjncy(adjncy.begin(), adjncy.end());

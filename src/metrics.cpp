@@ -48,13 +48,13 @@ namespace PartitionMetrics {
 	double GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
 		Vector<double> balances = GetBalances(graph, k, partition);
 
-		double accuracy = balances[0] - 1.0 / k;
+		double imbalance = balances[0] - 1.0 / k;
 		for (int_t curr_V = 1; curr_V < k; ++curr_V) {
-			if (balances[curr_V] - 1.0 / k > accuracy) {
-				accuracy = balances[curr_V] - 1.0 / k;
+			if (balances[curr_V] - 1.0 / k > imbalance) {
+				imbalance = balances[curr_V] - 1.0 / k;
 			}
 		}
-		return accuracy * k;
+		return imbalance * k;
 	}
 
 	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const Vector<int_t>& partition) {

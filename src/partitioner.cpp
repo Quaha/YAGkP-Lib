@@ -3,11 +3,11 @@
 namespace Partitioner {
 	Vector<int_t> GetGraphKPartition(const Graph& graph, const int_t k) {
 		Vector<int_t> partition = RecursivePartition(graph, k, 0);
-		
-		if (ProgramConfig::post_processing_disbalance_fix) {
-			PostProcessor::FixPartitionDisbalance(graph, k, partition);
+
+		if (ProgramConfig::post_processing_imbalance_fix) {
+			PostProcessor::FixPartitionImbalance(graph, k, partition);
 		}
-		
+
 		if (ProgramConfig::post_processing_improvement) {
 			PostProcessor::ImproveFinalPartition(graph, k, partition);
 		}
@@ -22,9 +22,9 @@ namespace Partitioner {
 		}
 
 		Vector<CoarseLevel> coarse_levels = Coarser::GetCoarseLevels(graph, k);
-		const Graph& coarsed_graph        = coarse_levels.back().coarsed_graph;
+		const Graph& coarsened_graph      = coarse_levels.back().coarsened_graph;
 
-		Vector<Part> initial_partition  = Bipartitioner::GetGraphBipartition(coarsed_graph);
+		Vector<Part> initial_partition  = Bipartitioner::GetGraphBipartition(coarsened_graph);
 		Vector<Part> restored_partition = Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
 		Vector<int_t> first_part_vertices, second_part_vertices;
@@ -51,10 +51,10 @@ namespace Partitioner {
 		Vector<int_t> partition1 = RecursivePartition(first_graph, k1, offset);
 		Vector<int_t> partition2 = RecursivePartition(second_graph, k2, offset + k1);
 
-		for (int_t i = 0; i < first_part_vertices.size(); i++) {
+		for (int_t i = 0; i < (int_t)first_part_vertices.size(); i++) {
 			partition[first_part_vertices[i]] = partition1[i];
 		}
-		for (int_t i = 0; i < second_part_vertices.size(); i++) {
+		for (int_t i = 0; i < (int_t)second_part_vertices.size(); i++) {
 			partition[second_part_vertices[i]] = partition2[i];
 		}
 

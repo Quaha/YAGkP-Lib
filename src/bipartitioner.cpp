@@ -21,7 +21,7 @@ namespace Bipartitioner {
 		int_t total_weight = graph.getSumOfVertexWeights();
 
 		int_t ideal_weight = total_weight / 2;
-		int_t max_allowed  = (ProgramConfig::accuracy + 1.0) * ideal_weight;
+		int_t max_allowed  = (ProgramConfig::imbalance + 1.0) * ideal_weight;
 
 		Vector<Part> best_partition;
 		int_t best_edge_cut;
@@ -40,8 +40,7 @@ namespace Bipartitioner {
 			for (int_t start_V: order) {
 				if (graph.vertex_weights[start_V] <= max_allowed) {
 					q.push(start_V);
-					partition[start_V] = Part::Second;
-					visited[start_V]   = true;
+					visited[start_V] = true;
 					break;
 				}
 			}
@@ -82,7 +81,7 @@ namespace Bipartitioner {
 		const int_t n = graph.n;
 
 		int_t ideal_weight = graph.getSumOfVertexWeights() / 2;
-		int_t max_allowed  = (ProgramConfig::accuracy + 1.0) * ideal_weight;
+		int_t max_allowed  = (ProgramConfig::imbalance + 1.0) * ideal_weight;
 
 		Vector<Part> best_partition;
 		int_t best_edge_cut;

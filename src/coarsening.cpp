@@ -15,17 +15,17 @@ namespace Coarser {
 			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<int_t> base_vertex_importance(graph.n, (int_t)(0));
+		Vector<int_t> base_vertex_importance(graph.n, 0);
 
 		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertex_importance});
 
 		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit &&
-		                  levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertex_count_limit;
+		                  levels[i].coarsened_graph.n > ProgramConfig::coarsening_vertex_count_limit;
 		     ++i) {
 
 			CoarseLevel new_level;
 
-			FillLevel(levels[i], levels[i].coarsed_graph, new_level, k);
+			FillLevel(levels[i], levels[i].coarsened_graph, new_level, k);
 
 			levels.push_back(new_level);
 		}
@@ -60,7 +60,7 @@ namespace Coarser {
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, 0);
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
@@ -91,7 +91,7 @@ namespace Coarser {
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, 0);
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
@@ -133,7 +133,7 @@ namespace Coarser {
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, 0);
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
@@ -175,7 +175,7 @@ namespace Coarser {
 		Vector<int_t> permutation = GetRandomPermutation(graph.n);
 
 		Vector<int_t> matching(graph.n, -1);
-		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
+		Vector<int_t> matching_edge_weights(graph.n, 0);
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
@@ -196,9 +196,9 @@ namespace Coarser {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size)
 					continue;
 				if (matching[next_V] == -1) {
-					int_t total_W = level.coarsed_graph.vertex_weights[curr_V] + level.coarsed_graph.vertex_weights[next_V];
+					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] + level.coarsened_graph.vertex_weights[next_V];
 					int_t F       = (w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
-					          (total_W * (total_W - (int_t)(1)));
+					          (total_W * (total_W - 1));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -255,22 +255,22 @@ namespace Coarser {
 
 		// 2. Building graph
 
-		Graph coarsed_graph;
-		coarsed_graph.n = coarse_to_uncoarse.size();
-		coarsed_graph.vertex_weights.resize(coarsed_graph.n, (int_t)(0));
+		Graph coarsened_graph;
+		coarsened_graph.n = coarse_to_uncoarse.size();
+		coarsened_graph.vertex_weights.resize(coarsened_graph.n, 0);
 
-		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
+		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
 			for (int_t next_V: coarse_to_uncoarse[curr_V]) {
-				coarsed_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
+				coarsened_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
 			}
 		}
 
-		coarsed_graph.total_vertex_weight = graph.total_vertex_weight;
+		coarsened_graph.total_vertex_weight = graph.total_vertex_weight;
 
 		// 3. Edges
-		Vector<std::unordered_map<int_t, int_t>> tmp_edges(coarsed_graph.n);
+		Vector<std::unordered_map<int_t, int_t>> tmp_edges(coarsened_graph.n);
 
-		for (int_t c_curr_V = 0; c_curr_V < coarsed_graph.n; ++c_curr_V) {
+		for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
 			for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
 				for (auto [u_next_V, w]: graph[u_curr_V]) {
 					int_t c_next_V = uncoarse_to_coarse[u_next_V];
@@ -283,32 +283,32 @@ namespace Coarser {
 		}
 
 		int_t total_edges = 0;
-		Vector<int_t> edge_count(coarsed_graph.n, 0);
-		for (int_t i = 0; i < coarsed_graph.n; ++i) {
+		Vector<int_t> edge_count(coarsened_graph.n, 0);
+		for (int_t i = 0; i < coarsened_graph.n; ++i) {
 			edge_count[i] = tmp_edges[i].size();
 			total_edges += edge_count[i];
 		}
 
-		coarsed_graph.m = total_edges;
-		coarsed_graph.xadj.resize(coarsed_graph.n + 1);
-		coarsed_graph.adjncy.resize(total_edges);
-		coarsed_graph.edge_weights.resize(total_edges);
+		coarsened_graph.m = total_edges;
+		coarsened_graph.xadj.resize(coarsened_graph.n + 1);
+		coarsened_graph.adjncy.resize(total_edges);
+		coarsened_graph.edge_weights.resize(total_edges);
 
 		int_t pos = 0;
-		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
-			coarsed_graph.xadj[curr_V] = pos;
+		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
+			coarsened_graph.xadj[curr_V] = pos;
 			for (auto& [next_V, weight]: tmp_edges[curr_V]) {
-				coarsed_graph.adjncy[pos]       = next_V;
-				coarsed_graph.edge_weights[pos] = weight;
+				coarsened_graph.adjncy[pos]       = next_V;
+				coarsened_graph.edge_weights[pos] = weight;
 				pos++;
 			}
 		}
-		coarsed_graph.xadj[coarsed_graph.n] = pos;
+		coarsened_graph.xadj[coarsened_graph.n] = pos;
 
 		// 4. Importance
 
-		Vector<int_t> vertex_importance(coarsed_graph.n, (int_t)(0));
-		for (int_t curr_V = 0; curr_V < coarsed_graph.n; ++curr_V) {
+		Vector<int_t> vertex_importance(coarsened_graph.n, 0);
+		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
 				vertex_importance[curr_V] += level.vertex_importance[prev_V];
 			}
@@ -321,7 +321,7 @@ namespace Coarser {
 
 		new_level.uncoarse_to_coarse = std::move(uncoarse_to_coarse);
 		new_level.coarse_to_uncoarse = std::move(coarse_to_uncoarse);
-		new_level.coarsed_graph      = std::move(coarsed_graph);
+		new_level.coarsened_graph    = std::move(coarsened_graph);
 		new_level.vertex_importance  = std::move(vertex_importance);
 	}
 } // namespace Coarser

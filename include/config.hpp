@@ -24,7 +24,7 @@ struct ProgramConfig {
 	};
 
 	// --- Global parameters ---
-	inline static double accuracy = 0.05;
+	inline static double imbalance = 0.05;
 
 	// --- Coarsening parameters ---
 	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
@@ -52,6 +52,6 @@ struct ProgramConfig {
 	// --- Post processing parameters ---
 
 	// Correctness is guaranteed only for graphs with vertex weights equal to 1
-	inline static bool post_processing_disbalance_fix = false;
-	inline static bool post_processing_improvement    = false;
+	inline static bool post_processing_imbalance_fix = true;
+	inline static bool post_processing_improvement   = true;
 };

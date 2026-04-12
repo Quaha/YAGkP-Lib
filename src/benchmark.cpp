@@ -63,7 +63,7 @@ namespace Benchmark {
 
 		std::ofstream txt(txt_path, std::ios::app);
 		if (!txt_exists) {
-			txt << "# Graph: " << graph_name << "  n=" << g.n << "  m=" << g.m << "  k=" << k << " " << "imb=" << ProgramConfig::accuracy << "\n";
+			txt << "# Graph: " << graph_name << "  n=" << g.n << "  m=" << g.m << "  k=" << k << " " << "imb=" << ProgramConfig::imbalance << "\n";
 			txt << "# " << std::string(86, '-') << "\n";
 			txt << "# " << std::left
 			    << std::setw(16) << "algo"

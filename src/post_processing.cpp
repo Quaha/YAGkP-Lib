@@ -2,7 +2,7 @@
 
 namespace PostProcessor {
 
-	void FixPartitionDisbalance(const Graph& graph, const int_t k, Vector<int_t>& partition) {
+	void FixPartitionImbalance(const Graph& graph, const int_t k, Vector<int_t>& partition) {
 
 		Vector<int_t> comp_weight(k, 0);
 		int_t n = graph.getVerticesCount();
@@ -11,7 +11,7 @@ namespace PostProcessor {
 		}
 
 		int_t total_weight = graph.getSumOfVertexWeights();
-		int_t max_allowed  = (int_t)((double)(total_weight) / (double)(k) * (1.0 + ProgramConfig::accuracy + EPS));
+		int_t max_allowed  = (int_t)((double)(total_weight) / (double)(k) * (1.0 + ProgramConfig::imbalance + EPS));
 
 		while (max_allowed * k < total_weight) {
 			max_allowed += 1;
@@ -28,8 +28,7 @@ namespace PostProcessor {
 		}
 
 		while (!heap.empty() && heap.top().first > max_allowed) {
-			int_t weight = heap.top().first;
-			int_t cdx    = heap.top().second;
+			int_t cdx = heap.top().second;
 
 			int_t target = -1;
 			int_t min_w  = std::numeric_limits<int_t>::max();
@@ -76,7 +75,7 @@ namespace PostProcessor {
 		}
 
 		int_t total_weight = graph.getSumOfVertexWeights();
-		int_t max_allowed  = (int_t)(((double)(total_weight) / (double)(k)) * (1.0 + ProgramConfig::accuracy + EPS));
+		int_t max_allowed  = (int_t)(((double)(total_weight) / (double)(k)) * (1.0 + ProgramConfig::imbalance + EPS));
 
 		while (max_allowed * k < total_weight) {
 			max_allowed++;
