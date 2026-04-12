@@ -180,10 +180,10 @@ struct IndexedHeap2 {
 
 	void insert(DataType V, IndexType id) {
 		if (info.find(id) != info.end()) {
-			throw "Something went wrong";
+			throw std::runtime_error("Something went wrong");
 		}
 		info[id] = V;
-		data.insert(make_pair(V, id));
+		data.insert(std::make_pair(V, id));
 	}
 
 	void change(DataType delta, IndexType id) {
@@ -191,9 +191,9 @@ struct IndexedHeap2 {
 			return;
 		}
 		DataType was = info[id];
-		data.erase(make_pair(was, id));
+		data.erase(std::make_pair(was, id));
 		info[id] = was + delta;
-		data.insert(make_pair(was + delta, id));
+		data.insert(std::make_pair(was + delta, id));
 	}
 
 	std::pair<DataType, IndexType> extract() {

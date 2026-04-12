@@ -2,7 +2,7 @@
 
 namespace Partitioner {
 	Vector<int_t> GetGraphKPartition(const Graph& graph, const int_t k) {
-		vector<int_t> partition = RecursivePartition(graph, k, 0);
+		Vector<int_t> partition = RecursivePartition(graph, k, 0);
 		PostProcessor::FixPartitionDisbalance(graph, k, partition);
 		return partition;
 	}

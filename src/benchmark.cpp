@@ -56,37 +56,37 @@ namespace Benchmark {
 
 		std::string stem = graph_name + "_k" + std::to_string(k);
 
-	// === TXT ===
-	std::filesystem::create_directories(output_dir);
-	std::string txt_path = output_dir + "/" + stem + ".txt";
-	bool txt_exists      = std::filesystem::exists(txt_path);
+		// === TXT ===
+		std::filesystem::create_directories(output_dir);
+		std::string txt_path = output_dir + "/" + stem + ".txt";
+		bool txt_exists      = std::filesystem::exists(txt_path);
 
-	std::ofstream txt(txt_path, std::ios::app);
-	if (!txt_exists) {
-		txt << "# Graph: " << graph_name << "  n=" << g.n << "  m=" << g.m << "  k=" << k << " " << "imb=" << ProgramConfig::accuracy << "\n";
-		txt << "# " << std::string(86, '-') << "\n";
-		txt << "# " << std::left
-			<< std::setw(16) << "algo"
-			<< std::setw(12) << "time(ms)"
-			<< std::setw(14) << "edge cut"
-			<< std::setw(12) << "imbalance"
-			<< std::setw(14) << "max part"
-			<< std::setw(14) << "opt part"
-			<< "\n";
-		txt << "# " << std::string(86, '-') << "\n";
-	}
+		std::ofstream txt(txt_path, std::ios::app);
+		if (!txt_exists) {
+			txt << "# Graph: " << graph_name << "  n=" << g.n << "  m=" << g.m << "  k=" << k << " " << "imb=" << ProgramConfig::accuracy << "\n";
+			txt << "# " << std::string(86, '-') << "\n";
+			txt << "# " << std::left
+			    << std::setw(16) << "algo"
+			    << std::setw(12) << "time(ms)"
+			    << std::setw(14) << "edge cut"
+			    << std::setw(12) << "imbalance"
+			    << std::setw(14) << "max part"
+			    << std::setw(14) << "opt part"
+			    << "\n";
+			txt << "# " << std::string(86, '-') << "\n";
+		}
 
-	std::ostringstream pct;
-	pct << std::fixed << std::setprecision(2) << imbalance * 100.0 << "%";
+		std::ostringstream pct;
+		pct << std::fixed << std::setprecision(2) << imbalance * 100.0 << "%";
 
-	txt << std::left << std::fixed << std::setprecision(2)
-		<< std::setw(16) << algo
-		<< std::setw(12) << time_ms
-		<< std::setw(14) << edge_cut
-		<< std::setw(12) << pct.str()
-		<< std::setw(14) << max_part
-		<< std::setw(14) << opt
-		<< "\n";
+		txt << std::left << std::fixed << std::setprecision(2)
+		    << std::setw(16) << algo
+		    << std::setw(12) << time_ms
+		    << std::setw(14) << edge_cut
+		    << std::setw(12) << pct.str()
+		    << std::setw(14) << max_part
+		    << std::setw(14) << opt
+		    << "\n";
 
 		// Вывод в stdout
 		std::cout << std::left << std::fixed << std::setprecision(2)

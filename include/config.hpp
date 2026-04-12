@@ -2,7 +2,7 @@
 
 #include "utils.hpp"
 
-namespace ProgramConfig {
+struct ProgramConfig {
 	// --- Coarsening methods ---
 	enum class CoarseningMethod {
 		RandomMatching,
@@ -24,34 +24,34 @@ namespace ProgramConfig {
 	};
 
 	// --- Global parameters ---
-	extern double accuracy;
+	inline static double accuracy = 0.05;
 
 	// --- Coarsening parameters ---
-	extern CoarseningMethod coarsening_method;
+	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
 
-	extern int_t coarsening_itarations_limit;
-	extern int_t coarsening_vertix_count_limit;
+	inline static int_t coarsening_iterations_limit   = 40;
+	inline static int_t coarsening_vertex_count_limit = 500;
 
-	extern bool coarsening_clusterization_prohibition;
-	extern double coarsening_clusterization_size_factor;
+	inline static bool coarsening_clusterization_prohibition   = false;
+	inline static double coarsening_clusterization_size_factor = 0.5;
 
 	// --- Bipartitioning parameters ---
-	extern BipartitioningMethod bipartitioning_method;
+	inline static BipartitioningMethod bipartitioning_method = BipartitioningMethod::GreedyGraphGrowingAlgorithm;
 
-	extern int_t bipartitioning_GraphGrowingAlgorithm_launches_count;
-	extern int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count;
+	inline static int_t bipartitioning_GraphGrowingAlgorithm_launches_count       = 100;
+	inline static int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100;
 
 	// --- Uncoarsening parameters ---
-	extern UncoarseningMethod uncoarsening_method;
+	inline static UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;
 
-	extern bool uncoarsening_KernighanLin_use_blocking;
+	inline static bool uncoarsening_KernighanLin_use_blocking = true;
 
-	extern int_t uncoarsening_KernighanLin_runs;
-	extern int_t uncoarsening_KernighanLin_waste_limit;
+	inline static int_t uncoarsening_KernighanLin_runs        = 3;
+	inline static int_t uncoarsening_KernighanLin_waste_limit = 50;
 
 	// --- Post processing parameters ---
 
 	// Correctness is guaranteed only for graphs with vertex weights equal to 1
-	extern bool post_processing_disbalance_fix;
-	extern bool post_processing_improvement;
-} // namespace ProgramConfig
+	inline static bool post_processing_disbalance_fix = false;
+	inline static bool post_processing_improvement    = false;
+};

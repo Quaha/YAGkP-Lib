@@ -83,7 +83,7 @@ namespace Uncoarser {
 				vertices.push_back(curr_V);
 
 				current_edgecut -= gain;
-				current_run_best_edgecut = min(current_run_best_edgecut, current_edgecut);
+				current_run_best_edgecut = std::min(current_run_best_edgecut, current_edgecut);
 
 				for (auto [next_V, w]: previous_graph[curr_V]) {
 					if (current_partition[curr_V] == current_partition[next_V]) {
@@ -186,7 +186,7 @@ namespace Uncoarser {
 				vertices.push_back(curr_V);
 
 				current_edgecut -= gain;
-				current_run_best_edgecut = min(current_run_best_edgecut, current_edgecut);
+				current_run_best_edgecut = std::min(current_run_best_edgecut, current_edgecut);
 
 				for (auto [next_V, w]: previous_graph[curr_V]) {
 					if (current_partition[curr_V] == current_partition[next_V]) {
@@ -302,7 +302,7 @@ namespace Uncoarser {
 				vertices.push_back(curr_V);
 
 				current_edgecut -= gain;
-				current_run_best_edgecut = min(current_run_best_edgecut, current_edgecut);
+				current_run_best_edgecut = std::min(current_run_best_edgecut, current_edgecut);
 
 				for (auto [next_V, w]: previous_graph[curr_V]) {
 					if (current_partition[curr_V] == current_partition[next_V]) {
@@ -351,29 +351,6 @@ namespace Uncoarser {
 		Vector<Part> prev_partition = DirectMapping(coarse_level, coarse_partition);
 
 		Vector<bool> blocked(n, false);
-		if (false) {
-
-			int_t total_weight0 = 0;
-			int_t total_weight1 = 0;
-
-			for (int_t i = 0; i < n; i++) {
-				if (prev_partition[i] == Part::First) {
-					total_weight0 += previous_graph.getVertexWeight(i);
-				}
-				else {
-					total_weight1 += previous_graph.getVertexWeight(i);
-				}
-			}
-
-			for (int_t i = 0; i < n; i++) {
-				if (prev_partition[i] == Part::First && total_weight0 < total_weight1) {
-					blocked[i] = true;
-				}
-				if (prev_partition[i] == Part::Second && total_weight1 < total_weight0) {
-					blocked[i] = true;
-				}
-			}
-		}
 
 		IndexedHeap<int_t> heap(n);
 

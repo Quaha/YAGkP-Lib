@@ -1,7 +1,7 @@
 #include "metrics.hpp"
 
 namespace PartitionMetrics {
-	double GetEdgeCut(const Graph& graph, const Vector<int_t> partition) {
+	double GetEdgeCut(const Graph& graph, const Vector<int_t>& partition) {
 		double edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
@@ -15,7 +15,7 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	double GetEdgeCut(const Graph& graph, const Vector<Part> partition) {
+	double GetEdgeCut(const Graph& graph, const Vector<Part>& partition) {
 		double edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {

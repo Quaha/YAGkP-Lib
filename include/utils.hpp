@@ -25,8 +25,6 @@
 #include <unordered_set>
 #include <vector>
 
-using namespace std;
-
 using int_t = int;
 
 enum class Part {

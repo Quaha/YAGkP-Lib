@@ -4,7 +4,7 @@ namespace Coarser {
 
 	Vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k) {
 		Vector<CoarseLevel> levels;
-		levels.reserve(ProgramConfig::coarsening_itarations_limit + 1);
+		levels.reserve(ProgramConfig::coarsening_iterations_limit + 1);
 
 		// Entry-level initialization
 		Vector<int_t> base_uncoarse_to_coarse(graph.n);
@@ -15,12 +15,12 @@ namespace Coarser {
 			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<int_t> base_vertexmportance(graph.n, (int_t)(0));
+		Vector<int_t> base_vertex_importance(graph.n, (int_t)(0));
 
-		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertexmportance});
+		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertex_importance});
 
-		for (int_t i = 0; i < ProgramConfig::coarsening_itarations_limit &&
-		                  levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertix_count_limit;
+		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit &&
+		                  levels[i].coarsed_graph.n > ProgramConfig::coarsening_vertex_count_limit;
 		     ++i) {
 
 			CoarseLevel new_level;
@@ -29,7 +29,7 @@ namespace Coarser {
 
 			levels.push_back(new_level);
 		}
-		return std::move(levels);
+		return levels;
 	}
 
 	void FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
@@ -63,7 +63,7 @@ namespace Coarser {
 		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (!ProgramConfig::coarsening_clusterization_prohibition) {
+		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
 			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
@@ -94,7 +94,7 @@ namespace Coarser {
 		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (!ProgramConfig::coarsening_clusterization_prohibition) {
+		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
 			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
@@ -136,7 +136,7 @@ namespace Coarser {
 		Vector<int_t> matching_edge_weights(graph.n, (int_t)(0));
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (!ProgramConfig::coarsening_clusterization_prohibition) {
+		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
 			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
@@ -320,6 +320,6 @@ namespace Coarser {
 		new_level.uncoarse_to_coarse = std::move(uncoarse_to_coarse);
 		new_level.coarse_to_uncoarse = std::move(coarse_to_uncoarse);
 		new_level.coarsed_graph      = std::move(coarsed_graph);
-		new_level.vertex_importance    = std::move(vertex_importance);
+		new_level.vertex_importance  = std::move(vertex_importance);
 	}
 }; // namespace Coarser
