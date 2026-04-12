@@ -34,6 +34,21 @@ using Vector = std::vector<T>;
 
 using String = std::string;
 
+template <typename T>
+class Queue {
+    Vector<T> data;
+    int_t head = 0;
+
+public:
+    void push(const T& value) { data.push_back(value); }
+    void pop() { ++head; }
+    T front() const { return data[head]; }
+    bool empty() const { return head >= (int_t)data.size(); }
+
+    void reserve(int_t n) { data.reserve(n); }
+    void clear() { data.clear(); head = 0; }
+};
+
 // part: current part  | Part::Second
 // returns: other part | Part::First
 Part GetOtherPart(Part part);

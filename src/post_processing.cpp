@@ -81,7 +81,7 @@ namespace PostProcessor {
 			max_allowed++;
 		}
 
-		std::queue<int_t> vertices_queue;
+		Queue<int_t> vertices_queue; vertices_queue.reserve(n / 2);
 		for (int_t i = 0; i < n; i++) {
 			vertices_queue.push(i);
 		}

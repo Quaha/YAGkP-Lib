@@ -33,7 +33,7 @@ namespace Bipartitioner {
 			Vector<Part> partition(n, Part::First);
 			Vector<bool> visited(n, false);
 
-			std::queue<int_t> q;
+			Queue<int_t> q; q.reserve(n / 2);
 
 			Vector<int_t> order = GetRandomPermutation(n);
 

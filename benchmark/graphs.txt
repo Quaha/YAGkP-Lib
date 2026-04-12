@@ -35,7 +35,7 @@ Hamm/add32
 # DIMACS10/fe_ocean
 # DIMACS10/144
 # DIMACS10/m14b
-# DIMACS10/auto
+DIMACS10/auto
 
 ### 4elt, fe_pwt, wing, wave - weren't found
 

@@ -23,17 +23,28 @@ struct Graph {
 			const Graph& g;
 			int_t pos;
 
-			Iterator(const Graph& g, int_t pos);
-			bool operator!=(const Iterator& other) const;
-			void operator++();
-			std::pair<int_t, int_t> operator*() const;
+			Iterator(const Graph& g, int_t pos) : g(g), pos(pos) {}
+
+			bool operator!=(const Iterator& other) const {
+				return pos != other.pos;
+			}
+
+			void operator++() {
+				++pos;
+			}
+
+			std::pair<int_t, int_t> operator*() const {
+				return {g.adjncy[pos], g.edge_weights[pos]};
+			}
 		};
 
-		Iterator begin() const;
-		Iterator end() const;
+		Iterator begin() const { return Iterator(g, g.xadj[v]); }
+		Iterator end() const { return Iterator(g, g.xadj[v + 1]); }
 	};
 
-	AdjacentIterator operator[](int_t v) const;
+	AdjacentIterator operator[](int_t v) const {
+		return AdjacentIterator{*this, v};
+	}
 
 	Graph();
 	Graph(const spMtx<double>& matrix, bool ignore_eweights = false);

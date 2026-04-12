@@ -52,6 +52,6 @@ struct ProgramConfig {
 	// --- Post processing parameters ---
 
 	// Correctness is guaranteed only for graphs with vertex weights equal to 1
-	inline static bool post_processing_imbalance_fix = true;
-	inline static bool post_processing_improvement   = true;
+	inline static bool post_processing_imbalance_fix = false;
+	inline static bool post_processing_improvement   = false;
 };

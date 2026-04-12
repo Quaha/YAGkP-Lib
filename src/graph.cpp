@@ -1,37 +1,5 @@
 #include "graph.hpp"
 
-// --- Iterator ---
-
-Graph::AdjacentIterator::Iterator::Iterator(const Graph& g, int_t pos)
-    : g(g), pos(pos) {
-}
-
-bool Graph::AdjacentIterator::Iterator::operator!=(const Iterator& other) const {
-	return pos != other.pos;
-}
-
-void Graph::AdjacentIterator::Iterator::operator++() {
-	++pos;
-}
-
-std::pair<int_t, int_t> Graph::AdjacentIterator::Iterator::operator*() const {
-	return std::make_pair(g.adjncy[pos], g.edge_weights[pos]);
-}
-
-Graph::AdjacentIterator::Iterator Graph::AdjacentIterator::begin() const {
-	return Iterator(g, g.xadj[v]);
-}
-
-Graph::AdjacentIterator::Iterator Graph::AdjacentIterator::end() const {
-	return Iterator(g, g.xadj[v + 1]);
-}
-
-// --- Graph ---
-
-Graph::AdjacentIterator Graph::operator[](int_t v) const {
-	return AdjacentIterator{*this, v};
-}
-
 Graph::Graph() {
 }
 
