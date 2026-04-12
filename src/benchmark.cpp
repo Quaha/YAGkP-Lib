@@ -18,10 +18,20 @@ namespace Benchmark {
 			if (name == "yagkp") {
 				partition = Partitioner::GetGraphKPartition(g, k);
 			}
-			else if (name == "kahip") {
+			else if (name == "kahip_fast") {
 				partition = RunKaHIP(g.n, k, std::vector<int>(g.xadj.begin(), g.xadj.end()),
 				                     std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
-				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()));
+				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "fast");
+			}
+			else if (name == "kahip_eco") {
+				partition = RunKaHIP(g.n, k, std::vector<int>(g.xadj.begin(), g.xadj.end()),
+				                     std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
+				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "eco");
+			}
+			else if (name == "kahip_strong") {
+				partition = RunKaHIP(g.n, k, std::vector<int>(g.xadj.begin(), g.xadj.end()),
+				                     std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
+				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "strong");
 			}
 			else if (name == "metis") {
 				auto v    = RunMETIS(g.n, k,

@@ -37,7 +37,8 @@ std::vector<int> RunKaHIP(
     int n, int nparts,
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
-    const std::vector<int>& vwgt) {
+    const std::vector<int>& vwgt,
+	std::string mode) {
 
 	int edge_cut     = 0;
 	double imbalance = ProgramConfig::imbalance;
@@ -47,6 +48,11 @@ std::vector<int> RunKaHIP(
 	std::vector<int> _vwgt(vwgt.begin(), vwgt.end());
 
 	std::vector<int> partition(n);
+
+	int kahip_mode;
+	if (mode == "fast")        kahip_mode = FAST;
+	else if (mode == "eco")    kahip_mode = ECO;
+	else if (mode == "strong") kahip_mode = STRONG;
 
 	kaffpa(
 	    &n,
@@ -58,7 +64,7 @@ std::vector<int> RunKaHIP(
 	    &imbalance,
 	    true,
 	    0,
-	    STRONG,
+	    kahip_mode,
 	    &edge_cut,
 	    partition.data());
 
