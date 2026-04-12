@@ -12,7 +12,9 @@ std::vector<int> RunMETIS(
     int n, int nparts,
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
-    const std::vector<int>& vwgt) {
+    const std::vector<int>& vwgt,
+	const std::string& mode) {
+
 	idx_t _n       = n;
 	idx_t _nparts  = nparts;
 	idx_t _ncon    = 1;
@@ -23,12 +25,22 @@ std::vector<int> RunMETIS(
 	std::vector<idx_t> _vwgt(vwgt.begin(), vwgt.end());
 	std::vector<idx_t> partition(n);
 
-	METIS_PartGraphKway(
-	    &_n, &_ncon,
-	    _xadj.data(), _adjncy.data(), _vwgt.data(),
-	    nullptr, nullptr,
-	    &_nparts, nullptr, nullptr, nullptr,
-	    &edge_cut, partition.data());
+	if (mode == "kway") {
+		METIS_PartGraphKway(
+			&_n, &_ncon,
+			_xadj.data(), _adjncy.data(), _vwgt.data(),
+			nullptr, nullptr,
+			&_nparts, nullptr, nullptr, nullptr,
+			&edge_cut, partition.data());
+	}
+	else if (mode == "recursive") {
+		METIS_PartGraphRecursive(
+			&_n, &_ncon,
+			_xadj.data(), _adjncy.data(), _vwgt.data(),
+			nullptr, nullptr,
+			&_nparts, nullptr, nullptr, nullptr,
+			&edge_cut, partition.data());
+	}
 
 	return std::vector<int>(partition.begin(), partition.end());
 }
@@ -38,7 +50,7 @@ std::vector<int> RunKaHIP(
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
     const std::vector<int>& vwgt,
-	std::string mode) {
+	const std::string& mode) {
 
 	int edge_cut     = 0;
 	double imbalance = ProgramConfig::imbalance;

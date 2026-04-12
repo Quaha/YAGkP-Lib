@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
 	if (graph_path.empty() || k == 0 || algo.empty() || output_dir.empty()) {
 		std::cerr << "Usage: YAGkP_app --graph <path> --k <k> --algo <algo> --output <dir>" << std::endl;
-		std::cerr << "Algos: yagkp, kahip_strong, kahip_eco, kahip_fast, metis, scotch" << std::endl;
+		std::cerr << "Algos: yagkp, kahip_strong, kahip_eco, kahip_fast, metis_kway, metis_recursive, scotch" << std::endl;
 		return 1;
 	}
 
