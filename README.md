@@ -36,13 +36,19 @@ bash benchmark/run_benchmark.sh
 ```
 
 Результаты сохраняются в:
-- `benchmark/results/
+- `benchmark/results/`
 
 ---
 
 ## Полезные ресурсы
 - The Graph Partitioning Archive: https://chriswalshaw.co.uk/partition/ - таблица рекордов разделений
 - The SuiteSparse Matrix Collection: https://sparse.tamu.edu - коллекция матриц
+
+---
+
+## TO-DO:
+- Разобраться с пост-обработкой
+- ...
 
 ---
 

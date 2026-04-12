@@ -23,7 +23,7 @@ namespace PartitionMetrics {
 	// k: number of parts                                               | 4
 	// partition: vector of part indices                                | {0, 1, 0, 2, 3, 1}
 	// returns: imbalance measure = k * max(part_weight_fraction - 1/k) | 0.33
-	double GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition);
+	double GetImbalance(const Graph& graph, const int_t k, const Vector<int_t>& partition);
 
 	// graph: input graph                                   | graph (|V| = 6, weight(Ui) = 1)
 	// k: number of parts                                   | 4

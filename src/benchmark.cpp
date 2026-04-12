@@ -47,7 +47,7 @@ namespace Benchmark {
 			return {
 			    time_ms,
 			    PartitionMetrics::GetEdgeCut(g, partition),
-			    PartitionMetrics::GetAccuracy(g, k, partition),
+			    PartitionMetrics::GetImbalance(g, k, partition),
 			    PartitionMetrics::GetMaxPartWeight(g, k, partition)};
 		};
 

@@ -45,7 +45,7 @@ namespace PartitionMetrics {
 		return balances;
 	}
 
-	double GetAccuracy(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
+	double GetImbalance(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
 		Vector<double> balances = GetBalances(graph, k, partition);
 
 		double imbalance = balances[0] - 1.0 / k;

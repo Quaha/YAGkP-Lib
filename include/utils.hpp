@@ -1,25 +1,20 @@
 #pragma once
 
 #include <algorithm>
-#include <bitset>
 #include <cassert>
 #include <chrono>
 #include <climits>
 #include <cmath>
-#include <cstring>
-#include <deque>
 #include <filesystem>
 #include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
-#include <list>
 #include <map>
 #include <numeric>
 #include <queue>
 #include <random>
 #include <set>
-#include <stack>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>

@@ -46,7 +46,7 @@ std::vector<int> RunKaHIP(
 	std::vector<int> _adjncy(adjncy.begin(), adjncy.end());
 	std::vector<int> _vwgt(vwgt.begin(), vwgt.end());
 
-	std::vector<int_t> partition(n);
+	std::vector<int> partition(n);
 
 	kaffpa(
 	    &n,
