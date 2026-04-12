@@ -3,9 +3,6 @@
 namespace PostProcessor {
 
 	void FixPartitionDisbalance(const Graph& graph, const int_t k, Vector<int_t>& partition) {
-		if (!ProgramConfig::post_processing_disbalance_fix) {
-			return;
-		}
 
 		Vector<int_t> comp_weight(k, 0);
 		int_t n = graph.getVerticesCount();
@@ -71,9 +68,6 @@ namespace PostProcessor {
 	}
 
 	void ImproveFinalPartition(const Graph& graph, const int_t k, Vector<int_t>& partition) {
-		if (!ProgramConfig::post_processing_improvement) {
-			return;
-		}
 		int_t n = graph.getVerticesCount();
 
 		Vector<int_t> comp_weight(k, 0);

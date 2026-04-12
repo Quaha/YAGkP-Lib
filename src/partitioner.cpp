@@ -3,7 +3,15 @@
 namespace Partitioner {
 	Vector<int_t> GetGraphKPartition(const Graph& graph, const int_t k) {
 		Vector<int_t> partition = RecursivePartition(graph, k, 0);
-		PostProcessor::FixPartitionDisbalance(graph, k, partition);
+		
+		if (ProgramConfig::post_processing_disbalance_fix) {
+			PostProcessor::FixPartitionDisbalance(graph, k, partition);
+		}
+		
+		if (ProgramConfig::post_processing_improvement) {
+			PostProcessor::ImproveFinalPartition(graph, k, partition);
+		}
+
 		return partition;
 	}
 
@@ -16,10 +24,8 @@ namespace Partitioner {
 		Vector<CoarseLevel> coarse_levels = Coarser::GetCoarseLevels(graph, k);
 		const Graph& coarsed_graph        = coarse_levels.back().coarsed_graph;
 
-		Vector<Part> restored_partition;
-
-		Vector<Part> initial_partition = Bipartitioner::GetGraphBipartition(coarsed_graph);
-		restored_partition             = Uncoarser::RestorePartition(coarse_levels, initial_partition);
+		Vector<Part> initial_partition  = Bipartitioner::GetGraphBipartition(coarsed_graph);
+		Vector<Part> restored_partition = Uncoarser::RestorePartition(coarse_levels, initial_partition);
 
 		Vector<int_t> first_part_vertices, second_part_vertices;
 		for (int_t i = 0; i < graph.n; ++i) {

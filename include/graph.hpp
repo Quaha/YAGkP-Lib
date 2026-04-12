@@ -8,10 +8,12 @@ struct Graph {
 	int_t n = 0;
 	int_t m = 0;
 
+	int_t total_vertex_weight = 0;
+
 	Vector<int_t> adjncy;
 	Vector<int_t> xadj;
 	Vector<int_t> vertex_weights;
-	Vector<double> edge_weights;
+	Vector<int_t> edge_weights;
 
 	struct AdjacentIterator {
 		const Graph& g;
@@ -24,7 +26,7 @@ struct Graph {
 			Iterator(const Graph& g, int_t pos);
 			bool operator!=(const Iterator& other) const;
 			void operator++();
-			std::pair<int_t, double> operator*() const;
+			std::pair<int_t, int_t> operator*() const;
 		};
 
 		Iterator begin() const;

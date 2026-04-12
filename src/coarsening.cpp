@@ -265,6 +265,8 @@ namespace Coarser {
 			}
 		}
 
+		coarsed_graph.total_vertex_weight = graph.total_vertex_weight;
+
 		// 3. Edges
 		Vector<std::unordered_map<int_t, int_t>> tmp_edges(coarsed_graph.n);
 

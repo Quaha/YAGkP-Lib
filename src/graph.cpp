@@ -14,7 +14,7 @@ void Graph::AdjacentIterator::Iterator::operator++() {
 	++pos;
 }
 
-std::pair<int_t, double> Graph::AdjacentIterator::Iterator::operator*() const {
+std::pair<int_t, int_t> Graph::AdjacentIterator::Iterator::operator*() const {
 	return std::make_pair(g.adjncy[pos], g.edge_weights[pos]);
 }
 
@@ -63,15 +63,17 @@ void Graph::buildGraph(const spMtx<double>& matrix, bool ignore_eweights) {
 		vertex_weights[i] = 1;
 	}
 
+	total_vertex_weight = std::accumulate(vertex_weights.begin(), vertex_weights.end(), 0);
+
 	edge_weights.resize(m);
 	if (matrix.Val != nullptr && !ignore_eweights) {
 		for (int_t i = 0; i < m; ++i) {
-			edge_weights[i] = matrix.Val[i];
+			edge_weights[i] = static_cast<int_t>(matrix.Val[i]);
 		}
 	}
 	else {
 		for (int_t i = 0; i < m; ++i) {
-			edge_weights[i] = 1.0;
+			edge_weights[i] = 1;
 		}
 	}
 }
@@ -85,7 +87,7 @@ int_t Graph::getEdgesCount() const noexcept {
 }
 
 int_t Graph::getSumOfVertexWeights() const {
-	return std::accumulate(vertex_weights.begin(), vertex_weights.end(), 0);
+	return total_vertex_weight;
 }
 
 int_t Graph::getVertexWeight(int_t v) const {
@@ -106,6 +108,8 @@ Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 	for (int_t i = 0; i < sub_vertices.size(); ++i) {
 		subgraph.vertex_weights[i] = vertex_weights[sub_vertices[i]];
 	}
+
+	subgraph.total_vertex_weight = std::accumulate(subgraph.vertex_weights.begin(), subgraph.vertex_weights.end(), 0);
 
 	Vector<bool> is_exist(n, false);
 
@@ -139,7 +143,7 @@ Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 
 				int_t j = original_to_sub[next_V];
 
-				double weight = edge_weights[k];
+				int_t weight = edge_weights[k];
 
 				++subgraph.xadj[i + 1];
 				subgraph.adjncy[edge_pos]       = j;
