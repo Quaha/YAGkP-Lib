@@ -67,7 +67,7 @@ for name in "${!NEEDED[@]}"; do
     # Not found anywhere — download from SuiteSparse Matrix Collection
     group=$(dirname "$matrix")
     echo "[$name] Downloading..."
-    url="https://suitesparse-collection-website.herokuapp.com/MM/${group}/${name}.tar.gz"
+    url="https://sparse.tamu.edu/MM/${group}/${name}.tar.gz"
 
     if ! wget -q --show-progress -O "/tmp/${name}.tar.gz" "$url"; then
         echo "[$name] ERROR: failed to download"
