@@ -1,5 +1,4 @@
 -O3
 -march=native
 -funroll-loops
--pg
 -ffast-math

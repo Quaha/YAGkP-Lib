@@ -52,10 +52,21 @@ struct Graph {
 
 	void buildGraph(const spMtx<double>& matrix, bool ignore_eweights);
 
-	int_t getVerticesCount() const noexcept;
-	int_t getEdgesCount() const noexcept;
-	int_t getSumOfVertexWeights() const;
-	int_t getVertexWeight(int_t v) const;
+	int_t getVerticesCount() const noexcept {
+		return n;
+	}
+	
+	int_t getEdgesCount() const noexcept {
+		return m;
+	}
+
+	int_t getSumOfVertexWeights() const {
+		return total_vertex_weight;
+	}
+
+	int_t getVertexWeight(int_t v) const {
+		return vertex_weights[v];
+	}
 
 	Graph selectSubgraph(const Vector<int_t>& sub_vertices) const;
 };

@@ -41,6 +41,9 @@ std::vector<int> RunMETIS(
 			&_nparts, nullptr, nullptr, nullptr,
 			&edge_cut, partition.data());
 	}
+	else {
+		throw std::logic_error("Incorrect mode");
+	}
 
 	return std::vector<int>(partition.begin(), partition.end());
 }
@@ -62,9 +65,18 @@ std::vector<int> RunKaHIP(
 	std::vector<int> partition(n);
 
 	int kahip_mode;
-	if (mode == "fast")        kahip_mode = FAST;
-	else if (mode == "eco")    kahip_mode = ECO;
-	else if (mode == "strong") kahip_mode = STRONG;
+	if (mode == "fast") {
+		kahip_mode = FAST;
+	}        
+	else if (mode == "eco") {
+		kahip_mode = ECO;
+	}
+	else if (mode == "strong") {
+		kahip_mode = STRONG;
+	}
+	else {
+		throw std::logic_error("Incorrect mode");		
+	}
 
 	kaffpa(
 	    &n,

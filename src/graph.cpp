@@ -46,22 +46,6 @@ void Graph::buildGraph(const spMtx<double>& matrix, bool ignore_eweights) {
 	}
 }
 
-int_t Graph::getVerticesCount() const noexcept {
-	return n;
-}
-
-int_t Graph::getEdgesCount() const noexcept {
-	return m;
-}
-
-int_t Graph::getSumOfVertexWeights() const {
-	return total_vertex_weight;
-}
-
-int_t Graph::getVertexWeight(int_t v) const {
-	return vertex_weights[v];
-}
-
 Graph Graph::selectSubgraph(const Vector<int_t>& sub_vertices) const {
 	Graph subgraph;
 
