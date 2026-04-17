@@ -1,6 +1,6 @@
 #include "uncoarsening.hpp"
 
-#include "BucketPQ.hpp"
+#include "buckets.hpp"
 
 namespace Uncoarser {
 

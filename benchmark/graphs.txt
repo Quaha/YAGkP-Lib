@@ -6,35 +6,35 @@
 
 ### Records (Walshaw)
 
-# Hamm/add20
-# DIMACS10/data
+Hamm/add20
+DIMACS10/data
 AG-Monien/3elt
-# DIMACS10/uk
+DIMACS10/uk
 Hamm/add32
-# HB/bcsstk33
-# AG-Monien/whitaker3
-# AG-Monien/crack
-# DIMACS10/wing_nodal
-# DIMACS10/fe_4elt2
-# Cote/vibrobox
-# HB/bcsstk29
-# DIMACS10/fe_sphere
-# DIMACS10/cti
-# Hamm/memplus
-# DIMACS10/cs4
-# HB/bcsstk30
-# HB/bcsstk31
-# HB/bcsstk32
-# DIMACS10/fe_body
-# DIMACS10/t60k
-# AG-Monien/brack2
-# Mulvey/finan512
-# DIMACS10/fe_tooth
-# DIMACS10/fe_rotor
-# DIMACS10/598a
-# DIMACS10/fe_ocean
-# DIMACS10/144
-# DIMACS10/m14b
+HB/bcsstk33
+AG-Monien/whitaker3
+AG-Monien/crack
+DIMACS10/wing_nodal
+DIMACS10/fe_4elt2
+Cote/vibrobox
+HB/bcsstk29
+DIMACS10/fe_sphere
+DIMACS10/cti
+Hamm/memplus
+DIMACS10/cs4
+HB/bcsstk30
+HB/bcsstk31
+HB/bcsstk32
+DIMACS10/fe_body
+DIMACS10/t60k
+AG-Monien/brack2
+Mulvey/finan512
+DIMACS10/fe_tooth
+DIMACS10/fe_rotor
+DIMACS10/598a
+DIMACS10/fe_ocean
+DIMACS10/144
+DIMACS10/m14b
 DIMACS10/auto
 
 ### 4elt, fe_pwt, wing, wave - weren't found
