@@ -34,14 +34,14 @@ namespace Benchmark {
 				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "strong");
 			}
 			else if (name == "metis_kway") {
-				auto v = RunMETIS(g.n, k,
+				auto v    = RunMETIS(g.n, k,
 				                     std::vector<int>(g.xadj.begin(), g.xadj.end()),
 				                     std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
 				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "kway");
 				partition = Vector<int_t>(v.begin(), v.end());
 			}
 			else if (name == "metis_recursive") {
-				auto v = RunMETIS(g.n, k,
+				auto v    = RunMETIS(g.n, k,
 				                     std::vector<int>(g.xadj.begin(), g.xadj.end()),
 				                     std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
 				                     std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()), "recursive");

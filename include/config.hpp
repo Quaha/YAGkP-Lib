@@ -44,8 +44,6 @@ struct ProgramConfig {
 	// --- Uncoarsening parameters ---
 	inline static UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;
 
-	inline static bool uncoarsening_KernighanLin_use_blocking = true;
-
 	inline static int_t uncoarsening_KernighanLin_runs        = 3;
 	inline static int_t uncoarsening_KernighanLin_waste_limit = 50;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 std::vector<int> RunMETIS(
     int n, int nparts,

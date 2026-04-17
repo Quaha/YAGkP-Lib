@@ -1,5 +1,7 @@
 #include "uncoarsening.hpp"
 
+#include "BucketPQ.hpp"
+
 namespace Uncoarser {
 
 	Vector<Part> RestorePartition(const Vector<CoarseLevel>& levels, Vector<Part> partition) {
@@ -11,15 +13,8 @@ namespace Uncoarser {
 			break;
 
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
-			if (ProgramConfig::uncoarsening_KernighanLin_use_blocking) {
-				for (int_t i = levels.size() - 1; i > 0; i--) {
-					partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition);
-				}
-			}
-			else {
-				for (int_t i = levels.size() - 1; i > 0; i--) {
-					partition = Uncoarser::KernighanLin(levels[i - 1].coarsened_graph, levels[i], partition);
-				}
+			for (int_t i = levels.size() - 1; i > 0; i--) {
+				partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition);
 			}
 			break;
 
@@ -41,86 +36,6 @@ namespace Uncoarser {
 		return prev_partition;
 	}
 
-	Vector<Part> KernighanLin(const Graph& previous_graph, const CoarseLevel& coarse_level,
-	                          const Vector<Part>& coarse_partition) {
-		int_t n = previous_graph.n;
-
-		Vector<Part> current_partition = DirectMapping(coarse_level, coarse_partition);
-		int_t current_edgecut          = PartitionMetrics::GetEdgeCut(previous_graph, current_partition);
-
-		Vector<Part> best_partition = current_partition;
-		int_t best_edgecut          = current_edgecut;
-
-		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs; run_number++) {
-
-			IndexedHeap2<int_t, int_t> heap;
-			for (int_t curr_V = 0; curr_V < n; curr_V++) {
-				int_t gain = 0;
-				for (auto [next_V, w]: previous_graph[curr_V]) {
-					if (current_partition[curr_V] != current_partition[next_V]) {
-						gain += w;
-					}
-					else {
-						gain -= w;
-					}
-				}
-				heap.insert(gain, curr_V);
-			}
-
-			Vector<int_t> gains;
-			Vector<int_t> vertices;
-
-			int_t current_run_best_edgecut = current_edgecut;
-
-			int_t waste_cnt = 0;
-
-			while (!heap.empty() && waste_cnt < ProgramConfig::uncoarsening_KernighanLin_waste_limit) {
-				auto [gain, curr_V] = heap.extract();
-
-				if (gain < 0) {
-					waste_cnt++;
-				}
-				else {
-					waste_cnt = 0;
-				}
-
-				gains.push_back(gain);
-				vertices.push_back(curr_V);
-
-				current_edgecut -= gain;
-				current_run_best_edgecut = std::min(current_run_best_edgecut, current_edgecut);
-
-				for (auto [next_V, w]: previous_graph[curr_V]) {
-					if (current_partition[curr_V] == current_partition[next_V]) {
-						heap.change(2 * w, next_V);
-					}
-					else {
-						heap.change(-2 * w, next_V);
-					}
-				}
-
-				current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
-			}
-
-			while (current_edgecut > current_run_best_edgecut) {
-				int_t gain = gains.back();
-				gains.pop_back();
-				int_t curr_V = vertices.back();
-				vertices.pop_back();
-
-				current_edgecut += gain;
-				current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
-			}
-
-			if (current_edgecut < best_edgecut) {
-				best_edgecut   = current_edgecut;
-				best_partition = current_partition;
-			}
-		}
-
-		return best_partition;
-	}
-
 	Vector<Part> KernighanLinBlocking(const Graph& previous_graph, Vector<Part> current_partition) {
 		int_t n               = previous_graph.n;
 		int_t current_edgecut = PartitionMetrics::GetEdgeCut(previous_graph, current_partition);
@@ -128,13 +43,23 @@ namespace Uncoarser {
 		Vector<Part> best_partition = current_partition;
 		int_t best_edgecut          = current_edgecut;
 
+		int_t max_edge_sum = 0;
+		for (int_t curr_V = 0; curr_V < n; curr_V++) {
+			int_t sum = 0;
+			for (auto [next_V, w] : previous_graph[curr_V]) {
+				sum += w;
+			}
+			max_edge_sum = std::max(max_edge_sum, sum);
+		}
+
+
 		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs; run_number++) {
 
 			int_t weight1 = 0;
 			int_t weight2 = 0;
 
-			IndexedHeap2<int_t, int_t> heap1;
-			IndexedHeap2<int_t, int_t> heap2;
+			BucketPQ heap1(n, -max_edge_sum, max_edge_sum);
+			BucketPQ heap2(n, -max_edge_sum, max_edge_sum);
 			for (int_t curr_V = 0; curr_V < n; curr_V++) {
 				int_t gain = 0;
 				for (auto [next_V, w]: previous_graph[curr_V]) {

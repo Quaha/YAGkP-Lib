@@ -23,7 +23,9 @@ struct Graph {
 			const Graph& g;
 			int_t pos;
 
-			Iterator(const Graph& g, int_t pos) : g(g), pos(pos) {}
+			Iterator(const Graph& g, int_t pos)
+			    : g(g), pos(pos) {
+			}
 
 			bool operator!=(const Iterator& other) const {
 				return pos != other.pos;
@@ -38,8 +40,12 @@ struct Graph {
 			}
 		};
 
-		Iterator begin() const { return Iterator(g, g.xadj[v]); }
-		Iterator end() const { return Iterator(g, g.xadj[v + 1]); }
+		Iterator begin() const {
+			return Iterator(g, g.xadj[v]);
+		}
+		Iterator end() const {
+			return Iterator(g, g.xadj[v + 1]);
+		}
 	};
 
 	AdjacentIterator operator[](int_t v) const {
@@ -55,7 +61,7 @@ struct Graph {
 	int_t getVerticesCount() const noexcept {
 		return n;
 	}
-	
+
 	int_t getEdgesCount() const noexcept {
 		return m;
 	}

@@ -95,8 +95,10 @@ if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
 endif()
 
 # Compile flags are kept in a separate file for easy switching between environments
-file(STRINGS ${CMAKE_SOURCE_DIR}/compile_options.txt COMPILE_OPTIONS_LIST)
-target_compile_options(${PROJECT_NAME}_library PRIVATE ${COMPILE_OPTIONS_LIST})
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    file(STRINGS ${CMAKE_SOURCE_DIR}/compile_options.txt COMPILE_OPTIONS_LIST)
+    target_compile_options(${PROJECT_NAME}_library PRIVATE ${COMPILE_OPTIONS_LIST})
+endif()
 
 # =============================================================================
 # Executable

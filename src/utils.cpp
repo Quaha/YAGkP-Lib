@@ -3,13 +3,6 @@
 static std::random_device rd;
 static std::mt19937 rng(rd());
 
-Part GetOtherPart(Part p) {
-	if (p == Part::First) {
-		return Part::Second;
-	}
-	return Part::First;
-}
-
 Vector<String> GetFileNames(const String& folder, const String& format) {
 	Vector<String> file_names;
 	for (const auto& entry: std::filesystem::directory_iterator(folder)) {

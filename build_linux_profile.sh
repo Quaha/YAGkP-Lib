@@ -9,10 +9,11 @@ if [ ! -d "deps" ]; then
     exit 1
 fi
 
+rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
-cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-         -DCMAKE_CXX_FLAGS="-pg -g" \
+cmake .. -DCMAKE_BUILD_TYPE=Debug \
+         -DCMAKE_CXX_FLAGS="-O2 -g -pg" \
          -DCMAKE_EXE_LINKER_FLAGS="-pg"
 cmake --build . --parallel
 cd ..

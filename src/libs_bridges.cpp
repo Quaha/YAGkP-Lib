@@ -13,7 +13,7 @@ std::vector<int> RunMETIS(
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
     const std::vector<int>& vwgt,
-	const std::string& mode) {
+    const std::string& mode) {
 
 	idx_t _n       = n;
 	idx_t _nparts  = nparts;
@@ -27,19 +27,19 @@ std::vector<int> RunMETIS(
 
 	if (mode == "kway") {
 		METIS_PartGraphKway(
-			&_n, &_ncon,
-			_xadj.data(), _adjncy.data(), _vwgt.data(),
-			nullptr, nullptr,
-			&_nparts, nullptr, nullptr, nullptr,
-			&edge_cut, partition.data());
+		    &_n, &_ncon,
+		    _xadj.data(), _adjncy.data(), _vwgt.data(),
+		    nullptr, nullptr,
+		    &_nparts, nullptr, nullptr, nullptr,
+		    &edge_cut, partition.data());
 	}
 	else if (mode == "recursive") {
 		METIS_PartGraphRecursive(
-			&_n, &_ncon,
-			_xadj.data(), _adjncy.data(), _vwgt.data(),
-			nullptr, nullptr,
-			&_nparts, nullptr, nullptr, nullptr,
-			&edge_cut, partition.data());
+		    &_n, &_ncon,
+		    _xadj.data(), _adjncy.data(), _vwgt.data(),
+		    nullptr, nullptr,
+		    &_nparts, nullptr, nullptr, nullptr,
+		    &edge_cut, partition.data());
 	}
 	else {
 		throw std::logic_error("Incorrect mode");
@@ -53,7 +53,7 @@ std::vector<int> RunKaHIP(
     const std::vector<int>& xadj,
     const std::vector<int>& adjncy,
     const std::vector<int>& vwgt,
-	const std::string& mode) {
+    const std::string& mode) {
 
 	int edge_cut     = 0;
 	double imbalance = ProgramConfig::imbalance;
@@ -67,7 +67,7 @@ std::vector<int> RunKaHIP(
 	int kahip_mode;
 	if (mode == "fast") {
 		kahip_mode = FAST;
-	}        
+	}
 	else if (mode == "eco") {
 		kahip_mode = ECO;
 	}
@@ -75,7 +75,7 @@ std::vector<int> RunKaHIP(
 		kahip_mode = STRONG;
 	}
 	else {
-		throw std::logic_error("Incorrect mode");		
+		throw std::logic_error("Incorrect mode");
 	}
 
 	kaffpa(

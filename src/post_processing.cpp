@@ -67,6 +67,9 @@ namespace PostProcessor {
 	}
 
 	void ImproveFinalPartition(const Graph& graph, const int_t k, Vector<int_t>& partition) {
+
+		std::cout << "ImproveFinalPartition called!" << std::endl;
+
 		int_t n = graph.getVerticesCount();
 
 		Vector<int_t> comp_weight(k, 0);
@@ -81,7 +84,8 @@ namespace PostProcessor {
 			max_allowed++;
 		}
 
-		Queue<int_t> vertices_queue; vertices_queue.reserve(n / 2);
+		Queue<int_t> vertices_queue;
+		vertices_queue.reserve(n / 2);
 		for (int_t i = 0; i < n; i++) {
 			vertices_queue.push(i);
 		}
