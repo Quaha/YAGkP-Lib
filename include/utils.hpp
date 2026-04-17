@@ -21,13 +21,14 @@
 #include <vector>
 
 using int_t = int;
+using fp_t = double;
 
 enum class Part {
 	First,
 	Second
 };
 
-inline constexpr double EPS = 1e-8;
+inline constexpr fp_t EPS = 1e-8;
 
 template <typename T>
 using Vector = std::vector<T>;

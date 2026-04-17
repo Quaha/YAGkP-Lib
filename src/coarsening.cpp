@@ -65,7 +65,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -96,7 +96,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -138,7 +138,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -180,7 +180,7 @@ namespace Coarser {
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
 			max_allowed_size =
-			    (int_t)(((double)(max_allowed_size) / (double)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			    (int_t)((fp_t(max_allowed_size) / fp_t(k)) * ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -188,7 +188,7 @@ namespace Coarser {
 				continue;
 			}
 			int_t best_V;
-			int_t best_F;
+			fp_t best_F;
 			int_t edge_W;
 			bool found = false;
 
@@ -197,8 +197,8 @@ namespace Coarser {
 					continue;
 				if (matching[next_V] == -1) {
 					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] + level.coarsened_graph.vertex_weights[next_V];
-					int_t F       = (w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
-					          (total_W * (total_W - 1));
+					fp_t F       = fp_t(w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
+					          fp_t(total_W * (total_W - 1));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;

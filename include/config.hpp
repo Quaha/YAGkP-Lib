@@ -24,7 +24,7 @@ struct ProgramConfig {
 	};
 
 	// --- Global parameters ---
-	inline static double imbalance = 0.05;
+	inline static fp_t imbalance = 0.05;
 
 	// --- Coarsening parameters ---
 	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
@@ -33,7 +33,7 @@ struct ProgramConfig {
 	inline static int_t coarsening_vertex_count_limit = 500;
 
 	inline static bool coarsening_clusterization_prohibition   = false;
-	inline static double coarsening_clusterization_size_factor = 0.5;
+	inline static fp_t coarsening_clusterization_size_factor = 0.5;
 
 	// --- Bipartitioning parameters ---
 	inline static BipartitioningMethod bipartitioning_method = BipartitioningMethod::GreedyGraphGrowingAlgorithm;
