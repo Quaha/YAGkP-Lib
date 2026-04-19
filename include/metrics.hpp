@@ -2,126 +2,32 @@
 
 #include "graph.hpp"
 
-class PartitionMetrics {
-public:
+namespace PartitionMetrics {
+	// graph: input graph                                                   | graph
+	// partition: vector of part indices for each vertex (size = |V|)       | {0, 1, 2}
+	// returns: total weight of edges connecting different parts (edge cut) | 4
+	int_t GetEdgeCut(const Graph& graph, const Vector<int_t>& partition);
 
-	/*
-	 * Calculates the total edge cut of a given graph partition.
-	 *
-	 * This function iterates over all edges in the graph and sums the weights
-	 * of edges that connect vertices belonging to different partitions.
-	 * Each undirected edge is counted only once.
-	 *
-	 * Parameters:
-	 * - graph - the input graph for which the edge cut is computed								               | ex: ...(|V| = 3)
-	 * - partition - a vector of size |V| where partition[i] indicates the part of vertex i (may be any int_t) | ex: {0, 1, 2}
-	 *
-	 * Returns:
-	 * - ew_t - total weight of all edges crossing partition boundaries										   | ex: ...
-	 */
-	template <typename vw_t, typename ew_t>
-	static ew_t GetEdgeCut(
-		const Graph<vw_t, ew_t>& graph,
-		const Vector<int_t>		 partition
-	) {
-		ew_t edge_cut = c<ew_t>(0);
+	// graph: input graph                                                   | graph
+	// partition: vector of parts for each vertex (size = |V|)              | {Part::First, Part::Second, Part::First}
+	// returns: total weight of edges connecting different parts (edge cut) | 4
+	int_t GetEdgeCut(const Graph& graph, const Vector<Part>& partition);
 
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
-			for (auto [next_V, w]: graph[curr_V]) {
-				if (curr_V < next_V && partition[curr_V] != partition[next_V]) {
-					edge_cut += w;
-				}
-			}
-		}
+	// graph: input graph                                                                 | graph (|V| = 6, weight(Ui) = 1)
+	// k: number of parts                                                                 | 4
+	// partition: vector of part indices for each vertex                                  | {0, 1, 0, 2, 3, 1}
+	// returns: vector of relative weights of each part (fraction of total vertex weight) | {0.33, 0.33, 0.16, 0.16}
+	Vector<double> GetBalances(const Graph& graph, const int_t k, const Vector<int_t>& partition);
 
-		return edge_cut;
-	}
+	// graph: input graph                                               | graph (|V| = 6, weight(Ui) = 1)
+	// k: number of parts                                               | 4
+	// partition: vector of part indices                                | {0, 1, 0, 2, 3, 1}
+	// returns: imbalance measure = k * max(part_weight_fraction - 1/k) | 0.33
+	double GetImbalance(const Graph& graph, const int_t k, const Vector<int_t>& partition);
 
-	/*
-	 * Computes the relative balance (weight proportion) of each partition.
-	 *
-	 * This function calculates the total weight of all vertices in the graph
-     * and then determines what fraction of that weight belongs to each part.
-	 *
-	 * Parameters:
-	 * - graph - the input graph whose vertex weights are used for balance computation			               | ex: ...(|V| = 6);
-	 * - k - the number of partitions to evaluate (equal to the number of different values in the partition)   | ex: 4
-	 * - partition - a vector of size |V| where partition[i] indicates the part of vertex i (may be any int_t) | ex: {0, 1, 0, 2, 3, 1}
-	 *
-	 * Returns:
-	 * - Vector<real_t> - output vector where i-th element stores the fraction of total weight				   | ex: {0.33, 0.33, 0.16, 0.16}
-	 */
-	template <typename vw_t, typename ew_t>
-	static Vector<real_t> GetBalances(
-		const Graph<ew_t, vw_t>& graph,
-		const int_t				 k,
-		const Vector<int_t>&	 partition
-	) {
-		Vector<real_t> balances(k, 0.0_r);
-
-		vw_t total_W = graph.getSumOfVertexWeights();
-
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
-			balances[partition[curr_V]] += static_cast<real_t>(graph.vertex_weights[curr_V]);
-		}
-
-		for (int_t curr_V = 0_i; curr_V < k; ++curr_V) {
-			balances[curr_V] = balances[curr_V] / total_W;
-		}
-
-		return balances;
-	}
-
-	/*
-	 * Computes the imbalance (accuracy) of a k-way graph partition.
-	 *
-	 * This function checks how evenly the vertex weights are split between
-	 * parts by comparing the heaviest part to the ideal equal share (1 / k).
-	 *
-	 * Parameters:
-	 * - graph - the input graph whose partition balance is being evaluated										   | ex: ... (|V| = 6)
-	 * - k - the number of partitions used in the graph (equal to the number of different values in the partition) | ex: 4
-	 * - partition - a vector of size |V| where partition[i] indicates the part of vertex i	(may be any int)	   | ex: {0, 1, 0, 2, 3, 1}
-	 *
-	 * Returns:
-	 * - real_t - the imbalance value (difference between the heaviest part and 1/k)							   | ex: 0.0833  -> 8.33% imbalance
-	 */
-	template <typename vw_t, typename ew_t>
-	static real_t GetAccuracy(
-		const Graph<vw_t, ew_t>& graph,
-		const int_t				 k,
-		const Vector<int_t>&	 partition
-	) {
-		Vector<real_t> balances = GetBalances(graph, k, partition);
-
-		real_t accuracy = balances[0] - 1.0_r / k;
-		for (int_t curr_V = 1_i; curr_V < k; ++curr_V) {
-			if (balances[curr_V] - 1.0_r / k > accuracy) {
-				accuracy = balances[curr_V] - 1.0_r / k;
-			}
-		}
-		return accuracy;
-	}
-
-	template <typename vw_t, typename ew_t>
-	static vw_t GetMaxPartWeight(
-		const Graph<ew_t, vw_t>& graph,
-		const int_t				 k,
-		const Vector<int_t>& partition
-	) {
-		Vector<vw_t> weights(k, 0_i);
-
-		for (int_t curr_V = 0_i; curr_V < graph.getVerticesCount(); ++curr_V) {
-			weights[partition[curr_V]] += graph.getVertexWeight(curr_V);
-		}
-
-		vw_t max_weight = 0_i;
-		for (int_t i = 0_i; i < k; ++i) {
-			if (max_weight < weights[i]) {
-				max_weight = weights[i];
-			}
-		}
-
-		return max_weight;
-	}
-};
+	// graph: input graph                                   | graph (|V| = 6, weight(Ui) = 1)
+	// k: number of parts                                   | 4
+	// partition: vector of part indices                    | {0, 1, 0, 2, 3, 1}
+	// returns: maximum total vertex weight among all parts | 2
+	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const Vector<int_t>& partition);
+} // namespace PartitionMetrics

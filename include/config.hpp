@@ -2,56 +2,54 @@
 
 #include "utils.hpp"
 
-namespace ProgramConfig {
-    // --- Coarsening methods ---
-    enum class CoarseningMethod {
-        RandomMatching,
-        LightEdgeMatching,
-        HeavyEdgeMatching,
-        HeavyCliqueMatching,
-    };
+struct ProgramConfig {
+	// --- Coarsening methods ---
+	enum class CoarseningMethod {
+		RandomMatching,
+		LightEdgeMatching,
+		HeavyEdgeMatching,
+		HeavyCliqueMatching,
+	};
 
-    // --- Bipartitioning methods ---
-    enum class BipartitioningMethod {
-        GraphGrowingAlgorithm,
-        GreedyGraphGrowingAlgorithm,
-    };
+	// --- Bipartitioning methods ---
+	enum class BipartitioningMethod {
+		GraphGrowingAlgorithm,
+		GreedyGraphGrowingAlgorithm,
+	};
 
-    // --- Uncoarsening methods ---
-    enum class UncoarseningMethod {
-        DirectMapping,
-        KernighanLin
-    };
+	// --- Uncoarsening methods ---
+	enum class UncoarseningMethod {
+		DirectMapping,
+		KernighanLin
+	};
 
-    // --- Global parameters ---
-    inline real_t accuracy = 0.05_r;
+	// --- Global parameters ---
+	inline static fp_t imbalance = 0.05;
 
-    // --- Coarsening parameters ---
-    inline CoarseningMethod coarsening_method = CoarseningMethod::HeavyEdgeMatching;
+	// --- Coarsening parameters ---
+	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
 
-    inline int_t coarsening_itarations_limit = 40_i;
-    inline int_t coarsening_vertix_count_limit = 100_i;
+	inline static int_t coarsening_iterations_limit   = 40;
+	inline static int_t coarsening_vertex_count_limit = 500;
 
-    inline bool coarsening_clusterization_prohibition = false;
-	inline real_t coarsening_clusterization_size_factor = 0.5_r;
+	inline static bool coarsening_clusterization_prohibition   = false;
+	inline static fp_t coarsening_clusterization_size_factor = 0.5;
 
-    // --- Bipartitioning parameters ---
-    inline BipartitioningMethod bipartitioning_method = BipartitioningMethod::GraphGrowingAlgorithm;
+	// --- Bipartitioning parameters ---
+	inline static BipartitioningMethod bipartitioning_method = BipartitioningMethod::GreedyGraphGrowingAlgorithm;
 
-    inline int_t bipartitioning_GraphGrowingAlgorithm_launches_count = 100_i;
-    inline int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100_i;
+	inline static int_t bipartitioning_GraphGrowingAlgorithm_launches_count       = 100;
+	inline static int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100;
 
-    // --- Uncoarsening parameters ---
-	inline UncoarseningMethod uncoarsening_method = UncoarseningMethod::DirectMapping;   
+	// --- Uncoarsening parameters ---
+	inline static UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;
 
-	inline bool uncoarsening_KernighanLin_use_blocking = true;
+	inline static int_t uncoarsening_KernighanLin_runs        = 3;
+	inline static int_t uncoarsening_KernighanLin_waste_limit = 50;
 
 	// --- Post processing parameters ---
 
-    // Correctness is guaranteed only for graphs with vertex weights equal to 1
-	inline bool post_processing_disbalance_fix = true;
-	inline bool post_processing_improvement = true;
-
-	// --- Statistics parameters ---
-	inline bool collect_mathing_statistics = false;
-}
+	// Correctness is guaranteed only for graphs with vertex weights equal to 1
+	inline static bool post_processing_imbalance_fix = false;
+	inline static bool post_processing_improvement   = false;
+};

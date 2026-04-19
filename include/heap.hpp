@@ -1,41 +1,29 @@
 #pragma once
 
-#include <iostream>
-#include <functional>
+#include "utils.hpp"
 
-#include "types.hpp"
-
-template <
-	typename HeapType,
-	typename Comparator = std::less<HeapType>
->
+template <typename HeapType, typename Comparator = std::less<HeapType>>
 class IndexedHeap {
-protected:
-
-	int_t capacity = 0_i;
-	int_t sz = 0_i;
+  protected:
+	int_t capacity = 0;
+	int_t sz       = 0;
 
 	std::pair<HeapType, int_t>* data = nullptr;
-	int_t* index_to_position = nullptr;
+	int_t* index_to_position         = nullptr;
 
 	Comparator comp;
 
-public:
-
+  public:
 	IndexedHeap() = delete;
 
-	IndexedHeap(int_t cap): 
-		capacity(cap), 
-		sz(0_i),
-		data(new std::pair<HeapType, int_t>[cap]),
-		index_to_position(new int_t[cap])
-	{
-		std::fill(index_to_position, index_to_position + cap, -1_i);
+	IndexedHeap(int_t cap)
+	    : capacity(cap), sz(0), data(new std::pair<HeapType, int_t>[cap]), index_to_position(new int_t[cap]) {
+		std::fill(index_to_position, index_to_position + cap, -1);
 	}
 
 	IndexedHeap(const IndexedHeap& other) {
 		capacity = other.capacity;
-		sz = other.sz;
+		sz       = other.sz;
 
 		data = new std::pair<HeapType, int_t>[capacity];
 		std::copy(other.data, other.data + sz, data);
@@ -45,14 +33,14 @@ public:
 	}
 
 	IndexedHeap(IndexedHeap&& other) noexcept {
-		capacity = other.capacity;
-		sz = other.sz;
-		data = other.data;
+		capacity          = other.capacity;
+		sz                = other.sz;
+		data              = other.data;
 		index_to_position = other.index_to_position;
 
-		other.capacity = 0_i;
-		other.sz = 0_i;
-		other.data = nullptr;
+		other.capacity          = 0;
+		other.sz                = 0;
+		other.data              = nullptr;
 		other.index_to_position = nullptr;
 	}
 
@@ -62,7 +50,7 @@ public:
 			delete[] index_to_position;
 
 			capacity = other.capacity;
-			sz = other.sz;
+			sz       = other.sz;
 
 			data = new std::pair<HeapType, int_t>[capacity];
 			std::copy(other.data, other.data + sz, data);
@@ -79,15 +67,15 @@ public:
 			delete[] index_to_position;
 
 			capacity = other.capacity;
-			sz = other.sz;
+			sz       = other.sz;
 
 			index_to_position = other.index_to_position;
-			data = other.data;
+			data              = other.data;
 
-			other.capacity = 0_i;
-			other.sz = 0_i;
+			other.capacity          = 0;
+			other.sz                = 0;
 			other.index_to_position = nullptr;
-			other.data = nullptr;
+			other.data              = nullptr;
 		}
 		return *this;
 	}
@@ -97,15 +85,14 @@ public:
 		delete[] index_to_position;
 	}
 
-protected:
-
+  protected:
 	void siftUp(int_t position) {
-		while (position > 0_i) {
-			int_t parent = (position - 1_i) / 2_i;
+		while (position > 0) {
+			int_t parent = (position - 1) / 2;
 			if (comp(data[position].first, data[parent].first)) {
 				hswap(position, parent);
 				position = parent;
-			} 
+			}
 			else {
 				break;
 			}
@@ -113,9 +100,9 @@ protected:
 	}
 
 	void siftDown(int_t position) {
-		while (position * 2_i + 1_i < sz) {
-			int_t left_child = position * 2_i + 1_i;
-			int_t right_child = position * 2_i + 2_i;
+		while (position * 2 + 1 < sz) {
+			int_t left_child     = position * 2 + 1;
+			int_t right_child    = position * 2 + 2;
 			int_t swap_candidate = left_child;
 			if (right_child < sz && comp(data[right_child].first, data[left_child].first)) {
 				swap_candidate = right_child;
@@ -123,7 +110,7 @@ protected:
 			if (comp(data[swap_candidate].first, data[position].first)) {
 				hswap(position, swap_candidate);
 				position = swap_candidate;
-			} 
+			}
 			else {
 				break;
 			}
@@ -135,21 +122,20 @@ protected:
 		std::swap(index_to_position[data[position1].second], index_to_position[data[position2].second]);
 	}
 
-public:
-
+  public:
 	bool empty() const {
-		return sz == 0_i;
+		return sz == 0;
 	}
 
 	void push(HeapType value, int_t index) {
-		if (index < 0_i || index >= capacity) {
+		if (index < 0 || index >= capacity) {
 			throw std::runtime_error("Incorrect index in .push operation!");
 		}
-		if (index_to_position[index] != -1_i) {
+		if (index_to_position[index] != -1) {
 			changePriority(value, index);
 		}
 		else {
-			data[sz] = std::make_pair(value, index);
+			data[sz]                 = std::make_pair(value, index);
 			index_to_position[index] = sz;
 			siftUp(sz++);
 		}
@@ -159,27 +145,65 @@ public:
 		if (empty()) {
 			throw std::runtime_error("Empty heap!");
 		}
-		return data[0_i];
+		return data[0];
 	}
 
 	std::pair<HeapType, int_t> extract() {
 		if (empty()) {
 			throw std::runtime_error("Empty heap!");
 		}
-		hswap(0_i, sz - 1_i);
+		hswap(0, sz - 1);
 		--sz;
-		siftDown(0_i);
-		index_to_position[data[sz].second] = -1_i;
+		siftDown(0);
+		index_to_position[data[sz].second] = -1;
 		return data[sz];
 	}
 
 	void changePriority(HeapType new_priority, int_t index) {
 		int_t position = index_to_position[index];
-		if (position == -1_i) {
+		if (position == -1) {
 			throw std::runtime_error("No such index in the heap!");
 		}
 		data[position].first = new_priority;
 		siftUp(position);
 		siftDown(position);
+	}
+};
+
+template <typename DataType, typename IndexType,
+          typename Comparator = std::greater<std::pair<DataType, IndexType>> // >=
+          >
+struct IndexedHeap2 {
+
+	std::set<std::pair<DataType, IndexType>, Comparator> data;
+	std::unordered_map<IndexType, DataType> info;
+
+	void insert(DataType V, IndexType id) {
+		if (info.find(id) != info.end()) {
+			throw std::runtime_error("Something went wrong");
+		}
+		info[id] = V;
+		data.insert(std::make_pair(V, id));
+	}
+
+	void change(DataType delta, IndexType id) {
+		if (info.find(id) == info.end()) {
+			return;
+		}
+		DataType was = info[id];
+		data.erase(std::make_pair(was, id));
+		info[id] = was + delta;
+		data.insert(std::make_pair(was + delta, id));
+	}
+
+	std::pair<DataType, IndexType> extract() {
+		auto result = *data.begin();
+		data.erase(data.begin());
+		info.erase(result.second);
+		return result;
+	}
+
+	bool empty() const {
+		return data.empty();
 	}
 };

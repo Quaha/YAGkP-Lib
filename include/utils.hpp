@@ -1,58 +1,87 @@
 #pragma once
 
-#include <vector>
-#include <string>
+#include <algorithm>
+#include <cassert>
+#include <chrono>
+#include <climits>
+#include <cmath>
 #include <filesystem>
+#include <fstream>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <random>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
-#include "types.hpp"
-#include "dynamic_array.hpp"
+using int_t = int;
+using fp_t = double;
 
-inline constexpr real_t EPS = 1e-8;
+enum class Part {
+	First,
+	Second
+};
 
-template <typename T> 
+inline constexpr fp_t EPS = 1e-8;
+
+template <typename T>
 using Vector = std::vector<T>;
 
 using String = std::string;
 
-/*
- * Retrieves all file names in a given folder with the specified extension.
- *
- * This function iterates through all regular files in the specified directory
- * and collects those whose extension matches the given format.
- *
- * Parameters:
- * - folder - the path to the folder to search in				| ex: "../data/"
- * - format - the file extension to filter by (without the dot) | ex: ".mtx"
- * 
- * Returns:
- * - Vector<String> - contains full paths to all matching files | ex: {"../ data/add20.mtx", "../data/add32.mtx"}
- */
+template <typename T>
+class Queue {
+	Vector<T> data;
+	int_t head = 0;
+
+  public:
+	void push(const T& value) {
+		data.push_back(value);
+	}
+	void pop() {
+		++head;
+	}
+	T front() const {
+		return data[head];
+	}
+	bool empty() const {
+		return head >= (int_t)data.size();
+	}
+
+	void reserve(int_t n) {
+		data.reserve(n);
+	}
+	void clear() {
+		data.clear();
+		head = 0;
+	}
+};
+
+// part: current part  | Part::Second
+// returns: other part | Part::First
+inline Part GetOtherPart(Part p) {
+	if (p == Part::First) {
+		return Part::Second;
+	}
+	return Part::First;
+}
+
+
+// folder: path to folder         | "../data/"
+// format: extension with dot     | ".mtx"
+// returns: vector of full paths  | {"../data/add20.mtx", ...}
 Vector<String> GetFileNames(const String& folder, const String& format);
 
-/*
- * Generates a random permutation of integers in the range [0, n - 1].
- *
- * This function creates a sequence of integers from 0 to n - 1
- * and shuffles it using a random number generator based on std::mt19937.
- * 
- * Parameters:
- * - n - the size of the permutation				 | ex: 5
- * 
- * Returns:
- * - Vector<int_t> - contains the shuffled sequence  | ex: {4, 2, 3, 0, 1}
- */
+// n: size of permutation (range [0, n-1])     | 5
+// returns: shuffled vector of integers 0..n-1 | {4, 2, 3, 0, 1}
 Vector<int_t> GetRandomPermutation(int_t n);
 
-/*
- * Generates a random integer number from the range [0, n - 1].
- *
- * This function creates an integer from 0 to n - 1
- * using a random number generator based on std::mt19937.
- *
- * Parameters:
- * - n - the upper bound	   | ex: 5
- *
- * Returns:
- * - int_t - generated number  | ex: 0
- */
+// n: upper bound (exclusive, returns in [0, n-1]) | 5
+// returns: random integer in range [0, n-1]       | 0
 int_t GetRandomInt(int_t n);

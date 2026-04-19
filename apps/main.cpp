@@ -1,43 +1,36 @@
 #include <iostream>
-
-#include "config.hpp"
-
-#include "utils.hpp"
-
-#include "graph.hpp"
-#include "partitioner.hpp"
-#include "metrics.hpp"
+#include <string>
 
 #include "benchmark.hpp"
 
-using namespace std;
+// ./YAGkP_app --graph ../data/add20.mtx --k 4 --algo kahip_strong --output ../benchmark/results/
 
-int main() {
+int main(int argc, char* argv[]) {
 
-    //ProgramStatistics::InitMatchingStatistics();
+	std::string graph_path;
+	std::string algo;
+	std::string output_dir;
+	int k = 0;
 
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+	for (int i = 1; i < argc; i++) {
+		std::string arg = argv[i];
+		if (arg == "--graph" && i + 1 < argc)
+			graph_path = argv[++i];
+		else if (arg == "--k" && i + 1 < argc)
+			k = std::stoi(argv[++i]);
+		else if (arg == "--algo" && i + 1 < argc)
+			algo = argv[++i];
+		else if (arg == "--output" && i + 1 < argc)
+			output_dir = argv[++i];
+	}
 
-    ProgramConfig::coarsening_method = ProgramConfig::CoarseningMethod::HeavyCliqueMatching;
-	ProgramConfig::bipartitioning_method = ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm;
-	ProgramConfig::uncoarsening_method = ProgramConfig::UncoarseningMethod::KernighanLin;
+	if (graph_path.empty() || k == 0 || algo.empty() || output_dir.empty()) {
+		std::cerr << "Usage: YAGkP_app --graph <path> --k <k> --algo <algo> --output <dir>" << std::endl;
+		std::cerr << "Algos: yagkp, kahip_strong, kahip_eco, kahip_fast, metis_kway, metis_recursive, scotch" << std::endl;
+		return 1;
+	}
 
-	ProgramConfig::coarsening_clusterization_prohibition = true;
-	ProgramConfig::coarsening_clusterization_size_factor = 0.9_r;
+	Benchmark::RunSingle(graph_path, k, algo, output_dir);
 
-    ProgramConfig::coarsening_vertix_count_limit = 100_i;
-    ProgramConfig::coarsening_itarations_limit = 40_i;
-
-
-    ProgramConfig::accuracy = 0.050_r;
-
-	ProgramConfig::post_processing_disbalance_fix = true;
-	ProgramConfig::post_processing_improvement = true;
-
-    PrintBenchmark();
-
-    //ProgramStatistics::PrintMatchingStatistics();
-
-    return 0;
+	return 0;
 }

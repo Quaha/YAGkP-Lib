@@ -1,0 +1,9 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureArgs": [],
+    "cmake.buildArgs": ["--parallel"],
+    "cmake.generator": "Ninja",
+    "cmake.debugConfig": {
+        "MIMode": "gdb"
+    }
+}

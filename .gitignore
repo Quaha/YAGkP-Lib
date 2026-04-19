@@ -1,1 +1,5 @@
 build/
+build_profile/
+deps/
+data/
+gmon.out

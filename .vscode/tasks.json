@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clang-format",
+            "type": "shell",
+            "command": "find ${workspaceFolder}/src ${workspaceFolder}/include ${workspaceFolder}/apps -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i"
+        },
+        {
+            "label": "cmake-build",
+            "type": "shell",
+            "command": "bash ${workspaceFolder}/build_linux.sh",
+            "group": "build",
+            "dependsOn": "clang-format",
+            "problemMatcher": "$gcc"
+        }
+    ]
+}

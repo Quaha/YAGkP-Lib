@@ -3,58 +3,17 @@
 #include "matrix.hpp"
 #include "utils.hpp"
 
-#include <map>
-#include <unordered_map>
+struct Graph {
 
-class Partitioner;
-class Coarser;
-class Bipartitioner;
+	int_t n = 0;
+	int_t m = 0;
 
-class PartitionMetrics;
+	int_t total_vertex_weight = 0;
 
-class CoarseTest;
-
-template <typename vw_t, typename ew_t> class GraphTester;
-
-// Graph stored in Compressed Row Storage (CRS/CSR) format.
-// Vertices are numbered starting from 0.
-// 
-// Template parameters:
-//   vw_t — type of vertex weights
-//   ew_t - type of edge weights
-//
-template <typename vw_t, typename ew_t>
-class Graph {
-
-	friend class Partitioner;
-	friend class Coarser;
-	friend class Bipartitioner;
-
-	friend class PartitionMetrics;
-
-	friend class CoarseTest;
-	friend class GraphTester<vw_t, ew_t>;
-
-private:
-	int_t n = 0_i; // Number of vertices
-	int_t m = 0_i; // Number of edges
-
-	// Adjacency list:
-	//   adjncy[xadj[u] .. xadj[u+1]-1] contains neighbors of vertex u.
 	Vector<int_t> adjncy;
-
-	// Row pointer array:
-	//   xadj[u] = index in `adjncy` where adjacency of vertex u begins.
-	//   Size = n + 1, with xadj[n] = m.
 	Vector<int_t> xadj;
-
-	// Vertex weights (size = n).
-	Vector<vw_t> vertex_weights;
-
-	// Edge weights (size = m).
-	Vector<ew_t> edge_weights;
-
-public:
+	Vector<int_t> vertex_weights;
+	Vector<int_t> edge_weights;
 
 	struct AdjacentIterator {
 		const Graph& g;
@@ -64,7 +23,9 @@ public:
 			const Graph& g;
 			int_t pos;
 
-			Iterator(const Graph& g, int_t pos) : g(g), pos(pos) {}
+			Iterator(const Graph& g, int_t pos)
+			    : g(g), pos(pos) {
+			}
 
 			bool operator!=(const Iterator& other) const {
 				return pos != other.pos;
@@ -74,109 +35,28 @@ public:
 				++pos;
 			}
 
-			std::pair<int_t, ew_t> operator*() const {
-				return std::make_pair(g.adjncy[pos], g.edge_weights[pos]);
+			std::pair<int_t, int_t> operator*() const {
+				return {g.adjncy[pos], g.edge_weights[pos]};
 			}
 		};
 
 		Iterator begin() const {
 			return Iterator(g, g.xadj[v]);
 		}
-
 		Iterator end() const {
 			return Iterator(g, g.xadj[v + 1]);
 		}
 	};
 
 	AdjacentIterator operator[](int_t v) const {
-		return AdjacentIterator{ *this, v };
+		return AdjacentIterator{*this, v};
 	}
 
-private:
-	void buildGraph(const spMtx<ew_t>& matrix, bool ignore_eweights) {
-		n = static_cast<int_t>(matrix.m);
-		m = static_cast<int_t>(matrix.nz);
+	Graph();
+	Graph(const spMtx<double>& matrix, bool ignore_eweights = false);
+	Graph(const String& file_name, const String& format, bool ignore_eweights = false);
 
-		adjncy.resize(m);
-		for (int_t i = 0_i; i < m; ++i) {
-			adjncy[i] = static_cast<int_t>(matrix.Col[i]);
-		}
-
-		xadj.resize(n + 1_i);
-		for (int_t i = 0_i; i < n + 1_i; ++i) {
-			xadj[i] = static_cast<int_t>(matrix.Rst[i]);
-		}
-
-		vertex_weights.resize(n);
-		for (int_t i = 0_i; i < n; ++i) {
-			vertex_weights[i] = c<vw_t>(1);
-		}
-
-		edge_weights.resize(m);
-		if (matrix.Val != nullptr && !ignore_eweights) {
-			for (int_t i = 0_i; i < m; ++i) {
-				edge_weights[i] = matrix.Val[i];
-			}
-		}
-		else {
-			for (int_t i = 0_i; i < m; ++i) {
-				edge_weights[i] = c<ew_t>(1);
-			}
-		}
-	}
-
-public:
-
-	Graph() {
-
-	}
-
-	// Requires a matrix corresponding to an undirected graph
-	Graph(const spMtx<ew_t>& matrix, bool ignore_eweights = false) {
-		buildGraph(matrix, ignore_eweights);
-	}
-
-	// Requires a matrix corresponding to an undirected graph
-	Graph(const String& file_name, const String& format, bool ignore_eweights = false) {
-		spMtx<ew_t> matrix(file_name.c_str(), format);
-		buildGraph(matrix, ignore_eweights);
-	}
-
-	Graph(
-		const Vector<vw_t>& vertex_weights,
-		const Vector<std::tuple<int_t, int_t, ew_t>>& edges
-	) {
-		n = static_cast<int_t>(vertex_weights.size());
-		this->vertex_weights = vertex_weights;
-
-		Vector<int_t> degree(n, 0_i);
-		for (auto& [u, v, w] : edges) {
-			degree[u]++;
-			degree[v]++;
-		}
-
-		xadj.resize(n + 1_i, 0_i);
-		for (int_t i = 1_i; i <= n; ++i) {
-			xadj[i] = xadj[i - 1_i] + degree[i - 1_i];
-		}
-
-		m = xadj[n];
-
-		adjncy.resize(m);
-		edge_weights.resize(m);
-
-		Vector<int_t> offset = xadj;
-
-		for (auto& [u, v, w] : edges) {
-			adjncy[offset[u]] = v;
-			edge_weights[offset[u]] = w;
-			++offset[u];
-
-			adjncy[offset[v]] = u;
-			edge_weights[offset[v]] = w;
-			++offset[v];
-		}
-	}
+	void buildGraph(const spMtx<double>& matrix, bool ignore_eweights);
 
 	int_t getVerticesCount() const noexcept {
 		return n;
@@ -186,165 +66,13 @@ public:
 		return m;
 	}
 
-	// This function returns a subgraph of the current graph, where
-	// the vertices were mapped according to the order in vertices.
-	Graph<vw_t, ew_t> selectSubgraph(const Vector<int_t>& vertices) const {
-		Graph<vw_t, ew_t> subgraph;
-
-		std::unordered_map<int_t, int_t> original_to_sub;
-		for (int_t i = 0_i; i < vertices.size(); ++i) {
-			original_to_sub[vertices[i]] = i;
-		}
-
-		subgraph.n = vertices.size();
-
-		subgraph.vertex_weights.resize(subgraph.n);
-		for (int_t i = 0_i; i < vertices.size(); ++i) {
-			subgraph.vertex_weights[i] = vertex_weights[vertices[i]];
-		}
-
-		Vector<bool> is_exist(n, false);
-
-		for (int_t curr_V : vertices) {
-			is_exist[curr_V] = true;
-		}
-
-		for (int_t curr_V = 0_i; curr_V < n; ++curr_V) {
-			for (int_t i = xadj[curr_V]; i < xadj[curr_V + 1_i]; ++i) {
-				int_t next_V = adjncy[i];
-
-				if (is_exist[curr_V] && is_exist[next_V]) {
-					subgraph.m++;
-				}
-			}
-		}
-
-		subgraph.adjncy.resize(subgraph.m);
-		subgraph.edge_weights.resize(subgraph.m);
-
-		subgraph.xadj.resize(subgraph.n + 1_i);
-		subgraph.xadj[0_i] = 0_i;
-
-		int_t edge_pos = 0_i;
-
-		for (int_t i = 0_i; i < vertices.size(); ++i) {
-			int_t curr_V = vertices[i];
-			subgraph.xadj[i + 1_i] = subgraph.xadj[i];
-			for (int_t k = xadj[curr_V]; k < xadj[curr_V + 1_i]; ++k) {
-				int_t next_V = adjncy[k];
-
-				if (is_exist[curr_V] && is_exist[next_V]) {
-
-					int_t j = original_to_sub[next_V];
-
-					ew_t weight = edge_weights[k];
-
-					++subgraph.xadj[i + 1_i];
-					subgraph.adjncy[edge_pos] = j;
-					subgraph.edge_weights[edge_pos] = weight;
-
-					++edge_pos;
-				}
-			}
-		}
-
-		return subgraph;
+	int_t getSumOfVertexWeights() const {
+		return total_vertex_weight;
 	}
 
-	void printEdges() const {
-		for (int_t curr_V = 0_i; curr_V < n; ++curr_V) {
-			for (int_t i = xadj[curr_V]; i < xadj[curr_V + 1_i]; ++i) {
-				int_t next_V = adjncy[i];
-				ew_t w = edge_weights[i];
-				std::cout << curr_V << " " << next_V << " " << w << "\n";
-			}
-		}
-	}
-
-	bool operator==(const Graph<vw_t, ew_t>& other) const {
-		if (n != other.n || m != other.m) {
-			return false;
-		}
-		if (vertex_weights.size() != other.vertex_weights.size()) {
-			return false;
-		}
-		if (xadj.size() != other.xadj.size()) {
-			return false;
-		}
-		if (edge_weights.size() != other.edge_weights.size()) {
-			return false;
-		}
-
-		for (int_t i = 0_i; i < n; ++i) {
-			if ((std::abs(vertex_weights[i] - other.vertex_weights[i]) > EPS)) {
-				return false;
-			}
-		}
-
-		std::map<std::pair<int_t, int_t>, ew_t> edges;
-
-		for (int_t curr_V = 0_i; curr_V < n; ++curr_V) {
-			for (int_t i = xadj[curr_V]; i < xadj[curr_V + 1_i]; ++i) {
-				int_t next_V = adjncy[i];
-				if (curr_V <= next_V) {
-					std::pair<int_t, int_t> key = std::make_pair(curr_V, next_V);
-					edges[key] += edge_weights[i];
-				}
-			}
-		}
-
-		for (int_t curr_V = 0_i; curr_V < other.n; ++curr_V) {
-			for (int_t i = other.xadj[curr_V]; i < other.xadj[curr_V + 1_i]; ++i) {
-				int_t next_V = other.adjncy[i];
-				if (curr_V <= next_V) {
-					std::pair<int_t, int_t> key = { curr_V, next_V };
-					auto it = edges.find(key);
-					if (it == edges.end()) {
-						return false;
-					}
-					it->second -= other.edge_weights[i];
-					if (std::abs(it->second) < EPS) {
-						edges.erase(it);
-					}
-				}
-			}
-		}
-
-		return edges.empty();
-	}
-
-	bool operator!=(const Graph<vw_t, ew_t>& other) const {
-		return !(*this == other);
-	}
-
-	vw_t getSumOfVertexWeights() const {
-		vw_t result = c<vw_t>(0);
-		for (int_t i = 0_i; i < n; ++i) {
-			result += vertex_weights[i];
-		}
-		return result;
-	}
-
-	vw_t getVertexWeight(int_t v) const {
+	int_t getVertexWeight(int_t v) const {
 		return vertex_weights[v];
 	}
-};
 
-template <typename vw_t, typename ew_t>
-struct GraphTester {
-	static const Vector<int_t>& getAdjncy(const Graph<vw_t, ew_t>& g) {
-		return g.adjncy;
-	}
-
-	static const Vector<int_t>& getXadj(const Graph<vw_t, ew_t>& g) {
-		return g.xadj;
-	}
-
-	static const Vector<vw_t>& getVertexWeights(const Graph<vw_t, ew_t>& g) {
-		return g.vertex_weights;
-	}
-
-	static const Vector<vw_t>& getEdgeWeights(const Graph<vw_t, ew_t>& g) {
-		return g.edge_weights;
-	}
+	Graph selectSubgraph(const Vector<int_t>& sub_vertices) const;
 };

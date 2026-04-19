@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "WSL",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/external/matrix",
+                "${workspaceFolder}/external/KaHIP/interface",
+                "${workspaceFolder}/deps/metis/include",
+                "${workspaceFolder}/deps/scotch/include",
+                "${workspaceFolder}/deps/gklib/include"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
