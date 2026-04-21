@@ -83,7 +83,7 @@ namespace Uncoarser {
 			setmax(max_possible_gain, current_possible_gain);
 		}
 
-		{
+		{ // initial balance fixing
 			int_t weight1 = 0;
 			int_t weight2 = 0;
 
@@ -106,7 +106,7 @@ namespace Uncoarser {
 
 			while (weight1 > C1) {
 				auto [gain, curr_V] = heap1.extract();
-				blocked[curr_V] = true;
+				blocked[curr_V]     = true;
 
 				int weight = graph.getVertexWeight(curr_V);
 
@@ -123,7 +123,7 @@ namespace Uncoarser {
 			}
 			while (weight2 > C2) {
 				auto [gain, curr_V] = heap2.extract();
-				blocked[curr_V] = true;
+				blocked[curr_V]     = true;
 
 				int weight = graph.getVertexWeight(curr_V);
 
@@ -220,7 +220,7 @@ namespace Uncoarser {
 						auto [gain1, temp1] = heap1.top();
 						auto [gain2, temp2] = heap2.top();
 
-						if (gain1 >= gain2) {
+						if (weight1 >= weight2) {
 							data       = heap1.extract();
 							int weight = graph.getVertexWeight(data.second);
 							if (weight2 + weight > C2) {
@@ -238,7 +238,7 @@ namespace Uncoarser {
 				}
 
 				auto [gain, curr_V] = data;
-				blocked[curr_V] = true;
+				blocked[curr_V]     = true;
 
 				if (gain < 0) {
 					waste_cnt++;
@@ -264,7 +264,6 @@ namespace Uncoarser {
 				current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
 
 				UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
-
 			}
 
 			while (current_edgecut > current_run_best_edgecut) {
