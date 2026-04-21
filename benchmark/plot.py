@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Построение сгруппированных столбчатых диаграмм по результатам бенчмарка
-графовых разбиений. Для каждой матрицы сохраняется png из двух подграфиков:
-сверху edge cut, снизу время работы (лог-шкала) по алгоритмам и k.
+графовых разбиений. Для каждой матрицы сохраняется отдельная страница в PDF,
+содержащая два подграфика: сверху edge cut, снизу время работы (лог‑шкала).
 
 Формат имени входных файлов: <matrix>.mtx_k<K>.txt,
 где K — число частей (обычно степень двойки: 2, 4, 8, 16, 32, 64).
@@ -13,7 +13,8 @@
     algo  time(ms)  edge_cut  imbalance  max_part  opt_part
 
 Пример запуска:
-    python plot.py  ./results  --out ./plots
+    python plot.py ./results
+    python plot.py ./results --out report.pdf
 """
 
 import argparse
@@ -25,6 +26,7 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backends.backend_pdf import PdfPages
 
 # tight_layout на фигуре с разными yscale у подграфиков выдаёт безобидный
 # UserWarning — для нашего макета он не информативен.
@@ -123,7 +125,8 @@ def _draw_bars(ax, ks, algos, data_by_k, colors, value_key):
     ax.grid(axis='y', linestyle='--', alpha=0.4)
 
 
-def plot_matrix(matrix, meta, data_by_k, out_path):
+def plot_matrix(matrix, meta, data_by_k, pdf):
+    """Построить фигуру для одной матрицы и сохранить страницу в PDF."""
     ks = sorted(data_by_k.keys())
 
     # Устойчивый порядок алгоритмов: в каком порядке впервые встретились.
@@ -170,7 +173,7 @@ def plot_matrix(matrix, meta, data_by_k, out_path):
     fig.suptitle(title, fontsize=13, y=0.995)
 
     fig.tight_layout(rect=(0, 0, 1, 0.96))
-    fig.savefig(out_path, dpi=150)
+    pdf.savefig(fig)          # <--- сохранение в PDF вместо отдельного PNG
     plt.close(fig)
 
 
@@ -180,22 +183,30 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     ap.add_argument('data_dir', help='каталог с файлами *.mtx_k<K>.txt')
-    ap.add_argument('--out', default='plots',
-                    help='каталог для png (по умолчанию ./plots)')
+    ap.add_argument('--out', default='plots.pdf',
+                    help='имя выходного PDF-файла (по умолчанию plots.pdf)')
     args = ap.parse_args()
 
-    os.makedirs(args.out, exist_ok=True)
+    # Если указан каталог без расширения .pdf, делаем в нём plots.pdf
+    out_path = args.out
+    if os.path.isdir(out_path) or not out_path.endswith('.pdf'):
+        out_path = os.path.join(out_path, 'plots.pdf')
+    # Создаём родительский каталог, если нужно
+    os.makedirs(os.path.dirname(out_path) or '.', exist_ok=True)
+
     data = collect(args.data_dir)
     if not data:
         print(f'В каталоге {args.data_dir!r} не найдено подходящих файлов',
               file=sys.stderr)
         sys.exit(1)
 
-    for matrix, (meta, data_by_k) in sorted(data.items()):
-        out_file = os.path.join(args.out, f'{matrix}.png')
-        plot_matrix(matrix, meta, data_by_k, out_file)
-        ks = sorted(data_by_k.keys())
-        print(f'  {matrix}: {out_file}  (k = {ks})')
+    with PdfPages(out_path) as pdf:
+        for matrix, (meta, data_by_k) in sorted(data.items()):
+            ks = sorted(data_by_k.keys())
+            plot_matrix(matrix, meta, data_by_k, pdf)
+            print(f'  {matrix}: добавлена страница в PDF  (k = {ks})')
+
+    print(f'Готово. Результат сохранён в {out_path}')
 
 
 if __name__ == '__main__':

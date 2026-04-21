@@ -1,0 +1,360 @@
+# Graph: 144.mtx  n=144649  m=2148786  k=2 imb=0.05
+yagkp           846         6745          0.00%       72325         72324.50      
+# Graph: 144.mtx  n=144649  m=2148786  k=4 imb=0.05
+yagkp           1577        16665         0.00%       36163         36162.25      
+# Graph: 144.mtx  n=144649  m=2148786  k=8 imb=0.05
+yagkp           2321        30229         0.00%       18082         18081.12      
+# Graph: 144.mtx  n=144649  m=2148786  k=16 imb=0.05
+yagkp           3057        43947         0.02%       9042          9040.56       
+# Graph: 144.mtx  n=144649  m=2148786  k=32 imb=0.05
+yagkp           3914        62842         0.04%       4522          4520.28       
+# Graph: 144.mtx  n=144649  m=2148786  k=64 imb=0.05
+yagkp           4996        88326         0.04%       2261          2260.14       
+# Graph: 3elt.mtx  n=4720  m=27444  k=2 imb=0.05
+yagkp           15          90            0.04%       2361          2360.00       
+# Graph: 3elt.mtx  n=4720  m=27444  k=4 imb=0.05
+yagkp           36          214           0.08%       1181          1180.00       
+# Graph: 3elt.mtx  n=4720  m=27444  k=8 imb=0.05
+yagkp           64          412           0.17%       591           590.00        
+# Graph: 3elt.mtx  n=4720  m=27444  k=16 imb=0.05
+yagkp           105         621           5.42%       311           295.00        
+# Graph: 3elt.mtx  n=4720  m=27444  k=32 imb=0.05
+yagkp           153         1102          5.76%       156           147.50        
+# Graph: 3elt.mtx  n=4720  m=27444  k=64 imb=0.05
+yagkp           200         1707          12.54%      83            73.75         
+# Graph: 598a.mtx  n=110971  m=1483868  k=2 imb=0.05
+yagkp           561         2460          0.00%       55486         55485.50      
+# Graph: 598a.mtx  n=110971  m=1483868  k=4 imb=0.05
+yagkp           1101        8346          0.00%       27743         27742.75      
+# Graph: 598a.mtx  n=110971  m=1483868  k=8 imb=0.05
+yagkp           1613        17447         0.01%       13873         13871.38      
+# Graph: 598a.mtx  n=110971  m=1483868  k=16 imb=0.05
+yagkp           2173        30085         0.02%       6937          6935.69       
+# Graph: 598a.mtx  n=110971  m=1483868  k=32 imb=0.05
+yagkp           2800        44875         0.03%       3469          3467.84       
+# Graph: 598a.mtx  n=110971  m=1483868  k=64 imb=0.05
+yagkp           3813        64062         0.06%       1735          1733.92       
+# Graph: add20.mtx  n=2395  m=14924  k=2 imb=0.05
+yagkp           34          759           0.04%       1198          1197.50       
+# Graph: add20.mtx  n=2395  m=14924  k=4 imb=0.05
+yagkp           70          1255          0.21%       600           598.75        
+# Graph: add20.mtx  n=2395  m=14924  k=8 imb=0.05
+yagkp           102         1808          8.56%       325           299.38        
+# Graph: add20.mtx  n=2395  m=14924  k=16 imb=0.05
+yagkp           137         2394          7.56%       161           149.69        
+# Graph: add20.mtx  n=2395  m=14924  k=32 imb=0.05
+yagkp           165         2937          13.57%      85            74.84         
+# Graph: add20.mtx  n=2395  m=14924  k=64 imb=0.05
+yagkp           189         3407          20.25%      45            37.42         
+# Graph: add32.mtx  n=4960  m=18924  k=2 imb=0.05
+yagkp           14          15            5.48%       2616          2480.00       
+# Graph: add32.mtx  n=4960  m=18924  k=4 imb=0.05
+yagkp           32          36            10.97%      1376          1240.00       
+# Graph: add32.mtx  n=4960  m=18924  k=8 imb=0.05
+yagkp           61          109           16.61%      723           620.00        
+# Graph: add32.mtx  n=4960  m=18924  k=16 imb=0.05
+yagkp           93          177           16.77%      362           310.00        
+# Graph: add32.mtx  n=4960  m=18924  k=32 imb=0.05
+yagkp           139         345           69.03%      262           155.00        
+# Graph: add32.mtx  n=4960  m=18924  k=64 imb=0.05
+yagkp           179         712           66.45%      129           77.50         
+# Graph: auto.mtx  n=448695  m=6629222  k=2 imb=0.05
+yagkp           2847        10568         0.00%       224348        224347.50     
+# Graph: auto.mtx  n=448695  m=6629222  k=4 imb=0.05
+yagkp           5340        28788         0.00%       112175        112173.75     
+# Graph: auto.mtx  n=448695  m=6629222  k=8 imb=0.05
+yagkp           7689        53687         0.00%       56088         56086.88      
+# Graph: auto.mtx  n=448695  m=6629222  k=16 imb=0.05
+yagkp           9984        87874         0.00%       28044         28043.44      
+# Graph: auto.mtx  n=448695  m=6629222  k=32 imb=0.05
+yagkp           12179       134840        0.01%       14023         14021.72      
+# Graph: auto.mtx  n=448695  m=6629222  k=64 imb=0.05
+yagkp           14623       193706        0.02%       7012          7010.86       
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=2 imb=0.05
+yagkp           110         2853          0.00%       6996          6996.00       
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=4 imb=0.05
+yagkp           259         9230          0.00%       3498          3498.00       
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=8 imb=0.05
+yagkp           483         17481         0.06%       1750          1749.00       
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=16 imb=0.05
+yagkp           1005        25936         0.17%       876           874.50        
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=32 imb=0.05
+yagkp           2380        41652         3.83%       454           437.25        
+# Graph: bcsstk29.mtx  n=13992  m=605496  k=64 imb=0.05
+yagkp           3843        60888         8.86%       238           218.62        
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=2 imb=0.05
+yagkp           349         6447          0.00%       14462         14462.00      
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=4 imb=0.05
+yagkp           689         17257         0.00%       7231          7231.00       
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=8 imb=0.05
+yagkp           1163        41041         0.04%       3617          3615.50       
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=16 imb=0.05
+yagkp           2094        79568         3.66%       1874          1807.75       
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=32 imb=0.05
+yagkp           4282        126251        1.78%       920           903.88        
+# Graph: bcsstk30.mtx  n=28924  m=2014568  k=64 imb=0.05
+yagkp           9102        190251        4.00%       470           451.94        
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=2 imb=0.05
+yagkp           238         5270          0.00%       17794         17794.00      
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=4 imb=0.05
+yagkp           489         9910          0.01%       8898          8897.00       
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=8 imb=0.05
+yagkp           757         20187         0.01%       4449          4448.50       
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=16 imb=0.05
+yagkp           1083        28847         3.54%       2303          2224.25       
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=32 imb=0.05
+yagkp           1602        44263         0.08%       1113          1112.12       
+# Graph: bcsstk31.mtx  n=35588  m=1145828  k=64 imb=0.05
+yagkp           2552        66321         4.66%       582           556.06        
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=2 imb=0.05
+yagkp           365         5811          0.00%       22305         22304.50      
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=4 imb=0.05
+yagkp           655         13984         0.01%       11153         11152.25      
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=8 imb=0.05
+yagkp           1027        24619         0.02%       5577          5576.12       
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=16 imb=0.05
+yagkp           1484        43578         2.65%       2862          2788.06       
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=32 imb=0.05
+yagkp           2224        70131         4.45%       1456          1394.03       
+# Graph: bcsstk32.mtx  n=44609  m=1970092  k=64 imb=0.05
+yagkp           3772        105161        3.15%       719           697.02        
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=2 imb=0.05
+yagkp           145         13035         0.02%       4370          4369.00       
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=4 imb=0.05
+yagkp           292         22757         0.02%       2185          2184.50       
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=8 imb=0.05
+yagkp           577         37322         0.07%       1093          1092.25       
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=16 imb=0.05
+yagkp           1195        59649         0.16%       547           546.12        
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=32 imb=0.05
+yagkp           2602        83304         2.54%       280           273.06        
+# Graph: bcsstk33.mtx  n=8738  m=583166  k=64 imb=0.05
+yagkp           3945        116369        5.47%       144           136.53        
+# Graph: brack2.mtx  n=62631  m=733118  k=2 imb=0.05
+yagkp           277         899           0.47%       31462         31315.50      
+# Graph: brack2.mtx  n=62631  m=733118  k=4 imb=0.05
+yagkp           519         3362          0.01%       15659         15657.75      
+# Graph: brack2.mtx  n=62631  m=733118  k=8 imb=0.05
+yagkp           811         7867          0.69%       7883          7828.88       
+# Graph: brack2.mtx  n=62631  m=733118  k=16 imb=0.05
+yagkp           1124        13588         0.76%       3944          3914.44       
+# Graph: brack2.mtx  n=62631  m=733118  k=32 imb=0.05
+yagkp           1512        19901         0.09%       1959          1957.22       
+# Graph: brack2.mtx  n=62631  m=733118  k=64 imb=0.05
+yagkp           2078        28978         4.13%       1019          978.61        
+# Graph: crack.mtx  n=10240  m=60760  k=2 imb=0.05
+yagkp           30          192           0.02%       5121          5120.00       
+# Graph: crack.mtx  n=10240  m=60760  k=4 imb=0.05
+yagkp           69          386           0.04%       2561          2560.00       
+# Graph: crack.mtx  n=10240  m=60760  k=8 imb=0.05
+yagkp           118         749           0.08%       1281          1280.00       
+# Graph: crack.mtx  n=10240  m=60760  k=16 imb=0.05
+yagkp           190         1257          1.72%       651           640.00        
+# Graph: crack.mtx  n=10240  m=60760  k=32 imb=0.05
+yagkp           298         1891          5.63%       338           320.00        
+# Graph: crack.mtx  n=10240  m=60760  k=64 imb=0.05
+yagkp           431         2807          10.62%      177           160.00        
+# Graph: cs4.mtx  n=22499  m=87716  k=2 imb=0.05
+yagkp           67          406           0.00%       11250         11249.50      
+# Graph: cs4.mtx  n=22499  m=87716  k=4 imb=0.05
+yagkp           152         1086          0.02%       5626          5624.75       
+# Graph: cs4.mtx  n=22499  m=87716  k=8 imb=0.05
+yagkp           256         1771          0.02%       2813          2812.38       
+# Graph: cs4.mtx  n=22499  m=87716  k=16 imb=0.05
+yagkp           360         2523          0.20%       1409          1406.19       
+# Graph: cs4.mtx  n=22499  m=87716  k=32 imb=0.05
+yagkp           504         3520          2.40%       720           703.09        
+# Graph: cs4.mtx  n=22499  m=87716  k=64 imb=0.05
+yagkp           691         4713          2.69%       361           351.55        
+# Graph: cti.mtx  n=16840  m=96464  k=2 imb=0.05
+yagkp           61          389           0.00%       8420          8420.00       
+# Graph: cti.mtx  n=16840  m=96464  k=4 imb=0.05
+yagkp           132         1209          0.02%       4211          4210.00       
+# Graph: cti.mtx  n=16840  m=96464  k=8 imb=0.05
+yagkp           220         1958          0.05%       2106          2105.00       
+# Graph: cti.mtx  n=16840  m=96464  k=16 imb=0.05
+yagkp           331         3023          3.28%       1087          1052.50       
+# Graph: cti.mtx  n=16840  m=96464  k=32 imb=0.05
+yagkp           481         4563          0.90%       531           526.25        
+# Graph: cti.mtx  n=16840  m=96464  k=64 imb=0.05
+yagkp           681         6422          5.65%       278           263.12        
+# Graph: data.mtx  n=2851  m=30186  k=2 imb=0.05
+yagkp           16          208           0.04%       1426          1425.50       
+# Graph: data.mtx  n=2851  m=30186  k=4 imb=0.05
+yagkp           45          449           0.18%       714           712.75        
+# Graph: data.mtx  n=2851  m=30186  k=8 imb=0.05
+yagkp           94          784           2.70%       366           356.38        
+# Graph: data.mtx  n=2851  m=30186  k=16 imb=0.05
+yagkp           143         1285          8.87%       194           178.19        
+# Graph: data.mtx  n=2851  m=30186  k=32 imb=0.05
+yagkp           191         2013          16.73%      104           89.09         
+# Graph: data.mtx  n=2851  m=30186  k=64 imb=0.05
+yagkp           236         3096          18.98%      53            44.55         
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=2 imb=0.05
+yagkp           31          130           0.03%       5573          5571.50       
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=4 imb=0.05
+yagkp           68          380           0.01%       2786          2785.75       
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=8 imb=0.05
+yagkp           115         649           3.24%       1438          1392.88       
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=16 imb=0.05
+yagkp           180         1131          1.66%       708           696.44        
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=32 imb=0.05
+yagkp           280         1831          2.23%       356           348.22        
+# Graph: fe_4elt2.mtx  n=11143  m=65636  k=64 imb=0.05
+yagkp           403         2767          16.02%      202           174.11        
+# Graph: fe_body.mtx  n=45087  m=327468  k=2 imb=0.05
+yagkp           127         367           0.00%       22544         22543.50      
+# Graph: fe_body.mtx  n=45087  m=327468  k=4 imb=0.05
+yagkp           253         799           7.95%       12168         11271.75      
+# Graph: fe_body.mtx  n=45087  m=327468  k=8 imb=0.05
+yagkp           382         1519          15.19%      6492          5635.88       
+# Graph: fe_body.mtx  n=45087  m=327468  k=16 imb=0.05
+yagkp           551         2166          19.95%      3380          2817.94       
+# Graph: fe_body.mtx  n=45087  m=327468  k=32 imb=0.05
+yagkp           788         3569          68.56%      2375          1408.97       
+# Graph: fe_body.mtx  n=45087  m=327468  k=64 imb=0.05
+yagkp           1125        5626          66.65%      1174          704.48        
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=2 imb=0.05
+yagkp           452         519           0.00%       71719         71718.50      
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=4 imb=0.05
+yagkp           885         2146          0.46%       36025         35859.25      
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=8 imb=0.05
+yagkp           1322        4779          0.37%       17996         17929.62      
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=16 imb=0.05
+yagkp           1783        9019          0.73%       9030          8964.81       
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=32 imb=0.05
+yagkp           2400        14969         0.04%       4484          4482.41       
+# Graph: fe_ocean.mtx  n=143437  m=819186  k=64 imb=0.05
+yagkp           3104        22913         0.04%       2242          2241.20       
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=2 imb=0.05
+yagkp           485         2126          0.00%       49809         49808.50      
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=4 imb=0.05
+yagkp           993         8380          0.00%       24905         24904.25      
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=8 imb=0.05
+yagkp           1485        14170         0.01%       12453         12452.12      
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=16 imb=0.05
+yagkp           2056        23445         0.02%       6227          6226.06       
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=32 imb=0.05
+yagkp           2772        35404         0.03%       3114          3113.03       
+# Graph: fe_rotor.mtx  n=99617  m=1324862  k=64 imb=0.05
+yagkp           3781        52896         2.47%       1595          1556.52       
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=2 imb=0.05
+yagkp           42          434           0.00%       8193          8193.00       
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=4 imb=0.05
+yagkp           86          846           0.01%       4097          4096.50       
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=8 imb=0.05
+yagkp           137         1323          0.09%       2050          2048.25       
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=16 imb=0.05
+yagkp           199         1998          0.09%       1025          1024.12       
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=32 imb=0.05
+yagkp           294         2878          3.11%       528           512.06        
+# Graph: fe_sphere.mtx  n=16386  m=98304  k=64 imb=0.05
+yagkp           435         4121          5.46%       270           256.03        
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=2 imb=0.05
+yagkp           341         4845          0.00%       39069         39068.00      
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=4 imb=0.05
+yagkp           660         8702          0.00%       19534         19534.00      
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=8 imb=0.05
+yagkp           991         13680         0.01%       9768          9767.00       
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=16 imb=0.05
+yagkp           1412        20955         0.03%       4885          4883.50       
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=32 imb=0.05
+yagkp           1871        28808         0.05%       2443          2441.75       
+# Graph: fe_tooth.mtx  n=78136  m=905182  k=64 imb=0.05
+yagkp           2593        40097         0.09%       1222          1220.88       
+# Graph: finan512.mtx  n=74752  m=522240  k=2 imb=0.05
+yagkp           191         545           5.26%       39342         37376.00      
+# Graph: finan512.mtx  n=74752  m=522240  k=4 imb=0.05
+yagkp           381         324           0.01%       18689         18688.00      
+# Graph: finan512.mtx  n=74752  m=522240  k=8 imb=0.05
+yagkp           648         1736          11.55%      10423         9344.00       
+# Graph: finan512.mtx  n=74752  m=522240  k=16 imb=0.05
+yagkp           1003        3458          10.49%      5162          4672.00       
+# Graph: finan512.mtx  n=74752  m=522240  k=32 imb=0.05
+yagkp           1474        2592          0.04%       2337          2336.00       
+# Graph: finan512.mtx  n=74752  m=522240  k=64 imb=0.05
+yagkp           2153        13226         77.23%      2070          1168.00       
+# Graph: m14b.mtx  n=214765  m=3358036  k=2 imb=0.05
+yagkp           1251        3901          0.00%       107383        107382.50     
+# Graph: m14b.mtx  n=214765  m=3358036  k=4 imb=0.05
+yagkp           2437        13813         0.00%       53692         53691.25      
+# Graph: m14b.mtx  n=214765  m=3358036  k=8 imb=0.05
+yagkp           3541        28267         0.01%       26847         26845.62      
+# Graph: m14b.mtx  n=214765  m=3358036  k=16 imb=0.05
+yagkp           4664        48463         0.01%       13424         13422.81      
+# Graph: m14b.mtx  n=214765  m=3358036  k=32 imb=0.05
+yagkp           5973        75265         0.02%       6713          6711.41       
+# Graph: m14b.mtx  n=214765  m=3358036  k=64 imb=0.05
+yagkp           7627        108804        0.04%       3357          3355.70       
+# Graph: memplus.mtx  n=17758  m=108392  k=2 imb=0.05
+yagkp           149         6278          0.01%       8880          8879.00       
+# Graph: memplus.mtx  n=17758  m=108392  k=4 imb=0.05
+yagkp           261         10040         0.01%       4440          4439.50       
+# Graph: memplus.mtx  n=17758  m=108392  k=8 imb=0.05
+yagkp           412         12546         5.37%       2339          2219.75       
+# Graph: memplus.mtx  n=17758  m=108392  k=16 imb=0.05
+yagkp           494         14678         9.74%       1218          1109.88       
+# Graph: memplus.mtx  n=17758  m=108392  k=32 imb=0.05
+yagkp           655         16449         13.35%      629           554.94        
+# Graph: memplus.mtx  n=17758  m=108392  k=64 imb=0.05
+yagkp           803         18484         18.21%      328           277.47        
+# Graph: t60k.mtx  n=60005  m=178880  k=2 imb=0.05
+yagkp           106         98            0.00%       30003         30002.50      
+# Graph: t60k.mtx  n=60005  m=178880  k=4 imb=0.05
+yagkp           210         284           0.00%       15002         15001.25      
+# Graph: t60k.mtx  n=60005  m=178880  k=8 imb=0.05
+yagkp           320         553           0.03%       7503          7500.62       
+# Graph: t60k.mtx  n=60005  m=178880  k=16 imb=0.05
+yagkp           448         976           3.91%       3897          3750.31       
+# Graph: t60k.mtx  n=60005  m=178880  k=32 imb=0.05
+yagkp           603         1643          1.91%       1911          1875.16       
+# Graph: t60k.mtx  n=60005  m=178880  k=64 imb=0.05
+yagkp           806         2501          3.88%       974           937.58        
+# Graph: uk.mtx  n=4824  m=13674  k=2 imb=0.05
+yagkp           13          29            0.83%       2432          2412.00       
+# Graph: uk.mtx  n=4824  m=13674  k=4 imb=0.05
+yagkp           30          58            5.72%       1275          1206.00       
+# Graph: uk.mtx  n=4824  m=13674  k=8 imb=0.05
+yagkp           54          111           3.81%       626           603.00        
+# Graph: uk.mtx  n=4824  m=13674  k=16 imb=0.05
+yagkp           80          191           9.78%       331           301.50        
+# Graph: uk.mtx  n=4824  m=13674  k=32 imb=0.05
+yagkp           108         312           18.08%      178           150.75        
+# Graph: uk.mtx  n=4824  m=13674  k=64 imb=0.05
+yagkp           135         516           59.20%      120           75.38         
+# Graph: vibrobox.mtx  n=12328  m=330500  k=2 imb=0.05
+yagkp           174         11567         0.02%       6165          6164.00       
+# Graph: vibrobox.mtx  n=12328  m=330500  k=4 imb=0.05
+yagkp           360         22502         0.03%       3083          3082.00       
+# Graph: vibrobox.mtx  n=12328  m=330500  k=8 imb=0.05
+yagkp           592         32958         0.06%       1542          1541.00       
+# Graph: vibrobox.mtx  n=12328  m=330500  k=16 imb=0.05
+yagkp           880         40186         4.74%       807           770.50        
+# Graph: vibrobox.mtx  n=12328  m=330500  k=32 imb=0.05
+yagkp           1463        45952         1.75%       392           385.25        
+# Graph: vibrobox.mtx  n=12328  m=330500  k=64 imb=0.05
+yagkp           2258        55075         5.91%       204           192.62        
+# Graph: whitaker3.mtx  n=9800  m=57978  k=2 imb=0.05
+yagkp           27          133           0.02%       4901          4900.00       
+# Graph: whitaker3.mtx  n=9800  m=57978  k=4 imb=0.05
+yagkp           61          400           0.04%       2451          2450.00       
+# Graph: whitaker3.mtx  n=9800  m=57978  k=8 imb=0.05
+yagkp           100         767           0.08%       1226          1225.00       
+# Graph: whitaker3.mtx  n=9800  m=57978  k=16 imb=0.05
+yagkp           158         1212          1.22%       620           612.50        
+# Graph: whitaker3.mtx  n=9800  m=57978  k=32 imb=0.05
+yagkp           247         1834          5.47%       323           306.25        
+# Graph: whitaker3.mtx  n=9800  m=57978  k=64 imb=0.05
+yagkp           350         2777          11.02%      170           153.12        
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=2 imb=0.05
+yagkp           72          1837          0.01%       5469          5468.50       
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=4 imb=0.05
+yagkp           155         3778          0.03%       2735          2734.25       
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=8 imb=0.05
+yagkp           266         6007          3.28%       1412          1367.12       
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=16 imb=0.05
+yagkp           426         9115          0.06%       684           683.56        
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=32 imb=0.05
+yagkp           690         13006         0.36%       343           341.78        
+# Graph: wing_nodal.mtx  n=10937  m=150976  k=64 imb=0.05
+yagkp           1056        17691         8.84%       186           170.89        

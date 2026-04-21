@@ -63,18 +63,18 @@ class Queue {
 	}
 };
 
-template<typename T>
+template <typename T>
 void setmax(T& a, T b) {
-    if (b > a) {
-        a = b;
-    }
+	if (b > a) {
+		a = b;
+	}
 }
 
-template<typename T>
+template <typename T>
 void setmin(T& a, T b) {
-    if (b < a) {
-        a = b;
-    }
+	if (b < a) {
+		a = b;
+	}
 }
 
 // part: current part  | Part::Second

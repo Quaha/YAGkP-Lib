@@ -7,9 +7,21 @@ namespace Partitioner {
 
 		const int M = std::max(int_t(opt_part_value * (1.0 + ProgramConfig::imbalance) + EPS), int_t(std::ceil(opt_part_value + EPS))); // max part weight
 
-		Vector<int_t> partition = RecursivePartition(graph, k, M, 0);
+		int_t best_edgecut = std::numeric_limits<int_t>::max();
+		Vector<int_t> best_partition;
 
-		return partition;
+		for (int_t i = 0; i < ProgramConfig::runs; ++i) {
+			Vector<int_t> partition = RecursivePartition(graph, k, M, 0);
+
+			int_t edgecut = PartitionMetrics::GetEdgeCut(graph, partition);
+
+			if (edgecut < best_edgecut) {
+				best_edgecut   = edgecut;
+				best_partition = partition;
+			}
+		}
+
+		return best_partition;
 	}
 
 	Vector<int_t> RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset) {

@@ -25,6 +25,7 @@ struct ProgramConfig {
 
 	// --- Global parameters ---
 	inline static fp_t imbalance = 0.05;
+	inline static int_t runs     = 3;
 
 	// --- Coarsening parameters ---
 	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
@@ -38,18 +39,12 @@ struct ProgramConfig {
 	// --- Bipartitioning parameters ---
 	inline static BipartitioningMethod bipartitioning_method = BipartitioningMethod::GreedyGraphGrowingAlgorithm;
 
-	inline static int_t bipartitioning_GraphGrowingAlgorithm_launches_count       = 100;
-	inline static int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 100;
+	inline static int_t bipartitioning_GraphGrowingAlgorithm_launches_count       = 50;
+	inline static int_t bipartitioning_GreedyGraphGrowingAlgorithm_launches_count = 50;
 
 	// --- Uncoarsening parameters ---
 	inline static UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;
 
-	inline static int_t uncoarsening_KernighanLin_runs        = 3;
-	inline static int_t uncoarsening_KernighanLin_waste_limit = 50;
-
-	// --- Post processing parameters ---
-
-	// Correctness is guaranteed only for graphs with vertex weights equal to 1
-	inline static bool post_processing_imbalance_fix = false;
-	inline static bool post_processing_improvement   = false;
+	inline static int_t uncoarsening_KernighanLin_runs        = 5;
+	inline static int_t uncoarsening_KernighanLin_waste_limit = 100;
 };
