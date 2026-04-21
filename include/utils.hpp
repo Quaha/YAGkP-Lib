@@ -21,7 +21,7 @@
 #include <vector>
 
 using int_t = int;
-using fp_t = double;
+using fp_t  = double;
 
 enum class Part {
 	First,
@@ -63,6 +63,20 @@ class Queue {
 	}
 };
 
+template<typename T>
+void setmax(T& a, T b) {
+    if (b > a) {
+        a = b;
+    }
+}
+
+template<typename T>
+void setmin(T& a, T b) {
+    if (b < a) {
+        a = b;
+    }
+}
+
 // part: current part  | Part::Second
 // returns: other part | Part::First
 inline Part GetOtherPart(Part p) {
@@ -71,7 +85,6 @@ inline Part GetOtherPart(Part p) {
 	}
 	return Part::First;
 }
-
 
 // folder: path to folder         | "../data/"
 // format: extension with dot     | ".mtx"

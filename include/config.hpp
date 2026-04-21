@@ -32,7 +32,7 @@ struct ProgramConfig {
 	inline static int_t coarsening_iterations_limit   = 40;
 	inline static int_t coarsening_vertex_count_limit = 500;
 
-	inline static bool coarsening_clusterization_prohibition   = false;
+	inline static bool coarsening_clusterization_prohibition = false;
 	inline static fp_t coarsening_clusterization_size_factor = 0.5;
 
 	// --- Bipartitioning parameters ---

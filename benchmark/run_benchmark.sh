@@ -15,7 +15,8 @@ CACHE_DIR="$ROOT_DIR/data/cache"
 OUTPUT_DIR="$SCRIPT_DIR/results"
 GRAPHS_FILE="$ROOT_DIR/benchmark/graphs.txt"
 
-ALGOS=("yagkp" "kahip_strong" "kahip_eco" "kahip_fast" "metis_kway" "metis_recursive" "scotch")
+ALGOS=("yagkp")
+#ALGOS=("yagkp" "kahip_strong" "kahip_eco" "kahip_fast" "metis_kway" "metis_recursive" "scotch")
 KS=(2 4 8 16 32 64)
 
 mkdir -p "$DATA_DIR" "$CACHE_DIR" "$OUTPUT_DIR"

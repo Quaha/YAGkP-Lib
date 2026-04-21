@@ -197,8 +197,8 @@ namespace Coarser {
 					continue;
 				if (matching[next_V] == -1) {
 					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] + level.coarsened_graph.vertex_weights[next_V];
-					fp_t F       = fp_t(w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
-					          fp_t(total_W * (total_W - 1));
+					fp_t F        = fp_t(w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
+					         fp_t(total_W * (total_W - 1));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;

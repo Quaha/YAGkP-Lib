@@ -4,7 +4,6 @@
 #include "coarsening.hpp"
 #include "graph.hpp"
 #include "metrics.hpp"
-#include "post_processing.hpp"
 #include "uncoarsening.hpp"
 #include "utils.hpp"
 
@@ -18,5 +17,5 @@ namespace Partitioner {
 	// k: number of parts for this recursive call (k >= 1)  | 2
 	// offset: starting index for parts in this call        | 2
 	// returns: vector of part indices (offset..offset+k-1) | {2, 2, 3, 3}
-	Vector<int_t> RecursivePartition(const Graph& graph, const int_t k, int_t offset = 0);
+	Vector<int_t> RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset);
 } // namespace Partitioner

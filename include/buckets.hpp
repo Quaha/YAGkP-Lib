@@ -33,33 +33,33 @@ class BucketPQ {
 		nodes[id].prev = -1;
 		if (buckets[idx] != -1) {
 			nodes[buckets[idx]].prev = id;
-        }
+		}
 		buckets[idx] = id;
 
 		if (max_gain < gain) {
 			max_gain = gain;
-        }
+		}
 		n_nodes++;
 	}
 
-	void change(int_t delta, int_t id) {
+	void add(int_t delta, int_t id) {
 		if (gain_value[id] < min_gain) {
 			return;
-        }
+		}
 
 		int_t old_gain = gain_value[id];
 		int_t old_idx  = old_gain - min_gain;
 
 		if (nodes[id].prev != -1) {
 			nodes[nodes[id].prev].next = nodes[id].next;
-        }
+		}
 		else {
 			buckets[old_idx] = nodes[id].next;
-        }
+		}
 
 		if (nodes[id].next != -1) {
 			nodes[nodes[id].next].prev = nodes[id].prev;
-        }
+		}
 
 		int_t new_gain = old_gain + delta;
 		int_t new_idx  = new_gain - min_gain;
@@ -69,17 +69,17 @@ class BucketPQ {
 		nodes[id].prev = -1;
 		if (buckets[new_idx] != -1) {
 			nodes[buckets[new_idx]].prev = id;
-        }
+		}
 		buckets[new_idx] = id;
 
 		if (new_gain > max_gain) {
 			max_gain = new_gain;
-        }
+		}
 		else if (old_gain == max_gain && buckets[old_idx] == -1) {
 			while (buckets[max_gain - min_gain] == -1) {
-                max_gain--;
-            }
-        }
+				max_gain--;
+			}
+		}
 	}
 
 	std::pair<int_t, int_t> extract() {
@@ -90,7 +90,7 @@ class BucketPQ {
 		buckets[idx] = nodes[id].next;
 		if (nodes[id].next != -1) {
 			nodes[nodes[id].next].prev = -1;
-        }
+		}
 
 		gain_value[id] = min_gain - 1;
 		n_nodes--;
@@ -98,13 +98,19 @@ class BucketPQ {
 		if (n_nodes > 0) {
 			while (buckets[max_gain - min_gain] == -1) {
 				max_gain--;
-            }
+			}
 		}
 		else {
 			max_gain = min_gain;
 		}
 
 		return {gain, id};
+	}
+
+	std::pair<int_t, int_t> top() const {
+		int_t idx = max_gain - min_gain;
+		int_t id  = buckets[idx];
+		return {gain_value[id], id};
 	}
 
 	bool empty() const {

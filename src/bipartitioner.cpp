@@ -1,14 +1,16 @@
 #include "bipartitioner.hpp"
 
+#include <iostream>
+
 namespace Bipartitioner {
 
-	Vector<Part> GetGraphBipartition(const Graph& graph) {
+	Vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
 		switch (ProgramConfig::bipartitioning_method) {
 		case (ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm):
 			return GraphGrowingAlgorithm(graph);
 
 		case (ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm):
-			return GreedyGraphGrowingAlgorithm(graph);
+			return GreedyGraphGrowingAlgorithm(graph, C1, C2);
 
 		default:
 			throw std::logic_error("Unknown processing method");
@@ -78,20 +80,15 @@ namespace Bipartitioner {
 		return best_partition;
 	}
 
-	Vector<Part> GreedyGraphGrowingAlgorithm(const Graph& graph) {
+	Vector<Part> GreedyGraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
 		const int_t n = graph.n;
 
-		int_t ideal_weight = graph.getSumOfVertexWeights() / 2;
-		int_t max_allowed  = (ProgramConfig::imbalance + 1.0) * ideal_weight;
-
 		Vector<Part> best_partition;
-		int_t best_edge_cut;
-
-		bool found = false;
+		int_t best_edge_cut = std::numeric_limits<int_t>::max();
 
 		for (int_t i = 0; i < ProgramConfig::bipartitioning_GreedyGraphGrowingAlgorithm_launches_count; ++i) {
 
-			Vector<Part> partition(n, Part::First);
+			Vector<Part> partition(n, Part::Second);
 			Vector<bool> blocked(n, false);
 
 			int_t current_weight = 0;
@@ -104,15 +101,17 @@ namespace Bipartitioner {
 				flag = false;
 
 				for (int_t V: order) {
-					if (!blocked[V] && graph.getVertexWeight(V) + current_weight <= max_allowed) {
+					if (!blocked[V] && graph.getVertexWeight(V) + current_weight <= C1) {
 						flag         = true;
-						partition[V] = Part::Second;
-						blocked[V]   = true;
+						partition[V] = Part::First;
+
+						blocked[V] = true;
+						current_weight += graph.getVertexWeight(V);
 
 						for (auto [next_V, w1]: graph[V]) {
 							int_t gain = -w1;
 							for (auto [near_V, w2]: graph[next_V]) {
-								if (partition[near_V] == Part::First) {
+								if (partition[near_V] == Part::Second) {
 									gain += w2;
 								}
 							}
@@ -128,13 +127,13 @@ namespace Bipartitioner {
 
 					blocked[curr_V] = true;
 
-					if (current_weight + graph.vertex_weights[curr_V] > max_allowed) {
+					if (current_weight + graph.vertex_weights[curr_V] > C1) {
 						continue;
 					}
 
 					current_weight += graph.vertex_weights[curr_V];
 
-					partition[curr_V] = Part::Second;
+					partition[curr_V] = Part::First;
 					for (auto [next_V, w1]: graph[curr_V]) {
 						if (blocked[next_V])
 							continue;
@@ -142,7 +141,7 @@ namespace Bipartitioner {
 						int_t gain = 0;
 
 						for (auto [near_V, w2]: graph[next_V]) {
-							if (partition[near_V] == Part::First) {
+							if (partition[near_V] == Part::Second) {
 								gain += w2;
 							}
 							else {
@@ -157,12 +156,12 @@ namespace Bipartitioner {
 
 			int_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
 
-			if (!found || edge_cut < best_edge_cut) {
-				found          = true;
+			if (edge_cut < best_edge_cut) {
 				best_partition = partition;
 				best_edge_cut  = edge_cut;
 			}
 		}
+
 		return best_partition;
 	}
 } // namespace Bipartitioner

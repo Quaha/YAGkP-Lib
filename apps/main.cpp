@@ -14,14 +14,18 @@ int main(int argc, char* argv[]) {
 
 	for (int i = 1; i < argc; i++) {
 		std::string arg = argv[i];
-		if (arg == "--graph" && i + 1 < argc)
+		if (arg == "--graph" && i + 1 < argc) {
 			graph_path = argv[++i];
-		else if (arg == "--k" && i + 1 < argc)
+		}
+		else if (arg == "--k" && i + 1 < argc) {
 			k = std::stoi(argv[++i]);
-		else if (arg == "--algo" && i + 1 < argc)
+		}
+		else if (arg == "--algo" && i + 1 < argc) {
 			algo = argv[++i];
-		else if (arg == "--output" && i + 1 < argc)
+		}
+		else if (arg == "--output" && i + 1 < argc) {
 			output_dir = argv[++i];
+		}
 	}
 
 	if (graph_path.empty() || k == 0 || algo.empty() || output_dir.empty()) {

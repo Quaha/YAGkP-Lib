@@ -4,7 +4,7 @@
 
 namespace Uncoarser {
 
-	Vector<Part> RestorePartition(const Vector<CoarseLevel>& levels, Vector<Part> partition) {
+	Vector<Part> RestorePartition(const Vector<CoarseLevel>& levels, Vector<Part> partition, const int_t C1, const int_t C2) {
 		switch (ProgramConfig::uncoarsening_method) {
 		case ProgramConfig::UncoarseningMethod::DirectMapping:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
@@ -14,7 +14,7 @@ namespace Uncoarser {
 
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
-				partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition);
+				partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition, C1, C2);
 			}
 			break;
 
@@ -36,33 +36,28 @@ namespace Uncoarser {
 		return prev_partition;
 	}
 
-	Vector<Part> KernighanLinBlocking(const Graph& previous_graph, Vector<Part> current_partition) {
-		int_t n               = previous_graph.n;
-		int_t current_edgecut = PartitionMetrics::GetEdgeCut(previous_graph, current_partition);
+	Vector<Part> KernighanLinBlocking(const Graph& graph, Vector<Part> current_partition,
+	                                  const int_t C1, const int_t C2) {
+		int_t n               = graph.n;
 
-		Vector<Part> best_partition = current_partition;
-		int_t best_edgecut          = current_edgecut;
-
-		int_t max_edge_sum = 0;
+		int_t max_possible_gain = 0;
 		for (int_t curr_V = 0; curr_V < n; curr_V++) {
-			int_t sum = 0;
-			for (auto [next_V, w] : previous_graph[curr_V]) {
-				sum += w;
+			int_t current_possible_gain = 0;
+			for (auto [next_V, w]: graph[curr_V]) {
+				current_possible_gain += w;
 			}
-			max_edge_sum = std::max(max_edge_sum, sum);
+			setmax(max_possible_gain, current_possible_gain);
 		}
 
-
-		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs; run_number++) {
-
+		{
 			int_t weight1 = 0;
 			int_t weight2 = 0;
 
-			BucketPQ heap1(n, -max_edge_sum, max_edge_sum);
-			BucketPQ heap2(n, -max_edge_sum, max_edge_sum);
+			BucketPQ heap1(n, -max_possible_gain, max_possible_gain);
+			BucketPQ heap2(n, -max_possible_gain, max_possible_gain);
 			for (int_t curr_V = 0; curr_V < n; curr_V++) {
 				int_t gain = 0;
-				for (auto [next_V, w]: previous_graph[curr_V]) {
+				for (auto [next_V, w]: graph[curr_V]) {
 					if (current_partition[curr_V] != current_partition[next_V]) {
 						gain += w;
 					}
@@ -72,11 +67,77 @@ namespace Uncoarser {
 				}
 				if (current_partition[curr_V] == Part::First) {
 					heap1.insert(gain, curr_V);
-					weight1 += previous_graph.getVertexWeight(curr_V);
+					weight1 += graph.getVertexWeight(curr_V);
 				}
 				else {
 					heap2.insert(gain, curr_V);
-					weight2 += previous_graph.getVertexWeight(curr_V);
+					weight2 += graph.getVertexWeight(curr_V);
+				}
+			}
+
+			while (weight1 > C1) {
+				auto [gain, curr_V] = heap1.extract();
+
+				int weight = graph.getVertexWeight(curr_V);
+
+				if (weight + weight2 <= C2) {
+					weight1 -= weight;
+					weight2 += weight;
+
+					current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
+
+				}
+				else {
+					break;
+				}
+
+			}
+			while (weight2 > C2) {
+				auto [gain, curr_V] = heap2.extract();
+
+				int weight = graph.getVertexWeight(curr_V);
+
+				if (weight + weight1 <= C1) {
+					weight2 -= weight;
+					weight1 += weight;
+
+					current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
+				}
+				else {
+					break;
+				}
+			}
+		}
+		
+		int_t current_edgecut = PartitionMetrics::GetEdgeCut(graph, current_partition);
+
+		Vector<Part> best_partition = current_partition;
+		int_t best_edgecut          = current_edgecut;
+
+		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs; run_number++) {
+
+			int_t weight1 = 0;
+			int_t weight2 = 0;
+
+			BucketPQ heap1(n, -max_possible_gain, max_possible_gain);
+			BucketPQ heap2(n, -max_possible_gain, max_possible_gain);
+			for (int_t curr_V = 0; curr_V < n; curr_V++) {
+				int_t gain = 0;
+				for (auto [next_V, w]: graph[curr_V]) {
+					if (current_partition[curr_V] != current_partition[next_V]) {
+						gain += w;
+					}
+					else {
+						gain -= w;
+					}
+				}
+				if (current_partition[curr_V] == Part::First) {
+					heap1.insert(gain, curr_V);
+					weight1 += graph.getVertexWeight(curr_V);
+				}
+				else {
+					heap2.insert(gain, curr_V);
+					weight2 += graph.getVertexWeight(curr_V);
 				}
 			}
 
@@ -90,17 +151,66 @@ namespace Uncoarser {
 			while (waste_cnt < ProgramConfig::uncoarsening_KernighanLin_waste_limit) {
 
 				std::pair<int_t, int_t> data;
-				if (weight1 > weight2) {
+				if (weight1 > C1) {
 					if (heap1.empty()) {
 						break;
 					}
 					data = heap1.extract();
+
+					int weight = graph.getVertexWeight(data.second);
+					if (weight2 + weight > C2) {
+						continue;
+					}
 				}
-				else {
+				else if (weight2 > C2) {
 					if (heap2.empty()) {
 						break;
 					}
 					data = heap2.extract();
+
+					int weight = graph.getVertexWeight(data.second);
+					if (weight1 + weight > C1) {
+						continue;
+					}
+				}
+				else {
+					if (heap1.empty() && heap2.empty()) {
+						break;
+					}
+					else if (heap1.empty()) {
+						data = heap2.extract();
+						int weight = graph.getVertexWeight(data.second);
+						if (weight1 + weight > C1) {
+							continue;
+						}
+					}
+					else if (heap2.empty()) {
+						data = heap1.extract();
+						int weight = graph.getVertexWeight(data.second);
+						if (weight2 + weight > C2) {
+							continue;
+						}
+					}
+					else {
+						auto [gain1, temp1] = heap1.top();
+						auto [gain2, temp2] = heap2.top();
+
+						if (gain1 >= gain2) {
+							data = heap1.extract();
+							int weight = graph.getVertexWeight(data.second);
+							if (weight2 + weight > C2) {
+								continue;
+							}
+						}
+						else {
+							data = heap2.extract();
+							int weight = graph.getVertexWeight(data.second);
+							if (weight1 + weight > C1) {
+								continue;
+							}
+						}
+
+					}
 				}
 
 				auto [gain, curr_V] = data;
@@ -116,26 +226,26 @@ namespace Uncoarser {
 				vertices.push_back(curr_V);
 
 				current_edgecut -= gain;
-				current_run_best_edgecut = std::min(current_run_best_edgecut, current_edgecut);
+				setmin(current_run_best_edgecut, current_edgecut);
 
-				for (auto [next_V, w]: previous_graph[curr_V]) {
+				for (auto [next_V, w]: graph[curr_V]) {
 					if (current_partition[curr_V] == current_partition[next_V]) {
-						heap1.change(2 * w, next_V);
-						heap2.change(2 * w, next_V);
+						heap1.add(2 * w, next_V);
+						heap2.add(2 * w, next_V);
 					}
 					else {
-						heap1.change(-2 * w, next_V);
-						heap2.change(-2 * w, next_V);
+						heap1.add(-2 * w, next_V);
+						heap2.add(-2 * w, next_V);
 					}
 				}
 
 				if (current_partition[curr_V] == Part::First) {
-					weight1 -= previous_graph.getVertexWeight(curr_V);
-					weight2 += previous_graph.getVertexWeight(curr_V);
+					weight1 -= graph.getVertexWeight(curr_V);
+					weight2 += graph.getVertexWeight(curr_V);
 				}
 				else {
-					weight1 += previous_graph.getVertexWeight(curr_V);
-					weight2 -= previous_graph.getVertexWeight(curr_V);
+					weight1 += graph.getVertexWeight(curr_V);
+					weight2 -= graph.getVertexWeight(curr_V);
 				}
 				current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
 			}
@@ -160,7 +270,7 @@ namespace Uncoarser {
 	}
 
 	Vector<Part> KernighanLinBlocking(const Graph& previous_graph, const CoarseLevel& coarse_level,
-	                                  const Vector<Part>& coarse_partition) {
-		return KernighanLinBlocking(previous_graph, DirectMapping(coarse_level, coarse_partition));
+	                                  const Vector<Part>& coarse_partition, const int_t C1, const int_t C2) {
+		return KernighanLinBlocking(previous_graph, DirectMapping(coarse_level, coarse_partition), C1, C2);
 	}
 } // namespace Uncoarser
