@@ -25,7 +25,7 @@ struct ProgramConfig {
 
 	// --- Global parameters ---
 	inline static fp_t imbalance = 0.05;
-	inline static int_t runs     = 3;
+	inline static int_t runs     = 2;
 
 	// --- Coarsening parameters ---
 	inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;

@@ -104,7 +104,7 @@ namespace Uncoarser {
 				}
 			}
 
-			while (weight1 > C1) {
+			while (weight1 > C1 && !heap1.empty()) {
 				auto [gain, curr_V] = heap1.extract();
 				blocked[curr_V]     = true;
 
@@ -117,11 +117,8 @@ namespace Uncoarser {
 					current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
 					UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
 				}
-				else {
-					break;
-				}
 			}
-			while (weight2 > C2) {
+			while (weight2 > C2 && !heap2.empty()) {
 				auto [gain, curr_V] = heap2.extract();
 				blocked[curr_V]     = true;
 
@@ -133,9 +130,6 @@ namespace Uncoarser {
 
 					current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
 					UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
-				}
-				else {
-					break;
 				}
 			}
 		}
@@ -217,23 +211,36 @@ namespace Uncoarser {
 						}
 					}
 					else {
-						auto [gain1, temp1] = heap1.top();
-						auto [gain2, temp2] = heap2.top();
+						auto [gain1, V1] = heap1.top();
+						auto [gain2, V2] = heap2.top();
 
-						if (weight1 >= weight2) {
-							data       = heap1.extract();
-							int weight = graph.getVertexWeight(data.second);
-							if (weight2 + weight > C2) {
-								continue;
-							}
+						int_t vertex_weight1 = graph.getVertexWeight(V1);
+						int_t vertex_weight2 = graph.getVertexWeight(V2);
+
+						if (vertex_weight1 + weight2 > C2 && vertex_weight2 + weight1 > C1) {
+							heap1.extract();
+							heap2.extract();
+
+							blocked[V1] = true;
+							blocked[V2] = true;
+
+							continue;
+						}
+						else if (vertex_weight1 + weight2 > C2) {
+							data = heap2.extract();
+						}
+						else if (vertex_weight2 + weight1 > C1) {
+							data = heap1.extract();
 						}
 						else {
-							data       = heap2.extract();
-							int weight = graph.getVertexWeight(data.second);
-							if (weight1 + weight > C1) {
-								continue;
+							if (C1 - weight1 <= C2 - weight2) {
+								data       = heap1.extract();
+							}
+							else {
+								data       = heap2.extract();
 							}
 						}
+
 					}
 				}
 

@@ -20,7 +20,7 @@ namespace Coarser {
 		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertex_importance});
 
 		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit &&
-		                  levels[i].coarsened_graph.n > ProgramConfig::coarsening_vertex_count_limit;
+		                  levels[i].coarsened_graph.n > std::max(2, std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2));
 		     ++i) {
 
 			CoarseLevel new_level;
