@@ -99,3 +99,5 @@ Vector<int_t> GetRandomPermutation(int_t n);
 // n: upper bound (exclusive, returns in [0, n-1]) | 5
 // returns: random integer in range [0, n-1]       | 0
 int_t GetRandomInt(int_t n);
+
+std::pair<int_t, int_t> GetDifferentRandomInts(int_t n);

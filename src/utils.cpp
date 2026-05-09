@@ -28,3 +28,15 @@ int_t GetRandomInt(int_t n) {
 	std::uniform_int_distribution<int_t> dist(0, n - 1);
 	return dist(rng);
 }
+
+std::pair<int_t, int_t> GetDifferentRandomInts(int_t n) {
+	std::uniform_int_distribution<int_t> dist(0, n - 1);
+	int_t v1 = dist(rng);
+	int_t v2;
+
+	do {
+		v2 = dist(rng);
+	} while(v2 == v1);
+
+	return std::make_pair(v1, v2);
+}
