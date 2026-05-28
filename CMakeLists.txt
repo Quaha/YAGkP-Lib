@@ -105,3 +105,12 @@ endif()
 # =============================================================================
 add_executable(${PROJECT_NAME}_app apps/main.cpp)
 target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)
+
+# =============================================================================
+# Tests (opt-in)
+# =============================================================================
+option(BUILD_TESTING "Build unit tests" ON)
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

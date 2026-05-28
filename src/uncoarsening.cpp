@@ -49,7 +49,7 @@ namespace Uncoarser {
 		return gain;
 	}
 
-	inline void UpdateNearGains(int_t V, const Graph& graph, const Vector<Part>& partition, const Vector<bool>& blocked, BucketPQ& heap1, BucketPQ& heap2) {
+	inline void UpdateNearGains(int_t V, const Graph& graph, const Vector<Part>& partition, const Vector<bool>& blocked, BucketPriorityQueue& heap1, BucketPriorityQueue& heap2) {
 		for (auto [near_V, w]: graph[V]) {
 			if (blocked[near_V]) {
 				continue;
@@ -89,8 +89,8 @@ namespace Uncoarser {
 
 			Vector<bool> blocked(n, false);
 
-			BucketPQ heap1(n, -max_possible_gain, max_possible_gain);
-			BucketPQ heap2(n, -max_possible_gain, max_possible_gain);
+			BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
+			BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
 			for (int_t curr_V = 0; curr_V < n; curr_V++) {
 				int_t gain = GetGain(curr_V, graph, current_partition);
 
@@ -146,8 +146,8 @@ namespace Uncoarser {
 
 			Vector<bool> blocked(n, false);
 
-			BucketPQ heap1(n, -max_possible_gain, max_possible_gain);
-			BucketPQ heap2(n, -max_possible_gain, max_possible_gain);
+			BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
+			BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
 			for (int_t curr_V = 0; curr_V < n; curr_V++) {
 				int_t gain = GetGain(curr_V, graph, current_partition);
 				if (current_partition[curr_V] == Part::First) {

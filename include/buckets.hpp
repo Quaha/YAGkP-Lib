@@ -2,7 +2,7 @@
 
 #include "utils.hpp"
 
-class BucketPQ {
+class BucketPriorityQueue {
 	struct Node {
 		int_t prev = -1;
 		int_t next = -1;
@@ -17,7 +17,7 @@ class BucketPQ {
 
   public:
 	// n - amount of vertices in the graph, [min_g, max_g] - gains range
-	BucketPQ(int_t n, int_t min_g, int_t max_g)
+	BucketPriorityQueue(int_t n, int_t min_g, int_t max_g)
 	    : buckets(max_g - min_g + 1, -1),
 	      nodes(n),
 	      gain_value(n, min_g - 1),
@@ -26,6 +26,11 @@ class BucketPQ {
 	}
 
 	void insert(int_t gain, int_t id) {
+
+		if (gain_value[id] >= min_gain) {
+			throw std::logic_error("BucketPriorityQueue: id already present");
+		}
+
 		int_t idx      = gain - min_gain;
 		gain_value[id] = gain;
 
@@ -108,6 +113,7 @@ class BucketPQ {
 	}
 
 	std::pair<int_t, int_t> top() const {
+		if (empty()) throw std::runtime_error("Empty BucketPriorityQueue");
 		int_t idx = max_gain - min_gain;
 		int_t id  = buckets[idx];
 		return {gain_value[id], id};
@@ -115,5 +121,9 @@ class BucketPQ {
 
 	bool empty() const {
 		return n_nodes == 0;
+	}
+
+	bool contains(int_t id) const {
+		return gain_value[id] >= min_gain;
 	}
 };

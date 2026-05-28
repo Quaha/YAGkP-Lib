@@ -3,7 +3,6 @@
 #include "coarse_level.hpp"
 #include "config.hpp"
 #include "graph.hpp"
-#include "heap.hpp"
 #include "metrics.hpp"
 #include "utils.hpp"
 

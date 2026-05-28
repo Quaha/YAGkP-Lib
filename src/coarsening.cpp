@@ -15,9 +15,9 @@ namespace Coarser {
 			base_coarse_to_uncoarse[i] = Vector<int_t>(1, i);
 		}
 
-		Vector<int_t> base_vertex_importance(graph.n, 0);
+		Vector<int_t> base_included_ew_in_vertex(graph.n, 0);
 
-		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_vertex_importance});
+		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_included_ew_in_vertex});
 
 		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit &&
 		                  levels[i].coarsened_graph.n > std::max(2, std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2));
@@ -197,8 +197,8 @@ namespace Coarser {
 					continue;
 				if (matching[next_V] == -1) {
 					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] + level.coarsened_graph.vertex_weights[next_V];
-					fp_t F        = fp_t(w + level.vertex_importance[curr_V] + level.vertex_importance[next_V]) /
-					         fp_t(total_W * (total_W - 1));
+					fp_t F = 2.0 * fp_t(w + level.included_ew_in_vertex[curr_V] + level.included_ew_in_vertex[next_V]) /
+					         fp_t(std::max(1ll, static_cast<long long>(total_W) * static_cast<long long>(total_W - 1)));
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -307,13 +307,13 @@ namespace Coarser {
 
 		// 4. Importance
 
-		Vector<int_t> vertex_importance(coarsened_graph.n, 0);
+		Vector<int_t> included_ew_in_vertex(coarsened_graph.n, 0);
 		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
 			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
-				vertex_importance[curr_V] += level.vertex_importance[prev_V];
+				included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
 			}
 			if (coarse_to_uncoarse[curr_V].size() == 2) {
-				vertex_importance[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
+				included_ew_in_vertex[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
 			}
 		}
 
@@ -322,6 +322,6 @@ namespace Coarser {
 		new_level.uncoarse_to_coarse = std::move(uncoarse_to_coarse);
 		new_level.coarse_to_uncoarse = std::move(coarse_to_uncoarse);
 		new_level.coarsened_graph    = std::move(coarsened_graph);
-		new_level.vertex_importance  = std::move(vertex_importance);
+		new_level.included_ew_in_vertex  = std::move(included_ew_in_vertex);
 	}
 } // namespace Coarser

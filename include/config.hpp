@@ -15,13 +15,12 @@ struct ProgramConfig {
 	enum class BipartitioningMethod {
 		GraphGrowingAlgorithm,
 		GreedyGraphGrowingAlgorithm,
-		FlowAlgorithm
 	};
 
 	// --- Uncoarsening methods ---
 	enum class UncoarseningMethod {
 		DirectMapping,
-		KernighanLin
+		KernighanLin,
 	};
 
 	// --- Global parameters ---
