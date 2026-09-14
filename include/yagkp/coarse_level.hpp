@@ -1,7 +1,7 @@
 #pragma once
 
-#include "graph.hpp"
-#include "utils.hpp"
+#include "yagkp/graph.hpp"
+#include "yagkp/utils.hpp"
 
 struct CoarseLevel {
 	Vector<int_t> uncoarse_to_coarse;

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "coarse_level.hpp"
-#include "config.hpp"
-#include "graph.hpp"
-#include "metrics.hpp"
-#include "utils.hpp"
+#include "yagkp/coarse_level.hpp"
+#include "yagkp/config.hpp"
+#include "yagkp/graph.hpp"
+#include "yagkp/metrics.hpp"
+#include "yagkp/utils.hpp"
 
 namespace Uncoarser {
 	// levels: hierarchy of coarse levels from source graph to coarest | levels

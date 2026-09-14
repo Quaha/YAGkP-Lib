@@ -12,6 +12,14 @@
         {
             "folderPath": "YAGkP-Lib/include/yagkp/",
             "color": "foldercolorizer.color_ff0000"
+        },
+        {
+            "folderPath": "YAGkP-Lib/include/benchmark",
+            "color": "foldercolorizer.color_ff005f"
+        },
+        {
+            "folderPath": "YAGkP-Lib/include/benchmark/",
+            "color": "foldercolorizer.color_d70087"
         }
     ]
 }

@@ -1,9 +1,7 @@
 #pragma once
 
-#include "config.hpp"
-#include "graph.hpp"
-#include "metrics.hpp"
-#include "utils.hpp"
+#include "yagkp/utils.hpp"
+#include "yagkp/graph.hpp"
 
 namespace Bipartitioner {
 	Vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2);

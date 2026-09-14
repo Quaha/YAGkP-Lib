@@ -1,9 +1,8 @@
 #pragma once
 
-#include "coarse_level.hpp"
-#include "config.hpp"
-#include "graph.hpp"
-#include "utils.hpp"
+#include "yagkp/coarse_level.hpp"
+#include "yagkp/graph.hpp"
+#include "yagkp/utils.hpp"
 
 namespace Coarser {
 	Vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k);

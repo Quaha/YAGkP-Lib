@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graph.hpp"
+#include "yagkp/graph.hpp"
 
 namespace PartitionMetrics {
 	// graph: input graph                                                   | graph

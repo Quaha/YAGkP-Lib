@@ -1,7 +1,7 @@
 #pragma once
 
 #include "matrix.hpp"
-#include "utils.hpp"
+#include "yagkp/utils.hpp"
 
 struct Graph {
 

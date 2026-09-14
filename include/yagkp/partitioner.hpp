@@ -1,11 +1,11 @@
 #pragma once
 
-#include "bipartitioner.hpp"
-#include "coarsening.hpp"
-#include "graph.hpp"
-#include "metrics.hpp"
-#include "uncoarsening.hpp"
-#include "utils.hpp"
+#include "yagkp/bipartitioner.hpp"
+#include "yagkp/coarsening.hpp"
+#include "yagkp/graph.hpp"
+#include "yagkp/metrics.hpp"
+#include "yagkp/uncoarsening.hpp"
+#include "yagkp/utils.hpp"
 
 namespace Partitioner {
 	// graph: input graph to partition          | graph

@@ -1,8 +1,9 @@
-#include "benchmark.hpp"
+#include "benchmark/benchmark.hpp"
 
 #include <fstream>
 
-#include "libs_bridges.hpp"
+#include "benchmark/libs_wrappers.hpp"
+#include "yagkp/utils.hpp"
 
 namespace Benchmark {
 
