@@ -103,7 +103,7 @@ endif()
 # =============================================================================
 # Executable
 # =============================================================================
-add_executable(${PROJECT_NAME}_app apps/main.cpp)
+add_executable(${PROJECT_NAME}_app app/main.cpp)
 target_link_libraries(${PROJECT_NAME}_app PRIVATE ${PROJECT_NAME}_library)
 
 # =============================================================================
