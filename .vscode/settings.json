@@ -1,9 +1,17 @@
 {
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "cmake.configureArgs": [],
-    "cmake.buildArgs": ["--parallel"],
+    "cmake.buildArgs": [
+        "--parallel"
+    ],
     "cmake.generator": "Ninja",
     "cmake.debugConfig": {
         "MIMode": "gdb"
-    }
+    },
+    "folder-color.pathColors": [
+        {
+            "folderPath": "YAGkP-Lib/include/yagkp/",
+            "color": "foldercolorizer.color_ff0000"
+        }
+    ]
 }

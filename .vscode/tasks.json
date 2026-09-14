@@ -4,7 +4,7 @@
         {
             "label": "clang-format",
             "type": "shell",
-            "command": "find ${workspaceFolder}/src ${workspaceFolder}/include ${workspaceFolder}/apps -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i"
+            "command": "find ${workspaceFolder}/src ${workspaceFolder}/include ${workspaceFolder}/app -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i"
         },
         {
             "label": "cmake-build",
