@@ -1,9 +1,9 @@
-#include "libs_bridges.hpp"
+#include "yagkp/benchmark/libs_wrappers.hpp"
 
 #include <cstdio>
 #include <vector>
 
-#include "config.hpp"
+#include "yagkp/config.hpp"
 #include "kaHIP_interface.h"
 #include "metis.h"
 #include "scotch.h"

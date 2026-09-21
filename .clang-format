@@ -9,7 +9,10 @@ BraceWrapping:
   AfterControlStatement: false
   BeforeElse: true
 
-ColumnLimit: 0
+ColumnLimit: 100
+AlignAfterOpenBracket: BlockIndent
+BinPackParameters: false
+BinPackArguments: false
 
 SpaceBeforeParens: ControlStatements
 SpaceAfterCStyleCast: false

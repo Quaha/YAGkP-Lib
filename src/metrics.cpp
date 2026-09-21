@@ -1,7 +1,7 @@
-#include "metrics.hpp"
+#include "yagkp/metrics.hpp"
 
-namespace PartitionMetrics {
-	int_t GetEdgeCut(const Graph& graph, const Vector<int_t>& partition) {
+namespace yagkp::PartitionMetrics {
+	int_t GetEdgeCut(const Graph& graph, const std::vector<int_t>& partition) {
 		int_t edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
@@ -15,7 +15,7 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	int_t GetEdgeCut(const Graph& graph, const Vector<Part>& partition) {
+	int_t GetEdgeCut(const Graph& graph, const std::vector<Part>& partition) {
 		int_t edge_cut = 0;
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
@@ -29,8 +29,8 @@ namespace PartitionMetrics {
 		return edge_cut;
 	}
 
-	Vector<double> GetBalances(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
-		Vector<double> balances(k, 0.0);
+	std::vector<double> GetBalances(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+		std::vector<double> balances(k, 0.0);
 
 		int_t total_W = graph.getSumOfVertexWeights();
 
@@ -45,8 +45,8 @@ namespace PartitionMetrics {
 		return balances;
 	}
 
-	double GetImbalance(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
-		Vector<double> balances = GetBalances(graph, k, partition);
+	double GetImbalance(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+		std::vector<double> balances = GetBalances(graph, k, partition);
 
 		double imbalance = balances[0] - 1.0 / k;
 		for (int_t curr_V = 1; curr_V < k; ++curr_V) {
@@ -57,8 +57,8 @@ namespace PartitionMetrics {
 		return imbalance * k;
 	}
 
-	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const Vector<int_t>& partition) {
-		Vector<int_t> weights(k, 0);
+	int_t GetMaxPartWeight(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+		std::vector<int_t> weights(k, 0);
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
 			weights[partition[curr_V]] += graph.getVertexWeight(curr_V);

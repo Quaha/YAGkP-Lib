@@ -1,11 +1,13 @@
 #pragma once
 
+#include <vector>
+
 #include "yagkp/coarse_level.hpp"
 #include "yagkp/graph.hpp"
-#include "yagkp/utils.hpp"
+#include "yagkp/types.hpp"
 
 namespace Coarser {
-	Vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k);
+	std::vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k);
 
 	void FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k);
 
@@ -17,5 +19,5 @@ namespace Coarser {
 
 	void HeavyCliqueMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k);
 
-	void ProcessMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const Vector<int_t>& matching, const Vector<int_t>& matching_edge_weights);
+	void ProcessMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const std::vector<int_t>& matching, const std::vector<int_t>& matching_edge_weights);
 } // namespace Coarser

@@ -1,10 +1,15 @@
-#include "uncoarsening.hpp"
+#include "yagkp/uncoarsening.hpp"
 
-#include "buckets.hpp"
+#include "yagkp/buckets.hpp"
 
-namespace Uncoarser {
+namespace yagkp::Uncoarser {
 
-	Vector<Part> RestorePartition(const Vector<CoarseLevel>& levels, Vector<Part> partition, const int_t C1, const int_t C2) {
+	std::vector<Part> yagkp::Uncoarser::RestorePartition(
+	    const std::vector<CoarseLevel>& levels,
+	    std::vector<Part> partition,
+	    const int_t C1,
+	    const int_t C2
+	) {
 		switch (ProgramConfig::uncoarsening_method) {
 		case ProgramConfig::UncoarseningMethod::DirectMapping:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
@@ -14,7 +19,9 @@ namespace Uncoarser {
 
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
-				partition = Uncoarser::KernighanLinBlocking(levels[i - 1].coarsened_graph, levels[i], partition, C1, C2);
+				partition = Uncoarser::KernighanLinBlocking(
+				    levels[i - 1].coarsened_graph, levels[i], partition, C1, C2
+				);
 			}
 			break;
 
@@ -25,9 +32,10 @@ namespace Uncoarser {
 		return partition;
 	}
 
-	Vector<Part> DirectMapping(const CoarseLevel& coarse_level, const Vector<Part>& coarse_partition) {
+	std::vector<Part>
+	DirectMapping(const CoarseLevel& coarse_level, const std::vector<Part>& coarse_partition) {
 		const int_t n = coarse_level.uncoarse_to_coarse.size();
-		Vector<Part> prev_partition(n);
+		std::vector<Part> prev_partition(n);
 
 		for (int_t i = 0; i < n; i++) {
 			prev_partition[i] = coarse_partition[coarse_level.uncoarse_to_coarse[i]];
@@ -36,7 +44,7 @@ namespace Uncoarser {
 		return prev_partition;
 	}
 
-	inline int_t GetGain(int_t V, const Graph& graph, const Vector<Part>& partition) {
+	inline int_t GetGain(int_t V, const Graph& graph, const std::vector<Part>& partition) {
 		int_t gain = 0;
 		for (auto [next_V, w]: graph[V]) {
 			if (partition[V] != partition[next_V]) {
@@ -49,7 +57,14 @@ namespace Uncoarser {
 		return gain;
 	}
 
-	inline void UpdateNearGains(int_t V, const Graph& graph, const Vector<Part>& partition, const Vector<bool>& blocked, BucketPriorityQueue& heap1, BucketPriorityQueue& heap2) {
+	inline void UpdateNearGains(
+	    int_t V,
+	    const Graph& graph,
+	    const std::vector<Part>& partition,
+	    const std::vector<bool>& blocked,
+	    BucketPriorityQueue& heap1,
+	    BucketPriorityQueue& heap2
+	) {
 		for (auto [near_V, w]: graph[V]) {
 			if (blocked[near_V]) {
 				continue;
@@ -70,8 +85,9 @@ namespace Uncoarser {
 		}
 	}
 
-	Vector<Part> KernighanLinBlocking(const Graph& graph, Vector<Part> current_partition,
-	                                  const int_t C1, const int_t C2) {
+	std::vector<Part> KernighanLinBlocking(
+	    const Graph& graph, std::vector<Part> current_partition, const int_t C1, const int_t C2
+	) {
 		int_t n = graph.n;
 
 		int_t max_possible_gain = 0;
@@ -87,7 +103,7 @@ namespace Uncoarser {
 			int_t weight1 = 0;
 			int_t weight2 = 0;
 
-			Vector<bool> blocked(n, false);
+			std::vector<bool> blocked(n, false);
 
 			BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
 			BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
@@ -136,15 +152,16 @@ namespace Uncoarser {
 
 		int_t current_edgecut = PartitionMetrics::GetEdgeCut(graph, current_partition);
 
-		Vector<Part> best_partition = current_partition;
-		int_t best_edgecut          = current_edgecut;
+		std::vector<Part> best_partition = current_partition;
+		int_t best_edgecut               = current_edgecut;
 
-		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs; run_number++) {
+		for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs;
+		     run_number++) {
 
 			int_t weight1 = 0;
 			int_t weight2 = 0;
 
-			Vector<bool> blocked(n, false);
+			std::vector<bool> blocked(n, false);
 
 			BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
 			BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
@@ -160,8 +177,8 @@ namespace Uncoarser {
 				}
 			}
 
-			Vector<int_t> gains;
-			Vector<int_t> vertices;
+			std::vector<int_t> gains;
+			std::vector<int_t> vertices;
 
 			int_t current_run_best_edgecut = current_edgecut;
 
@@ -234,13 +251,12 @@ namespace Uncoarser {
 						}
 						else {
 							if (C1 - weight1 <= C2 - weight2) {
-								data       = heap1.extract();
+								data = heap1.extract();
 							}
 							else {
-								data       = heap2.extract();
+								data = heap2.extract();
 							}
 						}
-
 					}
 				}
 
@@ -292,8 +308,15 @@ namespace Uncoarser {
 		return best_partition;
 	}
 
-	Vector<Part> KernighanLinBlocking(const Graph& previous_graph, const CoarseLevel& coarse_level,
-	                                  const Vector<Part>& coarse_partition, const int_t C1, const int_t C2) {
-		return KernighanLinBlocking(previous_graph, DirectMapping(coarse_level, coarse_partition), C1, C2);
+	std::vector<Part> KernighanLinBlocking(
+	    const Graph& previous_graph,
+	    const CoarseLevel& coarse_level,
+	    const std::vector<Part>& coarse_partition,
+	    const int_t C1,
+	    const int_t C2
+	) {
+		return KernighanLinBlocking(
+		    previous_graph, DirectMapping(coarse_level, coarse_partition), C1, C2
+		);
 	}
-} // namespace Uncoarser
+} // namespace yagkp::Uncoarser

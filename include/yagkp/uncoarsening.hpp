@@ -1,28 +1,56 @@
 #pragma once
 
+#include <vector>
+
 #include "yagkp/coarse_level.hpp"
-#include "yagkp/config.hpp"
 #include "yagkp/graph.hpp"
-#include "yagkp/metrics.hpp"
-#include "yagkp/utils.hpp"
+#include "yagkp/types.hpp"
 
-namespace Uncoarser {
-	// levels: hierarchy of coarse levels from source graph to coarest | levels
-	// partition: partition of the coarsest graph                      | {Part::First, Part::Second}
-	// returns: partition of the original graph                        | {Part::First, Part::Second, Part::First,
-	// Part::Second}
-	Vector<Part> RestorePartition(const Vector<CoarseLevel>& levels, Vector<Part> partition, const int_t C1, const int_t C2);
+namespace yagkp {
+	namespace Uncoarser {
+		/**
+		 * @brief Projects the partition of the coarsened graph onto the uncoarsened graph.
+		 *
+		 * @param levels hierarchy of coarse levels from source graph to coarest
+		 * @param partition partition of the coarsest graph
+		 * @param C1 restriction on the 1st part
+		 * @param C2 restriction on the 2nd part
+		 * @return partition of the original graph
+		 */
+		std::vector<Part> RestorePartition(
+		    const std::vector<CoarseLevel>& levels,
+		    std::vector<Part> partition,
+		    const int_t C1,
+		    const int_t C2
+		);
 
-	// coarse_level: coarse level data with mapping from finer to coarser vertices | coarse_level
-	// coarse_partition: partition of the coarse graph (size = |V_coarse|)         | {Part::First, Part::Second}
-	// returns: partition of the finer graph obtained by direct mapping            | {Part::First, Part::First,
-	// Part::Second, Part::Second}
-	Vector<Part> DirectMapping(const CoarseLevel& coarse_level, const Vector<Part>& coarse_partition);
+		/**
+		 * @brief Projects the partition of the coarsened graph onto the the previous coarse level.
+		 *
+		 * @param coarse_level coarse level data with mapping from finer to coarser vertices
+		 * @param coarse_partition partition of the coarse graph
+		 * @return partition of the previous coarsening level graph
+		 */
+		std::vector<Part>
+		DirectMapping(const CoarseLevel& coarse_level, const std::vector<Part>& coarse_partition);
 
-	// previous_graph: finer graph to refine partition on                          | graph (|V| = 4, edge weights = 1)
-	// coarse_level: coarse level data with mapping from finer to coarser vertices | coarse_level
-	// coarse_partition: partition of the coarse graph                             | {Part::First, Part::Second}
-	// returns: refined partition of the finer graph using Kernighan-Lin algorithm | {Part::First, Part::Second,
-	// Part::First, Part::Second}
-	Vector<Part> KernighanLinBlocking(const Graph& previous_graph, const CoarseLevel& coarse_level, const Vector<Part>& coarse_partition, const int_t C1, const int_t C2);
-} // namespace Uncoarser
+		/**
+		 * @brief
+		 *
+		 * @param previous_graph Projects the partition of the coarsened graph onto the the previous
+		 * coarse level and does some improvements
+		 * @param coarse_level coarse level data with mapping from finer to coarser vertices
+		 * @param coarse_partition partition of the coarse graph
+		 * @param C1 restriction on the 1st part
+		 * @param C2 restriction on the 2nd part
+		 * @return improved partition of the previous coarsening level graph
+		 */
+		std::vector<Part> KernighanLinBlocking(
+		    const Graph& previous_graph,
+		    const CoarseLevel& coarse_level,
+		    const std::vector<Part>& coarse_partition,
+		    const int_t C1,
+		    const int_t C2
+		);
+	} // namespace Uncoarser
+} // namespace yagkp

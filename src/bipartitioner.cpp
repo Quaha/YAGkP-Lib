@@ -1,11 +1,11 @@
-#include "bipartitioner.hpp"
+#include "yagkp/bipartitioner.hpp"
 
 #include <iostream>
-#include <buckets.hpp>
+#include <yagkp/buckets.hpp>
 
-namespace Bipartitioner {
+namespace yagkp::Bipartitioner {
 
-	Vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
+	std::vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
 		switch (ProgramConfig::bipartitioning_method) {
 		case (ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm):
 			return GraphGrowingAlgorithm(graph, C1, C2);
@@ -18,23 +18,23 @@ namespace Bipartitioner {
 		}
 	}
 
-	Vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
+	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
 		const int_t n = graph.n;
 
 		int_t total_weight = graph.getSumOfVertexWeights();
 
-		Vector<Part> best_partition;
+		std::vector<Part> best_partition;
 		int_t best_edge_cut = std::numeric_limits<int_t>::max();
 
 		for (int_t i = 0; i < ProgramConfig::bipartitioning_launches_count; ++i) {
 
-			Vector<Part> partition(n, Part::Second);
-			Vector<bool> visited(n, false);
+			std::vector<Part> partition(n, Part::Second);
+			std::vector<bool> visited(n, false);
 
 			Queue<int_t> q;
 			q.reserve(n / 2);
 
-			Vector<int_t> order = GetRandomPermutation(n);
+			std::vector<int_t> order = GetRandomPermutation(n);
 
 			for (int_t start_V: order) {
 				if (graph.vertex_weights[start_V] <= C1) {
@@ -75,33 +75,35 @@ namespace Bipartitioner {
 		return best_partition;
 	}
 
-	Vector<Part> GreedyGraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
+	std::vector<Part>
+	GreedyGraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
 		const int_t n = graph.n;
 
 		int_t max_possible_gain = 0;
-		Vector<int_t> sum_of_incident_edges_weights(n, 0);
+		std::vector<int_t> sum_of_incident_edges_weights(n, 0);
 		for (int_t curr_V = 0; curr_V < n; ++curr_V) {
 			int_t sum = 0;
-			for (auto [next_V, w] : graph[curr_V]) {
+			for (auto [next_V, w]: graph[curr_V]) {
 				sum += w;
 			}
 			sum_of_incident_edges_weights[curr_V] = sum;
 			setmax(max_possible_gain, sum);
 		}
 
-		Vector<Part> best_partition;
+		std::vector<Part> best_partition;
 		int_t best_edge_cut = std::numeric_limits<int_t>::max();
 
 		for (int_t i = 0; i < ProgramConfig::bipartitioning_launches_count; ++i) {
-			Vector<Part> partition(n, Part::Second);
-			Vector<bool>  blocked(n, false);
+			std::vector<Part> partition(n, Part::Second);
+			std::vector<bool> blocked(n, false);
 			int_t current_weight = 0;
 
 			BucketPriorityQueue pq(n, -max_possible_gain, max_possible_gain);
-			Vector<int_t> order = GetRandomPermutation(n);
+			std::vector<int_t> order = GetRandomPermutation(n);
 
 			auto touch = [&](int_t u, int_t w) {
-				if (blocked[u]) return;
+				if (blocked[u])
+					return;
 				if (pq.contains(u)) {
 					pq.add(+2 * w, u);
 				}
@@ -114,31 +116,34 @@ namespace Bipartitioner {
 			while (progressed) {
 				progressed = false;
 
-				for (int_t V : order) {
-					if (blocked[V]) continue;
-					if (current_weight + graph.getVertexWeight(V) > C1) continue;
+				for (int_t V: order) {
+					if (blocked[V])
+						continue;
+					if (current_weight + graph.getVertexWeight(V) > C1)
+						continue;
 
-					progressed       = true;
-					partition[V]     = Part::First;
-					blocked[V]       = true;
-					current_weight  += graph.getVertexWeight(V);
+					progressed   = true;
+					partition[V] = Part::First;
+					blocked[V]   = true;
+					current_weight += graph.getVertexWeight(V);
 
-					for (auto [u, w] : graph[V]) touch(u, w);
+					for (auto [u, w]: graph[V])
+						touch(u, w);
 					break;
 				}
 
 				while (!pq.empty()) {
 					auto [gain, curr_V] = pq.extract();
-					blocked[curr_V] = true;
+					blocked[curr_V]     = true;
 
 					if (current_weight + graph.vertex_weights[curr_V] > C1) {
 						continue;
 					}
 
-					current_weight    += graph.vertex_weights[curr_V];
-					partition[curr_V]  = Part::First;
+					current_weight += graph.vertex_weights[curr_V];
+					partition[curr_V] = Part::First;
 
-					for (auto [next_V, w] : graph[curr_V]) {
+					for (auto [next_V, w]: graph[curr_V]) {
 						touch(next_V, w);
 					}
 				}
@@ -153,4 +158,4 @@ namespace Bipartitioner {
 
 		return best_partition;
 	}
-} // namespace Bipartitioner
+} // namespace yagkp::Bipartitioner
