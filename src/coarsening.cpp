@@ -1,5 +1,11 @@
 #include "yagkp/coarsening.hpp"
 
+#include <numeric>
+#include <unordered_map>
+
+#include "yagkp/queue.hpp"
+#include "yagkp/random.hpp"
+
 namespace yagkp::Coarser {
 
 	std::vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k) {
@@ -17,10 +23,18 @@ namespace yagkp::Coarser {
 
 		std::vector<int_t> base_included_ew_in_vertex(graph.n, 0);
 
-		levels.push_back(CoarseLevel{base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_included_ew_in_vertex});
+		levels.push_back(
+		    CoarseLevel{
+		        base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_included_ew_in_vertex
+		    }
+		);
 
-		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit &&
-		                  levels[i].coarsened_graph.n > std::max(2, std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2));
+		for (int_t i = 0;
+		     i < ProgramConfig::coarsening_iterations_limit &&
+		     levels[i].coarsened_graph.n >
+		         std::max<int_t>(
+		             2, std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2)
+		         );
 		     ++i) {
 
 			CoarseLevel new_level;
@@ -32,7 +46,8 @@ namespace yagkp::Coarser {
 		return levels;
 	}
 
-	void FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void
+	FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
 		switch (ProgramConfig::coarsening_method) {
 		case ProgramConfig::CoarseningMethod::RandomMatching:
 			RandomMatching(level, graph, new_level, k);
@@ -55,7 +70,9 @@ namespace yagkp::Coarser {
 		}
 	}
 
-	void RandomMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void RandomMatching(
+	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
 
@@ -64,8 +81,8 @@ namespace yagkp::Coarser {
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size =
-			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
+			                           ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -73,7 +90,8 @@ namespace yagkp::Coarser {
 				continue;
 			for (auto [next_V, w]: graph[curr_V]) {
 				if (matching[next_V] == -1 &&
-				    graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] <= max_allowed_size) {
+				    graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] <=
+				        max_allowed_size) {
 					matching[next_V]              = curr_V;
 					matching[curr_V]              = next_V;
 					matching_edge_weights[next_V] = w;
@@ -86,7 +104,9 @@ namespace yagkp::Coarser {
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	void LightEdgeMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void LightEdgeMatching(
+	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
 
@@ -95,8 +115,8 @@ namespace yagkp::Coarser {
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size =
-			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
+			                           ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -128,7 +148,9 @@ namespace yagkp::Coarser {
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	void HeavyEdgeMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void HeavyEdgeMatching(
+	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
 
@@ -137,8 +159,8 @@ namespace yagkp::Coarser {
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size =
-			    (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
+			                           ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -170,7 +192,9 @@ namespace yagkp::Coarser {
 		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
 	}
 
-	void HeavyCliqueMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void HeavyCliqueMatching(
+	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
 
@@ -179,8 +203,8 @@ namespace yagkp::Coarser {
 
 		int_t max_allowed_size = graph.getSumOfVertexWeights();
 		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size =
-			    (int_t)((fp_t(max_allowed_size) / fp_t(k)) * ProgramConfig::coarsening_clusterization_size_factor);
+			max_allowed_size = (int_t)((fp_t(max_allowed_size) / fp_t(k)) *
+			                           ProgramConfig::coarsening_clusterization_size_factor);
 		}
 
 		for (int_t curr_V: permutation) {
@@ -196,9 +220,20 @@ namespace yagkp::Coarser {
 				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size)
 					continue;
 				if (matching[next_V] == -1) {
-					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] + level.coarsened_graph.vertex_weights[next_V];
-					fp_t F        = 2.0 * fp_t(w + level.included_ew_in_vertex[curr_V] + level.included_ew_in_vertex[next_V]) /
-					                fp_t(std::max(1ll, static_cast<long long>(total_W) * static_cast<long long>(total_W - 1)));
+					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
+					                level.coarsened_graph.vertex_weights[next_V];
+					fp_t F        = 2.0 *
+					                fp_t(
+					                    w + level.included_ew_in_vertex[curr_V] +
+					                    level.included_ew_in_vertex[next_V]
+					                ) /
+					                fp_t(
+					                    std::max(
+					                        1ll,
+					                        static_cast<long long>(total_W) *
+					                            static_cast<long long>(total_W - 1)
+					                    )
+					                );
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;
@@ -220,8 +255,13 @@ namespace yagkp::Coarser {
 	}
 
 	// This function builds the coarse level based on the found matching
-	void ProcessMatching(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level,
-	                     const std::vector<int_t>& matching, const std::vector<int_t>& matching_edge_weights) {
+	void ProcessMatching(
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const std::vector<int_t>& matching,
+	    const std::vector<int_t>& matching_edge_weights
+	) {
 		// 1. Filling coarse vectors
 
 		std::vector<int_t> uncoarse_to_coarse(graph.n, -1);
@@ -313,7 +353,8 @@ namespace yagkp::Coarser {
 				included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
 			}
 			if (coarse_to_uncoarse[curr_V].size() == 2) {
-				included_ew_in_vertex[curr_V] += matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
+				included_ew_in_vertex[curr_V] +=
+				    matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
 			}
 		}
 
@@ -324,4 +365,4 @@ namespace yagkp::Coarser {
 		new_level.coarsened_graph       = std::move(coarsened_graph);
 		new_level.included_ew_in_vertex = std::move(included_ew_in_vertex);
 	}
-} // namespace Coarser
+} // namespace yagkp::Coarser

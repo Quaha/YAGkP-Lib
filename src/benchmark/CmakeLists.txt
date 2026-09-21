@@ -1,0 +1,71 @@
+# =============================================================================
+# Обёртки над METIS / KaHIP / SCOTCH
+#
+# GKlib, METIS и SCOTCH собираются заранее скриптом scripts/build_deps.sh
+# в каталог deps/. KaHIP собирается здесь же как ExternalProject.
+# =============================================================================
+set(DEPS_DIR   ${CMAKE_SOURCE_DIR}/deps)
+set(GKLIB_DIR  ${DEPS_DIR}/gklib)
+set(METIS_DIR  ${DEPS_DIR}/metis)
+set(SCOTCH_DIR ${DEPS_DIR}/scotch)
+
+if(NOT EXISTS ${METIS_DIR}/lib/libmetis.a OR NOT EXISTS ${SCOTCH_DIR}/lib/libscotch.a)
+    message(FATAL_ERROR
+        "Сторонние библиотеки не собраны (нет deps/).\n"
+        "Запустите: bash build.sh --benchmark   (соберёт их автоматически)\n"
+        "или:       bash scripts/build_deps.sh")
+endif()
+
+foreach(dep GKlib metis scotch scotcherr)
+    add_library(${dep} STATIC IMPORTED GLOBAL)
+endforeach()
+set_target_properties(GKlib     PROPERTIES IMPORTED_LOCATION ${GKLIB_DIR}/lib/libGKlib.a)
+set_target_properties(metis     PROPERTIES IMPORTED_LOCATION ${METIS_DIR}/lib/libmetis.a)
+set_target_properties(scotch    PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotch.a)
+set_target_properties(scotcherr PROPERTIES IMPORTED_LOCATION ${SCOTCH_DIR}/lib/libscotcherr.a)
+
+# -----------------------------------------------------------------------------
+# KaHIP
+#   NOMPI=ON  MPI нужен KaHIP только для ParHIP и kaffpaE, а мы используем
+#             лишь последовательный kaffpa из kahip_static
+#   --target  собираем одну библиотеку, а не все утилиты KaHIP
+# -----------------------------------------------------------------------------
+set(KAHIP_SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/KaHIP)
+set(KAHIP_BUILD_DIR  ${CMAKE_BINARY_DIR}/kahip_build)
+set(KAHIP_LIB        ${KAHIP_BUILD_DIR}/libkahip_static.a)
+
+include(ExternalProject)
+ExternalProject_Add(kahip_external
+    SOURCE_DIR       ${KAHIP_SOURCE_DIR}
+    BINARY_DIR       ${KAHIP_BUILD_DIR}
+    CMAKE_ARGS
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DNOMPI=ON
+    BUILD_COMMAND    ${CMAKE_COMMAND} --build <BINARY_DIR> --target kahip_static
+    BUILD_BYPRODUCTS ${KAHIP_LIB}
+    INSTALL_COMMAND  ""
+)
+add_library(kahip STATIC IMPORTED GLOBAL)
+set_target_properties(kahip PROPERTIES IMPORTED_LOCATION ${KAHIP_LIB})
+add_dependencies(kahip kahip_external)
+
+# -----------------------------------------------------------------------------
+# Слой замеров
+# -----------------------------------------------------------------------------
+add_library(yagkp_benchmark STATIC
+    benchmark.cpp
+    libs_wrappers.cpp
+)
+
+target_include_directories(yagkp_benchmark PRIVATE
+    ${KAHIP_SOURCE_DIR}/interface
+    ${METIS_DIR}/include
+    ${SCOTCH_DIR}/include
+)
+
+target_link_libraries(yagkp_benchmark
+    PUBLIC  yagkp
+    PRIVATE kahip metis GKlib scotch scotcherr
+)

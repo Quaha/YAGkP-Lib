@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
-BINARY="$ROOT_DIR/build/YAGkP_app"
+BINARY="$ROOT_DIR/build/benchmark/YAGkP_app"
 DATA_DIR="$ROOT_DIR/data"
 CACHE_DIR="$ROOT_DIR/data/cache"
 OUTPUT_DIR="$SCRIPT_DIR/results"

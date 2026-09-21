@@ -29,13 +29,13 @@ namespace yagkp::PartitionMetrics {
 		return edge_cut;
 	}
 
-	std::vector<double> GetBalances(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
-		std::vector<double> balances(k, 0.0);
+	std::vector<fp_t> GetBalances(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+		std::vector<fp_t> balances(k, 0.0);
 
 		int_t total_W = graph.getSumOfVertexWeights();
 
 		for (int_t curr_V = 0; curr_V < graph.getVerticesCount(); ++curr_V) {
-			balances[partition[curr_V]] += static_cast<double>(graph.vertex_weights[curr_V]);
+			balances[partition[curr_V]] += static_cast<fp_t>(graph.vertex_weights[curr_V]);
 		}
 
 		for (int_t curr_V = 0; curr_V < k; ++curr_V) {
@@ -45,10 +45,10 @@ namespace yagkp::PartitionMetrics {
 		return balances;
 	}
 
-	double GetImbalance(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
-		std::vector<double> balances = GetBalances(graph, k, partition);
+	fp_t GetImbalance(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+		std::vector<fp_t> balances = GetBalances(graph, k, partition);
 
-		double imbalance = balances[0] - 1.0 / k;
+		fp_t imbalance = balances[0] - 1.0 / k;
 		for (int_t curr_V = 1; curr_V < k; ++curr_V) {
 			if (balances[curr_V] - 1.0 / k > imbalance) {
 				imbalance = balances[curr_V] - 1.0 / k;

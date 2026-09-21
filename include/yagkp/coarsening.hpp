@@ -6,7 +6,7 @@
 #include "yagkp/graph.hpp"
 #include "yagkp/types.hpp"
 
-namespace Coarser {
+namespace yagkp::Coarser {
 	std::vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k);
 
 	void FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k);

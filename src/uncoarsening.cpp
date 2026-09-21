@@ -1,10 +1,12 @@
 #include "yagkp/uncoarsening.hpp"
 
 #include "yagkp/buckets.hpp"
+#include "yagkp/config.hpp"
+#include "yagkp/metrics.hpp"
 
 namespace yagkp::Uncoarser {
 
-	std::vector<Part> yagkp::Uncoarser::RestorePartition(
+	std::vector<Part> Uncoarser::RestorePartition(
 	    const std::vector<CoarseLevel>& levels,
 	    std::vector<Part> partition,
 	    const int_t C1,

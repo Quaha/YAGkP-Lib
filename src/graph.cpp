@@ -1,4 +1,6 @@
-#include "yagkp/benchmark/"
+#include "yagkp/graph.hpp"
+
+#include <numeric>
 
 namespace yagkp {
 

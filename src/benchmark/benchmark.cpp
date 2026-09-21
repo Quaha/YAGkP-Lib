@@ -1,13 +1,22 @@
 #include "yagkp/benchmark/benchmark.hpp"
 
+#include <chrono>
+#include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <tuple>
 #include <vector>
 
 #include "yagkp/benchmark/libs_wrappers.hpp"
+#include "yagkp/config.hpp"
 #include "yagkp/graph.hpp"
+#include "yagkp/metrics.hpp"
+#include "yagkp/partitioner.hpp"
 #include "yagkp/types.hpp"
 
-namespace Benchmark {
+namespace yagkp::benchmark {
 
 	void RunSingle(
 	    const std::string& graph_path, int k, const std::string& algo, const std::string& output_dir
@@ -24,7 +33,7 @@ namespace Benchmark {
 				partition = Partitioner::GetGraphKPartition(g, k);
 			}
 			else if (name == "kahip_fast") {
-				partition = RunKaHIP(
+				auto v = RunKaHIP(
 				    g.n,
 				    k,
 				    std::vector<int>(g.xadj.begin(), g.xadj.end()),
@@ -32,9 +41,10 @@ namespace Benchmark {
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()),
 				    "fast"
 				);
+				partition.assign(v.begin(), v.end());
 			}
 			else if (name == "kahip_eco") {
-				partition = RunKaHIP(
+				auto v = RunKaHIP(
 				    g.n,
 				    k,
 				    std::vector<int>(g.xadj.begin(), g.xadj.end()),
@@ -42,9 +52,10 @@ namespace Benchmark {
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()),
 				    "eco"
 				);
+				partition.assign(v.begin(), v.end());
 			}
 			else if (name == "kahip_strong") {
-				partition = RunKaHIP(
+				auto v = RunKaHIP(
 				    g.n,
 				    k,
 				    std::vector<int>(g.xadj.begin(), g.xadj.end()),
@@ -52,6 +63,7 @@ namespace Benchmark {
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()),
 				    "strong"
 				);
+				partition.assign(v.begin(), v.end());
 			}
 			else if (name == "metis_kway") {
 				auto v = RunMETIS(
@@ -62,7 +74,7 @@ namespace Benchmark {
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()),
 				    "kway"
 				);
-				partition = std::vector<int_t>(v.begin(), v.end());
+				partition.assign(v.begin(), v.end());
 			}
 			else if (name == "metis_recursive") {
 				auto v = RunMETIS(
@@ -73,7 +85,7 @@ namespace Benchmark {
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end()),
 				    "recursive"
 				);
-				partition = std::vector<int_t>(v.begin(), v.end());
+				partition.assign(v.begin(), v.end());
 			}
 			else if (name == "scotch") {
 				auto v = RunSCOTCH(
@@ -83,7 +95,7 @@ namespace Benchmark {
 				    std::vector<int>(g.adjncy.begin(), g.adjncy.end()),
 				    std::vector<int>(g.vertex_weights.begin(), g.vertex_weights.end())
 				);
-				partition = std::vector<int_t>(v.begin(), v.end());
+				partition.assign(v.begin(), v.end());
 			}
 			else {
 				throw std::runtime_error("Unknown algo: " + name);
@@ -135,4 +147,4 @@ namespace Benchmark {
 		          << std::setw(12) << time_ms << std::setw(14) << edge_cut << std::setw(12)
 		          << pct.str() << std::setw(14) << max_part << std::setw(14) << opt << "\n";
 	}
-} // namespace Benchmark
+} // namespace yagkp::benchmark

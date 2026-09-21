@@ -1,11 +1,22 @@
 #include "yagkp/partitioner.hpp"
 
+#include <cmath>
+
+#include "yagkp/bipartitioner.hpp"
+#include "yagkp/coarsening.hpp"
+#include "yagkp/config.hpp"
+#include "yagkp/metrics.hpp"
+#include "yagkp/uncoarsening.hpp"
+
 namespace yagkp::Partitioner {
 	std::vector<int_t> GetGraphKPartition(const Graph& graph, const int_t k) {
 
 		fp_t opt_part_value = fp_t(graph.getSumOfVertexWeights()) / fp_t(k);
 
-		const int M = std::max(int_t(opt_part_value * (1.0 + ProgramConfig::imbalance) + EPS), int_t(std::ceil(opt_part_value + EPS))); // max part weight
+		const int M = std::max(
+		    int_t(opt_part_value * (1.0 + ProgramConfig::imbalance) + ProgramConfig::EPS),
+		    int_t(std::ceil(opt_part_value + ProgramConfig::EPS))
+		); // max part weight
 
 		int_t best_edgecut = std::numeric_limits<int_t>::max();
 		std::vector<int_t> best_partition;
@@ -24,7 +35,8 @@ namespace yagkp::Partitioner {
 		return best_partition;
 	}
 
-	std::vector<int_t> RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset) {
+	std::vector<int_t>
+	RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset) {
 		std::vector<int_t> partition(graph.n, offset);
 		if (k == 1) {
 			return partition;
@@ -39,8 +51,10 @@ namespace yagkp::Partitioner {
 		int_t C1 = M * k1;
 		int_t C2 = M * k2;
 
-		std::vector<Part> initial_partition  = Bipartitioner::GetGraphBipartition(coarsened_graph, C1, C2);
-		std::vector<Part> restored_partition = Uncoarser::RestorePartition(coarse_levels, initial_partition, C1, C2);
+		std::vector<Part> initial_partition =
+		    Bipartitioner::GetGraphBipartition(coarsened_graph, C1, C2);
+		std::vector<Part> restored_partition =
+		    Uncoarser::RestorePartition(coarse_levels, initial_partition, C1, C2);
 
 		std::vector<int_t> first_part_vertices, second_part_vertices;
 		for (int_t i = 0; i < graph.n; ++i) {
@@ -67,4 +81,4 @@ namespace yagkp::Partitioner {
 
 		return partition;
 	}
-} // namespace Partitioner
+} // namespace yagkp::Partitioner

@@ -5,7 +5,9 @@
 #include <random>
 #include <vector>
 
-#include "buckets.hpp"
+#include "yagkp/buckets.hpp"
+
+using namespace yagkp;
 
 // =============================================================================
 // BucketPriorityQueue — executable documentation

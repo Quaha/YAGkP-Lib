@@ -1,7 +1,12 @@
 #include "yagkp/bipartitioner.hpp"
 
 #include <iostream>
-#include <yagkp/buckets.hpp>
+
+#include "yagkp/buckets.hpp"
+#include "yagkp/config.hpp"
+#include "yagkp/metrics.hpp"
+#include "yagkp/queue.hpp"
+#include "yagkp/random.hpp"
 
 namespace yagkp::Bipartitioner {
 

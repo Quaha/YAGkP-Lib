@@ -1,0 +1,54 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21 },
+  "configurePresets": [
+    {
+      "name": "debug",
+      "displayName": "Ядро + тесты, отладочная сборка",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "YAGKP_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Ядро, оптимизированная сборка",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "YAGKP_NATIVE_FLAGS": "ON"
+      }
+    },
+    {
+      "name": "benchmark",
+      "displayName": "Ядро + METIS / KaHIP / SCOTCH + CLI для замеров",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "YAGKP_NATIVE_FLAGS": "ON",
+        "YAGKP_BUILD_BENCHMARK": "ON"
+      }
+    },
+    {
+      "name": "profile",
+      "displayName": "Как benchmark, но для gprof (-O2 -g -pg)",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "YAGKP_BUILD_BENCHMARK": "ON",
+        "CMAKE_CXX_FLAGS": "-pg",
+        "CMAKE_EXE_LINKER_FLAGS": "-pg"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug",     "configurePreset": "debug" },
+    { "name": "release",   "configurePreset": "release" },
+    { "name": "benchmark", "configurePreset": "benchmark" },
+    { "name": "profile",   "configurePreset": "profile" }
+  ],
+  "testPresets": [
+    { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } }
+  ]
+}
