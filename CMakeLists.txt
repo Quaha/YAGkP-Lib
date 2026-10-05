@@ -27,8 +27,14 @@ option(YAGKP_BUILD_APPS      "Собирать приложения из apps/" 
 option(YAGKP_BUILD_BENCHMARK "Собирать yagkp_bench (нужны сторонние библиотеки)"     OFF)
 option(YAGKP_BUILD_TESTS     "Собирать модульные тесты"                              OFF)
 
-set(YAGKP_DEPS_DIR "${PROJECT_SOURCE_DIR}/deps" CACHE PATH
-    "Каталог с собранными сторонними библиотеками (для YAGKP_BUILD_BENCHMARK)")
+# Сторонние библиотеки собирают scripts/deps/*.sh: deps/seq или deps/par
+if(YAGKP_PARALLEL)
+    set(_deps_variant par)
+else()
+    set(_deps_variant seq)
+endif()
+set(YAGKP_DEPS_DIR "${PROJECT_SOURCE_DIR}/deps/${_deps_variant}" CACHE PATH
+     "Каталог с собранными сторонними библиотеками (для YAGKP_BUILD_BENCHMARK)")
 
 # -----------------------------------------------------------------------------
 # Тип сборки. Profile: свой тип, его флаги приходят из scripts/lib/flags.sh
