@@ -14,8 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # compile_commands.json для clangd / 
 # Опции
 #
 #   yagkp            ядро библиотеки, без внешних зависимостей
-#   yagkp_benchmark  обёртки METIS / KaHIP / SCOTCH (нужен scripts/build_deps.sh)
-#   yagkp_app        CLI для замеров, собирается вместе с yagkp_benchmark
+#   yagkp_bench      CLI для замеров (apps/bench), сторонние библиотеки из deps/
 #   yagkp_tests      модульные тесты (подмодуль external/gtest)
 # =============================================================================
 option(YAGKP_BUILD_BENCHMARK "Собирать слой сравнения со сторонними библиотеками" OFF)
@@ -60,14 +59,9 @@ if(OpenMP_CXX_FOUND)
 endif()
 
 # =============================================================================
-# Слой замеров и CLI
+# Приложения
 # =============================================================================
-if(YAGKP_BUILD_BENCHMARK)
-    add_subdirectory(src/benchmark)
-
-    add_executable(yagkp_app app/main.cpp)
-    target_link_libraries(yagkp_app PRIVATE yagkp_benchmark)
-endif()
+add_subdirectory(apps)
 
 # =============================================================================
 # Тесты

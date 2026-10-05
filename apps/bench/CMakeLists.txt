@@ -52,20 +52,20 @@ set_target_properties(kahip PROPERTIES IMPORTED_LOCATION ${KAHIP_LIB})
 add_dependencies(kahip kahip_external)
 
 # -----------------------------------------------------------------------------
-# Слой замеров
+# yagkp_bench: запуск любого алгоритма (свой или сторонний) с замером метрик
 # -----------------------------------------------------------------------------
-add_library(yagkp_benchmark STATIC
+add_executable(yagkp_bench
+    main.cpp
     benchmark.cpp
     libs_wrappers.cpp
 )
 
-target_include_directories(yagkp_benchmark PRIVATE
+target_include_directories(yagkp_bench PRIVATE
     ${KAHIP_SOURCE_DIR}/interface
     ${METIS_DIR}/include
     ${SCOTCH_DIR}/include
 )
 
-target_link_libraries(yagkp_benchmark
-    PUBLIC  yagkp
-    PRIVATE kahip metis GKlib scotch scotcherr
+target_link_libraries(yagkp_bench PRIVATE
+    yagkp kahip metis GKlib scotch scotcherr
 )

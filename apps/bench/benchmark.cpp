@@ -1,4 +1,4 @@
-#include "yagkp/benchmark/benchmark.hpp"
+#include "benchmark.hpp"
 
 #include <chrono>
 #include <filesystem>
@@ -9,7 +9,7 @@
 #include <tuple>
 #include <vector>
 
-#include "yagkp/benchmark/libs_wrappers.hpp"
+#include "libs_wrappers.hpp"
 #include "yagkp/config.hpp"
 #include "yagkp/graph.hpp"
 #include "yagkp/metrics.hpp"

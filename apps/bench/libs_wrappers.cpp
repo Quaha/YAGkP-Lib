@@ -1,4 +1,4 @@
-#include "yagkp/benchmark/libs_wrappers.hpp"
+#include "libs_wrappers.hpp"
 
 #include <cstdio>
 #include <stdexcept>
