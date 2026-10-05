@@ -11,15 +11,41 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # compile_commands.json для clangd / IDE
 
 # =============================================================================
-# Опции
+# Цели
 #
 #   yagkp            ядро библиотеки, без внешних зависимостей
-#   yagkp_bench      CLI для замеров (apps/bench), сторонние библиотеки из deps/
+#   yagkp_partition  CLI: разбиение только средствами YAGkP (apps/partition)
+#   yagkp_bench      CLI: любой алгоритм с замером метрик (apps/bench)
 #   yagkp_tests      модульные тесты (подмодуль external/gtest)
+#
+# Флаги компиляции здесь не задаются: их передают скрипты из scripts/
+# через CMAKE_BUILD_TYPE и CMAKE_<LANG>_FLAGS_<TYPE>. Единый источник
+# флагов для всех режимов и сторонних библиотек: scripts/lib/flags.sh
 # =============================================================================
-option(YAGKP_BUILD_BENCHMARK "Собирать слой сравнения со сторонними библиотеками" OFF)
-option(YAGKP_BUILD_TESTS     "Собирать модульные тесты"                           OFF)
-option(YAGKP_NATIVE_FLAGS    "Оптимизация под текущий процессор (-march=native)"  OFF)
+option(YAGKP_PARALLEL        "Параллельная версия (OpenMP)"                          OFF)
+option(YAGKP_BUILD_APPS      "Собирать приложения из apps/"                          ON)
+option(YAGKP_BUILD_BENCHMARK "Собирать yagkp_bench (нужны сторонние библиотеки)"     OFF)
+option(YAGKP_BUILD_TESTS     "Собирать модульные тесты"                              OFF)
+
+set(YAGKP_DEPS_DIR "${PROJECT_SOURCE_DIR}/deps" CACHE PATH
+    "Каталог с собранными сторонними библиотеками (для YAGKP_BUILD_BENCHMARK)")
+
+# -----------------------------------------------------------------------------
+# Тип сборки. Profile: свой тип, его флаги приходят из scripts/lib/flags.sh
+# -----------------------------------------------------------------------------
+set(YAGKP_BUILD_TYPES Debug Release Profile)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Тип сборки" FORCE)
+    message(STATUS "CMAKE_BUILD_TYPE не задан, использую Release")
+endif()
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YAGKP_BUILD_TYPES})
+
+if(NOT CMAKE_BUILD_TYPE IN_LIST YAGKP_BUILD_TYPES)
+    string(JOIN ", " _types ${YAGKP_BUILD_TYPES})
+    message(FATAL_ERROR
+        "Неизвестный CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}. Допустимые: ${_types}")
+endif()
 
 # =============================================================================
 # Ядро
@@ -35,10 +61,11 @@ add_library(yagkp STATIC
 )
 
 target_include_directories(yagkp PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/external     # для "mmio/matrix.hpp"
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/external   # для "mmio/matrix.hpp"
 )
 
+# Предупреждения: политика проекта, а не режима сборки, поэтому здесь
 target_compile_options(yagkp PRIVATE
     $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra>
 )
@@ -46,22 +73,23 @@ target_compile_options(yagkp PRIVATE
 # Сторонний код: его предупреждения не наши, глушим
 set_source_files_properties(external/mmio/mmio.cpp PROPERTIES COMPILE_OPTIONS "-w")
 
-# -march=native делает бинарь непереносимым между узлами кластера,
-# поэтому только по явному запросу
-if(YAGKP_NATIVE_FLAGS)
-    target_compile_options(yagkp PUBLIC -march=native -funroll-loops)
-endif()
-
-# OpenMP пока не используется, но понадобится для параллельной версии
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
+# -----------------------------------------------------------------------------
+# Параллельная версия. Пока только заготовка: макрос YAGKP_PARALLEL и OpenMP
+# подключаются, но код ядра их ещё не использует
+# -----------------------------------------------------------------------------
+if(YAGKP_PARALLEL)
+    message(WARNING "YAGKP_PARALLEL=ON: параллельная версия ещё не реализована")
+    find_package(OpenMP REQUIRED)
     target_link_libraries(yagkp PUBLIC OpenMP::OpenMP_CXX)
+    target_compile_definitions(yagkp PUBLIC YAGKP_PARALLEL=1)
 endif()
 
 # =============================================================================
 # Приложения
 # =============================================================================
-add_subdirectory(apps)
+if(YAGKP_BUILD_APPS)
+    add_subdirectory(apps)
+endif()
 
 # =============================================================================
 # Тесты
@@ -70,3 +98,19 @@ if(YAGKP_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+# =============================================================================
+# Сводка конфигурации
+# =============================================================================
+string(TOUPPER "${CMAKE_BUILD_TYPE}" _type)
+string(STRIP "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_type}}" _flags)
+message(STATUS "")
+message(STATUS "YAGkP ${PROJECT_VERSION}")
+message(STATUS "  Build type   ${CMAKE_BUILD_TYPE}")
+message(STATUS "  Compiler     ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "  CXX flags    ${_flags}")
+message(STATUS "  Parallel     ${YAGKP_PARALLEL}")
+message(STATUS "  Apps         ${YAGKP_BUILD_APPS}")
+message(STATUS "  Benchmark    ${YAGKP_BUILD_BENCHMARK}")
+message(STATUS "  Tests        ${YAGKP_BUILD_TESTS}")
+message(STATUS "")
