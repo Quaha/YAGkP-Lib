@@ -1,15 +1,14 @@
 #pragma once
 
 #include <cstdint>
-#include <stdfloat>
 
 namespace yagkp {
 
 	// Signed integer type
-	using int_t = int64_t;
+	using int_t = std::int64_t;
 
 	// Floating-point type
-	using fp_t = std::float64_t;
+	using fp_t = double;
 
 	enum class Part {
 		First,
