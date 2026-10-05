@@ -1,5 +1,5 @@
-build/
-deps/
-data/
+/build/
+/deps/
+/data/
 gmon.out
 compile_commands.json
