@@ -6,7 +6,7 @@
 
 namespace yagkp::Uncoarser {
 
-	std::vector<Part> Uncoarser::RestorePartition(
+	std::vector<Part> RestorePartition(
 	    const std::vector<CoarseLevel>& levels,
 	    std::vector<Part> partition,
 	    const int_t C1,

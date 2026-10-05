@@ -3,6 +3,7 @@
 #include <numeric>
 #include <unordered_map>
 
+#include "yagkp/config.hpp"
 #include "yagkp/queue.hpp"
 #include "yagkp/random.hpp"
 
