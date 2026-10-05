@@ -1,16 +1,12 @@
 {
-    "cmake.buildDirectory": "${workspaceFolder}/build",
-    "cmake.configureArgs": [],
-    "cmake.buildArgs": [
-        "--parallel"
-    ],
-    "cmake.generator": "Ninja",
-    "cmake.debugConfig": {
-        "MIMode": "gdb"
-    },
+    // Сборка идёт через build.sh и scripts/build/*.sh. Расширение CMake Tools
+    // не должно само конфигурировать проект в build/: там лежат каталоги
+    // build/<режим>-<вариант>, которые создают скрипты
+    "cmake.configureOnOpen": false,
+    "cmake.buildDirectory": "${workspaceFolder}/build/vscode",
     "folder-color.pathColors": [
         {
-            "folderPath": "YAGkP-Lib/include/benchmark",
+            "folderPath": "YAGkP-Lib/apps/bench",
             "color": "foldercolorizer.color_ff005f"
         }
     ]

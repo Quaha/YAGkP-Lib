@@ -2,16 +2,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug YAGkP_app",
+            "name": "Debug yagkp_partition",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/YAGkP_app",
+            "program": "${workspaceFolder}/build/debug-seq/apps/partition/yagkp_partition",
+            "args": ["--graph", "${workspaceFolder}/data/add20.mtx", "--k", "4"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build: debug",
+            "MIMode": "gdb",
+            "externalConsole": false
+        },
+        {
+            "name": "Debug yagkp_tests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/debug-seq/tests/yagkp_tests",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
-            "preLaunchTask": "cmake-build",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build: debug",
             "MIMode": "gdb",
-            "externalConsole": false,
+            "externalConsole": false
         }
     ]
 }

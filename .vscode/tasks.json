@@ -4,15 +4,46 @@
         {
             "label": "clang-format",
             "type": "shell",
-            "command": "find ${workspaceFolder}/src ${workspaceFolder}/include ${workspaceFolder}/app -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i"
+            "command": "find ${workspaceFolder}/src ${workspaceFolder}/include ${workspaceFolder}/apps ${workspaceFolder}/tests \\( -name '*.cpp' -o -name '*.hpp' \\) -print0 | xargs -0 clang-format -i"
         },
         {
-            "label": "cmake-build",
+            "label": "build: debug",
             "type": "shell",
-            "command": "bash ${workspaceFolder}/build_linux.sh",
-            "group": "build",
+            "command": "bash ${workspaceFolder}/build.sh --debug",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "dependsOn": "clang-format",
             "problemMatcher": "$gcc"
+        },
+        {
+            "label": "build: release",
+            "type": "shell",
+            "command": "bash ${workspaceFolder}/build.sh --release",
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "build: profile",
+            "type": "shell",
+            "command": "bash ${workspaceFolder}/build.sh --profile",
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "build: benchmark",
+            "type": "shell",
+            "command": "bash ${workspaceFolder}/build.sh --benchmark",
+            "group": "build",
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "check all builds",
+            "type": "shell",
+            "command": "bash ${workspaceFolder}/scripts/check_builds.sh",
+            "group": "test",
+            "problemMatcher": []
         }
     ]
 }

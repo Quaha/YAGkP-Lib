@@ -9,7 +9,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
-BINARY="$ROOT_DIR/build/benchmark/YAGkP_app"
+# Собирается командой: bash build.sh --benchmark
+BINARY="$ROOT_DIR/build/benchmark-seq/apps/bench/yagkp_bench"
 DATA_DIR="$ROOT_DIR/data"
 CACHE_DIR="$ROOT_DIR/data/cache"
 OUTPUT_DIR="$SCRIPT_DIR/results"
@@ -18,6 +19,11 @@ GRAPHS_FILE="$ROOT_DIR/benchmark/graphs.txt"
 #ALGOS=("yagkp")
 ALGOS=("yagkp" "kahip_strong" "kahip_eco" "kahip_fast" "metis_kway" "metis_recursive" "scotch")
 KS=(2 4 8 16 32 64)
+
+if [ ! -x "$BINARY" ]; then
+    echo "Error: $BINARY not found. Build it first: bash build.sh --benchmark" >&2
+    exit 1
+fi
 
 mkdir -p "$DATA_DIR" "$CACHE_DIR" "$OUTPUT_DIR"
 
