@@ -28,6 +28,6 @@ bash "$YAGKP_ROOT/scripts/deps/all.sh" "--$VARIANT" -j "$JOBS"
 
 build_yagkp benchmark \
 	-DYAGKP_BUILD_BENCHMARK=ON \
-	-DYAGKP_DEPS_DIR="$YAGKP_ROOT/deps/$VARIANT"
+	-DYAGKP_DEPS_DIR="$YAGKP_DEPS_ROOT/$VARIANT"
 
 print_built apps/partition/yagkp_partition apps/bench/yagkp_bench

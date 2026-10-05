@@ -31,4 +31,4 @@ for lib in "${DEPS_ALL[@]}"; do
 	bash "$YAGKP_ROOT/scripts/deps/$lib.sh" "${args[@]}"
 done
 
-ok "все сторонние библиотеки ($VARIANT) в deps/$VARIANT/"
+ok "все сторонние библиотеки ($VARIANT) в ${YAGKP_DEPS_ROOT#"$YAGKP_ROOT"/}/$VARIANT/"

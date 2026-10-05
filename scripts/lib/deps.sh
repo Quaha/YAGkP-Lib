@@ -9,6 +9,8 @@
 #   build/deps/<вариант>/<lib>  промежуточная сборка
 #   deps/<вариант>/<lib>        результат: lib/ и include/
 #
+# Корни build/ и deps/ переопределяются через YAGKP_BUILD_ROOT и YAGKP_DEPS_ROOT
+#
 # Все библиотеки собираются с флагами режима benchmark из flags.sh, то есть
 # так же, как YAGkP в этом режиме.
 #
@@ -28,7 +30,7 @@ source "$YAGKP_ROOT/scripts/lib/flags.sh"
 
 # deps_prefix <lib>: каталог установки библиотеки для текущего VARIANT
 deps_prefix() {
-	echo "$YAGKP_ROOT/deps/$VARIANT/$1"
+	echo "$YAGKP_DEPS_ROOT/$VARIANT/$1"
 }
 
 # deps_require <lib>: собрать зависимость, если её ещё нет или она устарела
@@ -64,7 +66,7 @@ deps_begin() {
 	DEP_SRC="$YAGKP_ROOT/$2"
 	shift 2
 	DEP_DEPENDS=("$@")
-	DEP_BUILD="$YAGKP_ROOT/build/deps/$VARIANT/$DEP_NAME"
+	DEP_BUILD="$YAGKP_BUILD_ROOT/deps/$VARIANT/$DEP_NAME"
 	DEP_PREFIX="$(deps_prefix "$DEP_NAME")"
 
 	if [ "$VARIANT" = "par" ]; then

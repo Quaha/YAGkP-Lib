@@ -2,7 +2,8 @@
 # =============================================================================
 # Общая логика скриптов сборки YAGkP (scripts/build/*.sh).
 #
-# Каталог сборки: build/<режим>-<вариант>, например build/release-seq.
+# Каталог сборки: build/<режим>-<вариант>, например build/release-seq
+# (корень build/ переопределяется переменной YAGKP_BUILD_ROOT).
 # Флаги берутся из flags.sh, вариант par включает YAGKP_PARALLEL.
 #
 #   build_yagkp <режим> [-D...]   # конфигурация и сборка
@@ -20,7 +21,7 @@ build_yagkp() {
 
 	require_cmd cmake
 
-	BUILD_DIR="$YAGKP_ROOT/build/$mode-$VARIANT"
+	BUILD_DIR="$YAGKP_BUILD_ROOT/$mode-$VARIANT"
 
 	local parallel=OFF
 	if [ "$VARIANT" = "par" ]; then

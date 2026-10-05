@@ -19,6 +19,13 @@ YAGKP_COMMON_SH=1
 YAGKP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export YAGKP_ROOT
 
+# Куда складываются сборки и сторонние библиотеки. По умолчанию build/ и deps/
+# в корне; переопределяются окружением (так scripts/check_builds.sh собирает
+# во временный каталог, не трогая рабочие сборки)
+YAGKP_BUILD_ROOT="${YAGKP_BUILD_ROOT:-$YAGKP_ROOT/build}"
+YAGKP_DEPS_ROOT="${YAGKP_DEPS_ROOT:-$YAGKP_ROOT/deps}"
+export YAGKP_BUILD_ROOT YAGKP_DEPS_ROOT
+
 # -----------------------------------------------------------------------------
 # Вывод. Цвет только если stderr — терминал и не задан NO_COLOR
 # -----------------------------------------------------------------------------
