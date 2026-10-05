@@ -17,11 +17,7 @@ deps_begin gklib external/GKlib
 
 #   GKLIB_BUILD_APPS=OFF       только библиотека, без утилит
 #   OPENMP=OFF                 последовательная версия
-#   CMAKE_INSTALL_LIBDIR=lib   иначе на части систем библиотека уйдёт в lib64
-cmake -S "$DEP_SRC" -B "$DEP_BUILD" \
-	"${CMAKE_FLAG_ARGS[@]}" \
-	-DCMAKE_INSTALL_PREFIX="$DEP_PREFIX" \
-	-DCMAKE_INSTALL_LIBDIR=lib \
+deps_configure \
 	-DGKLIB_BUILD_APPS=OFF \
 	-DOPENMP=OFF \
 	-DSHARED=OFF

@@ -31,9 +31,7 @@ gklib_prefix="$(deps_prefix gklib)"
 
 # METIS сам добавляет -O3 -march=native -Werror в CMAKE_C_FLAGS; наши флаги
 # идут после них (CMAKE_C_FLAGS_RELEASE), поэтому -march берётся наш
-cmake -S "$DEP_SRC" -B "$DEP_BUILD" \
-	"${CMAKE_FLAG_ARGS[@]}" \
-	-DCMAKE_INSTALL_PREFIX="$DEP_PREFIX" \
+deps_configure \
 	-DGKLIB_PATH="$gklib_prefix" \
 	-DSHARED=OFF
 # Только библиотека: утилиты METIS не нужны

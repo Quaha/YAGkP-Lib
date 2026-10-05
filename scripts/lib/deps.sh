@@ -18,7 +18,8 @@
 #
 # Скелет скрипта:
 #   deps_begin metis external/METIS      # выйдет сразу, если всё актуально
-#   ... cmake -S "$DEP_SRC" -B "$DEP_BUILD" "${CMAKE_FLAG_ARGS[@]}" ...
+#   deps_configure -DOPTION=...          # cmake с флагами benchmark
+#   cmake --build "$DEP_BUILD" ...
 #   deps_finish
 # =============================================================================
 
@@ -94,6 +95,19 @@ deps_begin() {
 
 	rm -rf "$DEP_BUILD" "$DEP_PREFIX"
 	mkdir -p "$DEP_BUILD" "$DEP_PREFIX/lib" "$DEP_PREFIX/include"
+}
+
+# deps_configure [-D...]: конфигурация CMake-проекта библиотеки с флагами
+# benchmark и префиксом установки DEP_PREFIX
+#
+# --no-warn-unused-cli: флаги передаются и для C, и для C++, а библиотеки на
+# чистом C (GKlib, METIS) иначе предупреждают о неиспользованных переменных
+deps_configure() {
+	cmake -S "$DEP_SRC" -B "$DEP_BUILD" --no-warn-unused-cli \
+		"${CMAKE_FLAG_ARGS[@]}" \
+		-DCMAKE_INSTALL_PREFIX="$DEP_PREFIX" \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		"$@"
 }
 
 # deps_finish: записать штамп, сообщить об успехе
