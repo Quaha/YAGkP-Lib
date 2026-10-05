@@ -62,6 +62,11 @@ add_library(yagkp STATIC
 
 target_include_directories(yagkp PUBLIC
     ${PROJECT_SOURCE_DIR}/include
+)
+
+# Сторонние заголовки как системные: их предупреждения не показываются
+# (matrix.hpp, например, содержит #pragma omp, а включается в graph.hpp)
+target_include_directories(yagkp SYSTEM PUBLIC
     ${PROJECT_SOURCE_DIR}/external   # для "mmio/matrix.hpp"
 )
 
