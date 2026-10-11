@@ -78,8 +78,11 @@ namespace yagkp::Bipartitioner {
 		return best_partition;
 	}
 
-	std::vector<Part>
-	GreedyGraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
+	std::vector<Part> GreedyGraphGrowingAlgorithm(
+	    const Graph& graph,
+	    const int_t C1,
+	    const int_t C2
+	) {
 		const int_t n = graph.n;
 
 		int_t max_possible_gain = 0;

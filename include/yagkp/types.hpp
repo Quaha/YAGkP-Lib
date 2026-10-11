@@ -10,20 +10,15 @@ namespace yagkp {
 	// Floating-point type
 	using fp_t = double;
 
-	enum class Part {
-		First,
-		Second
-	};
+	enum class Part { First, Second };
 
-	template <typename T>
-	void setmax(T& a, T b) {
+	template <typename T> void setmax(T& a, T b) {
 		if (b > a) {
 			a = b;
 		}
 	}
 
-	template <typename T>
-	void setmin(T& a, T b) {
+	template <typename T> void setmin(T& a, T b) {
 		if (b < a) {
 			a = b;
 		}

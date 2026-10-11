@@ -155,7 +155,10 @@ namespace yagkp::benchmark {
 		SCOTCH_stratInit(&strat);
 
 		SCOTCH_stratGraphMapBuild(
-		    &strat, SCOTCH_STRATDEFAULT, (SCOTCH_Num)nparts, ProgramConfig::imbalance
+		    &strat,
+		    SCOTCH_STRATDEFAULT,
+		    (SCOTCH_Num)nparts,
+		    ProgramConfig::imbalance
 		);
 
 		std::vector<int> partition(n);

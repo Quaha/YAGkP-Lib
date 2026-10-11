@@ -15,6 +15,10 @@ namespace yagkp::Partitioner {
 	// k: number of parts for this recursive call (k >= 1)  | 2
 	// offset: starting index for parts in this call        | 2
 	// returns: vector of part indices (offset..offset+k-1) | {2, 2, 3, 3}
-	std::vector<int_t>
-	RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset);
+	std::vector<int_t> RecursivePartition(
+	    const Graph& graph,
+	    const int_t k,
+	    const int_t M,
+	    int_t offset
+	);
 } // namespace yagkp::Partitioner

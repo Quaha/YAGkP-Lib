@@ -35,8 +35,12 @@ namespace yagkp::Partitioner {
 		return best_partition;
 	}
 
-	std::vector<int_t>
-	RecursivePartition(const Graph& graph, const int_t k, const int_t M, int_t offset) {
+	std::vector<int_t> RecursivePartition(
+	    const Graph& graph,
+	    const int_t k,
+	    const int_t M,
+	    int_t offset
+	) {
 		std::vector<int_t> partition(graph.n, offset);
 		if (k == 1) {
 			return partition;

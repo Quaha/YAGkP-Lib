@@ -22,7 +22,11 @@ namespace yagkp::Uncoarser {
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
 				partition = Uncoarser::KernighanLinBlocking(
-				    levels[i - 1].coarsened_graph, levels[i], partition, C1, C2
+				    levels[i - 1].coarsened_graph,
+				    levels[i],
+				    partition,
+				    C1,
+				    C2
 				);
 			}
 			break;
@@ -34,8 +38,10 @@ namespace yagkp::Uncoarser {
 		return partition;
 	}
 
-	std::vector<Part>
-	DirectMapping(const CoarseLevel& coarse_level, const std::vector<Part>& coarse_partition) {
+	std::vector<Part> DirectMapping(
+	    const CoarseLevel& coarse_level,
+	    const std::vector<Part>& coarse_partition
+	) {
 		const int_t n = coarse_level.uncoarse_to_coarse.size();
 		std::vector<Part> prev_partition(n);
 
@@ -88,7 +94,10 @@ namespace yagkp::Uncoarser {
 	}
 
 	std::vector<Part> KernighanLinBlocking(
-	    const Graph& graph, std::vector<Part> current_partition, const int_t C1, const int_t C2
+	    const Graph& graph,
+	    std::vector<Part> current_partition,
+	    const int_t C1,
+	    const int_t C2
 	) {
 		int_t n = graph.n;
 
@@ -216,14 +225,14 @@ namespace yagkp::Uncoarser {
 						break;
 					}
 					else if (heap1.empty()) {
-						data       = heap2.extract();
+						data         = heap2.extract();
 						int_t weight = graph.getVertexWeight(data.second);
 						if (weight1 + weight > C1) {
 							continue;
 						}
 					}
 					else if (heap2.empty()) {
-						data       = heap1.extract();
+						data         = heap1.extract();
 						int_t weight = graph.getVertexWeight(data.second);
 						if (weight2 + weight > C2) {
 							continue;
@@ -318,7 +327,10 @@ namespace yagkp::Uncoarser {
 	    const int_t C2
 	) {
 		return KernighanLinBlocking(
-		    previous_graph, DirectMapping(coarse_level, coarse_partition), C1, C2
+		    previous_graph,
+		    DirectMapping(coarse_level, coarse_partition),
+		    C1,
+		    C2
 		);
 	}
 } // namespace yagkp::Uncoarser

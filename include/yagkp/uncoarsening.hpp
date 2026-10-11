@@ -30,8 +30,10 @@ namespace yagkp::Uncoarser {
 	 * @param coarse_partition partition of the coarse graph
 	 * @return partition of the previous coarsening level graph
 	 */
-	std::vector<Part>
-	DirectMapping(const CoarseLevel& coarse_level, const std::vector<Part>& coarse_partition);
+	std::vector<Part> DirectMapping(
+	    const CoarseLevel& coarse_level,
+	    const std::vector<Part>& coarse_partition
+	);
 
 	/**
 	 * @brief

@@ -19,7 +19,10 @@
 namespace yagkp::benchmark {
 
 	void RunSingle(
-	    const std::string& graph_path, int k, const std::string& algo, const std::string& output_dir
+	    const std::string& graph_path,
+	    int k,
+	    const std::string& algo,
+	    const std::string& output_dir
 	) {
 		std::string graph_name = std::filesystem::path(graph_path).filename().string();
 		Graph g(graph_path, "mtx", true);

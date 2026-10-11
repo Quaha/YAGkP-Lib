@@ -26,7 +26,10 @@ namespace yagkp::Coarser {
 
 		levels.push_back(
 		    CoarseLevel{
-		        base_uncoarse_to_coarse, base_coarse_to_uncoarse, graph, base_included_ew_in_vertex
+		        base_uncoarse_to_coarse,
+		        base_coarse_to_uncoarse,
+		        graph,
+		        base_included_ew_in_vertex
 		    }
 		);
 
@@ -34,7 +37,8 @@ namespace yagkp::Coarser {
 		     i < ProgramConfig::coarsening_iterations_limit &&
 		     levels[i].coarsened_graph.n >
 		         std::max<int_t>(
-		             2, std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2)
+		             2,
+		             std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2)
 		         );
 		     ++i) {
 
@@ -47,8 +51,12 @@ namespace yagkp::Coarser {
 		return levels;
 	}
 
-	void
-	FillLevel(const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k) {
+	void FillLevel(
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const int_t k
+	) {
 		switch (ProgramConfig::coarsening_method) {
 		case ProgramConfig::CoarseningMethod::RandomMatching:
 			RandomMatching(level, graph, new_level, k);
@@ -72,7 +80,10 @@ namespace yagkp::Coarser {
 	}
 
 	void RandomMatching(
-	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const int_t k
 	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
@@ -106,7 +117,10 @@ namespace yagkp::Coarser {
 	}
 
 	void LightEdgeMatching(
-	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const int_t k
 	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
@@ -150,7 +164,10 @@ namespace yagkp::Coarser {
 	}
 
 	void HeavyEdgeMatching(
-	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const int_t k
 	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
@@ -194,7 +211,10 @@ namespace yagkp::Coarser {
 	}
 
 	void HeavyCliqueMatching(
-	    const CoarseLevel& level, const Graph& graph, CoarseLevel& new_level, const int_t k
+	    const CoarseLevel& level,
+	    const Graph& graph,
+	    CoarseLevel& new_level,
+	    const int_t k
 	) {
 
 		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
@@ -223,18 +243,18 @@ namespace yagkp::Coarser {
 				if (matching[next_V] == -1) {
 					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
 					                level.coarsened_graph.vertex_weights[next_V];
-					fp_t F        = 2.0 *
-					                fp_t(
-					                    w + level.included_ew_in_vertex[curr_V] +
-					                    level.included_ew_in_vertex[next_V]
-					                ) /
-					                fp_t(
-					                    std::max(
-					                        1ll,
-					                        static_cast<long long>(total_W) *
-					                            static_cast<long long>(total_W - 1)
-					                    )
-					                );
+					fp_t F = 2.0 *
+					         fp_t(
+					             w + level.included_ew_in_vertex[curr_V] +
+					             level.included_ew_in_vertex[next_V]
+					         ) /
+					         fp_t(
+					             std::max(
+					                 1ll,
+					                 static_cast<long long>(total_W) *
+					                     static_cast<long long>(total_W - 1)
+					             )
+					         );
 					if (!found || F > best_F) {
 						edge_W = w;
 						best_V = next_V;

@@ -21,8 +21,11 @@ namespace yagkp::PartitionMetrics {
 	// (|V| = 6, weight(Ui) = 1) k: number of parts | 4 partition: vector of part indices for each
 	// vertex                                  | {0, 1, 0, 2, 3, 1} returns: vector of relative
 	// weights of each part (fraction of total vertex weight) | {0.33, 0.33, 0.16, 0.16}
-	std::vector<fp_t>
-	GetBalances(const Graph& graph, const int_t k, const std::vector<int_t>& partition);
+	std::vector<fp_t> GetBalances(
+	    const Graph& graph,
+	    const int_t k,
+	    const std::vector<int_t>& partition
+	);
 
 	// graph: input graph                                               | graph (|V| = 6, weight(Ui)
 	// = 1) k: number of parts                                               | 4 partition: vector

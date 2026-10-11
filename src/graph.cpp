@@ -35,7 +35,8 @@ namespace yagkp {
 			vertex_weights[i] = 1;
 		}
 
-		total_vertex_weight = std::accumulate(vertex_weights.begin(), vertex_weights.end(), int_t{0});
+		total_vertex_weight =
+		    std::accumulate(vertex_weights.begin(), vertex_weights.end(), int_t{0});
 
 		edge_weights.resize(m);
 		if (matrix.Val != nullptr && !ignore_eweights) {
@@ -65,8 +66,11 @@ namespace yagkp {
 			subgraph.vertex_weights[i] = vertex_weights[sub_vertices[i]];
 		}
 
-		subgraph.total_vertex_weight =
-		    std::accumulate(subgraph.vertex_weights.begin(), subgraph.vertex_weights.end(), int_t{0});
+		subgraph.total_vertex_weight = std::accumulate(
+		    subgraph.vertex_weights.begin(),
+		    subgraph.vertex_weights.end(),
+		    int_t{0}
+		);
 
 		std::vector<bool> is_exist(n, false);
 

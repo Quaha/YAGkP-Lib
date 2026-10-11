@@ -5,8 +5,7 @@
 #include "yagkp/types.hpp"
 
 namespace yagkp {
-	template <typename T>
-	class Queue {
+	template <typename T> class Queue {
 		std::vector<T> data;
 		int_t head = 0;
 

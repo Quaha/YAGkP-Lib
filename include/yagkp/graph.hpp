@@ -27,8 +27,7 @@ namespace yagkp {
 				const Graph& g;
 				int_t pos;
 
-				Iterator(const Graph& g, int_t pos)
-				    : g(g), pos(pos) {
+				Iterator(const Graph& g, int_t pos) : g(g), pos(pos) {
 				}
 
 				bool operator!=(const Iterator& other) const {
@@ -58,7 +57,11 @@ namespace yagkp {
 
 		Graph();
 		Graph(const spMtx<double>& matrix, bool ignore_eweights = false);
-		Graph(const std::string& file_name, const std::string& format, bool ignore_eweights = false);
+		Graph(
+		    const std::string& file_name,
+		    const std::string& format,
+		    bool ignore_eweights = false
+		);
 
 		void buildGraph(const spMtx<double>& matrix, bool ignore_eweights);
 

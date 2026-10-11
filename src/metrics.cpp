@@ -29,7 +29,11 @@ namespace yagkp::PartitionMetrics {
 		return edge_cut;
 	}
 
-	std::vector<fp_t> GetBalances(const Graph& graph, const int_t k, const std::vector<int_t>& partition) {
+	std::vector<fp_t> GetBalances(
+	    const Graph& graph,
+	    const int_t k,
+	    const std::vector<int_t>& partition
+	) {
 		std::vector<fp_t> balances(k, 0.0);
 
 		int_t total_W = graph.getSumOfVertexWeights();
@@ -73,4 +77,4 @@ namespace yagkp::PartitionMetrics {
 
 		return max_weight;
 	}
-} // namespace PartitionMetrics
+} // namespace yagkp::PartitionMetrics
