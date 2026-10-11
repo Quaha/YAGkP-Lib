@@ -2,6 +2,7 @@
 #include <string>
 
 #include "benchmark.hpp"
+#include "yagkp/config.hpp"
 
 // ./yagkp_bench --graph ../data/add20.mtx --k 4 --algo kahip_strong --output ../benchmark/results/
 
@@ -26,10 +27,14 @@ int main(int argc, char* argv[]) {
 		else if (arg == "--output" && i + 1 < argc) {
 			output_dir = argv[++i];
 		}
+		else if (arg == "--imbalance" && i + 1 < argc) {
+			yagkp::ProgramConfig::imbalance = std::stod(argv[++i]);
+		}
 	}
 
 	if (graph_path.empty() || k == 0 || algo.empty() || output_dir.empty()) {
 		std::cerr << "Usage: yagkp_bench --graph <path> --k <k> --algo <algo> --output <dir>"
+		             " [--imbalance <eps>]"
 		          << std::endl;
 		std::cerr << "Algos: yagkp, kahip_strong, kahip_eco, kahip_fast, metis_kway, "
 		             "metis_recursive, scotch"

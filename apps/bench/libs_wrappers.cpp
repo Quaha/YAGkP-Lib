@@ -1,5 +1,7 @@
 #include "libs_wrappers.hpp"
 
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <stdexcept>
 #include <vector>
@@ -30,6 +32,11 @@ namespace yagkp::benchmark {
 		std::vector<idx_t> _vwgt(vwgt.begin(), vwgt.end());
 		std::vector<idx_t> partition(n);
 
+		idx_t options[METIS_NOPTIONS];
+		METIS_SetDefaultOptions(options);
+		options[METIS_OPTION_UFACTOR] =
+		    std::max<idx_t>(1, static_cast<idx_t>(std::lround(ProgramConfig::imbalance * 1000.0)));
+
 		if (mode == "kway") {
 			METIS_PartGraphKway(
 			    &_n,
@@ -42,7 +49,7 @@ namespace yagkp::benchmark {
 			    &_nparts,
 			    nullptr,
 			    nullptr,
-			    nullptr,
+			    options,
 			    &edge_cut,
 			    partition.data()
 			);
@@ -59,7 +66,7 @@ namespace yagkp::benchmark {
 			    &_nparts,
 			    nullptr,
 			    nullptr,
-			    nullptr,
+			    options,
 			    &edge_cut,
 			    partition.data()
 			);
@@ -146,6 +153,10 @@ namespace yagkp::benchmark {
 
 		SCOTCH_Strat strat;
 		SCOTCH_stratInit(&strat);
+
+		SCOTCH_stratGraphMapBuild(
+		    &strat, SCOTCH_STRATDEFAULT, (SCOTCH_Num)nparts, ProgramConfig::imbalance
+		);
 
 		std::vector<int> partition(n);
 		SCOTCH_graphPart(&graph, (SCOTCH_Num)nparts, &strat, (SCOTCH_Num*)partition.data());
