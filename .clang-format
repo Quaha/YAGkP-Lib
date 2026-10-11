@@ -14,6 +14,11 @@ AlignAfterOpenBracket: BlockIndent
 BinPackParameters: false
 BinPackArguments: false
 
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+
+PenaltyReturnTypeOnItsOwnLine: 1000
+
 SpaceBeforeParens: ControlStatements
 SpaceAfterCStyleCast: false
 SpaceInEmptyBlock: false
