@@ -126,7 +126,7 @@ namespace yagkp::Uncoarser {
 				auto [gain, curr_V] = heap1.extract();
 				blocked[curr_V]     = true;
 
-				int weight = graph.getVertexWeight(curr_V);
+				int_t weight = graph.getVertexWeight(curr_V);
 
 				if (weight + weight2 <= C2) {
 					weight1 -= weight;
@@ -140,7 +140,7 @@ namespace yagkp::Uncoarser {
 				auto [gain, curr_V] = heap2.extract();
 				blocked[curr_V]     = true;
 
-				int weight = graph.getVertexWeight(curr_V);
+				int_t weight = graph.getVertexWeight(curr_V);
 
 				if (weight + weight1 <= C1) {
 					weight2 -= weight;
@@ -195,7 +195,7 @@ namespace yagkp::Uncoarser {
 					}
 					data = heap1.extract();
 
-					int weight = graph.getVertexWeight(data.second);
+					int_t weight = graph.getVertexWeight(data.second);
 					if (weight2 + weight > C2) {
 						continue;
 					}
@@ -206,7 +206,7 @@ namespace yagkp::Uncoarser {
 					}
 					data = heap2.extract();
 
-					int weight = graph.getVertexWeight(data.second);
+					int_t weight = graph.getVertexWeight(data.second);
 					if (weight1 + weight > C1) {
 						continue;
 					}
@@ -217,14 +217,14 @@ namespace yagkp::Uncoarser {
 					}
 					else if (heap1.empty()) {
 						data       = heap2.extract();
-						int weight = graph.getVertexWeight(data.second);
+						int_t weight = graph.getVertexWeight(data.second);
 						if (weight1 + weight > C1) {
 							continue;
 						}
 					}
 					else if (heap2.empty()) {
 						data       = heap1.extract();
-						int weight = graph.getVertexWeight(data.second);
+						int_t weight = graph.getVertexWeight(data.second);
 						if (weight2 + weight > C2) {
 							continue;
 						}

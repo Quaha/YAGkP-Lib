@@ -26,8 +26,6 @@ namespace yagkp::Bipartitioner {
 	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
 		const int_t n = graph.n;
 
-		int_t total_weight = graph.getSumOfVertexWeights();
-
 		std::vector<Part> best_partition;
 		int_t best_edge_cut = std::numeric_limits<int_t>::max();
 

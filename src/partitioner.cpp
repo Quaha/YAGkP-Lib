@@ -13,7 +13,7 @@ namespace yagkp::Partitioner {
 
 		fp_t opt_part_value = fp_t(graph.getSumOfVertexWeights()) / fp_t(k);
 
-		const int M = std::max(
+		const int_t M = std::max(
 		    int_t(opt_part_value * (1.0 + ProgramConfig::imbalance) + ProgramConfig::EPS),
 		    int_t(std::ceil(opt_part_value + ProgramConfig::EPS))
 		); // max part weight
