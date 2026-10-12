@@ -1,6 +1,7 @@
 #include "yagkp/partitioner.hpp"
 
 #include <cmath>
+#include <limits>
 
 #include "yagkp/bipartitioner.hpp"
 #include "yagkp/coarsening.hpp"
@@ -18,17 +19,24 @@ namespace yagkp::Partitioner {
 		    int_t(std::ceil(opt_part_value + ProgramConfig::EPS))
 		); // max part weight
 
+		std::vector<std::vector<int_t>> partitions(ProgramConfig::runs);
+
+#pragma omp parallel
+#pragma omp single
+		for (int_t i = 0; i < ProgramConfig::runs; ++i) {
+#pragma omp task default(none) shared(graph, partitions) firstprivate(i, k, M)
+			partitions[i] = RecursivePartition(graph, k, M, 0);
+		}
+
 		int_t best_edgecut = std::numeric_limits<int_t>::max();
 		std::vector<int_t> best_partition;
 
-		for (int_t i = 0; i < ProgramConfig::runs; ++i) {
-			std::vector<int_t> partition = RecursivePartition(graph, k, M, 0);
-
+		for (std::vector<int_t>& partition: partitions) {
 			int_t edgecut = PartitionMetrics::GetEdgeCut(graph, partition);
 
 			if (edgecut < best_edgecut) {
 				best_edgecut   = edgecut;
-				best_partition = partition;
+				best_partition = std::move(partition);
 			}
 		}
 
@@ -73,8 +81,15 @@ namespace yagkp::Partitioner {
 		Graph first_graph  = graph.selectSubgraph(first_part_vertices);
 		Graph second_graph = graph.selectSubgraph(second_part_vertices);
 
-		std::vector<int_t> partition1 = RecursivePartition(first_graph, k1, M, offset);
-		std::vector<int_t> partition2 = RecursivePartition(second_graph, k2, M, offset + k1);
+		std::vector<int_t> partition1;
+		std::vector<int_t> partition2;
+
+#pragma omp task default(none) shared(first_graph, partition1)                                     \
+    firstprivate(k1, M, offset) if (first_graph.n >= ProgramConfig::parallel_task_min_vertices)
+		partition1 = RecursivePartition(first_graph, k1, M, offset);
+
+		partition2 = RecursivePartition(second_graph, k2, M, offset + k1);
+#pragma omp taskwait
 
 		for (int_t i = 0; i < (int_t)first_part_vertices.size(); i++) {
 			partition[first_part_vertices[i]] = partition1[i];

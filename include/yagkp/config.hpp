@@ -30,6 +30,9 @@ namespace yagkp {
 
 		inline static fp_t EPS = 1e-8;
 
+		// --- Parallel parameters ---
+		inline static int_t parallel_task_min_vertices = 1000;
+
 		// --- Coarsening parameters ---
 		inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
 
