@@ -46,6 +46,11 @@ namespace yagkp::Coarser {
 
 			FillLevel(levels[i], levels[i].coarsened_graph, new_level, k);
 
+			if (new_level.coarsened_graph.n >
+			    ProgramConfig::coarsening_min_reduction_fraction * levels[i].coarsened_graph.n) {
+				break;
+			}
+
 			levels.push_back(new_level);
 		}
 		return levels;

@@ -39,6 +39,8 @@ namespace yagkp {
 		inline static bool coarsening_clusterization_prohibition = true;
 		inline static fp_t coarsening_clusterization_size_factor = 5.0;
 
+		inline static fp_t coarsening_min_reduction_fraction = 0.85;
+
 		// --- Bipartitioning parameters ---
 		inline static BipartitioningMethod bipartitioning_method =
 		    BipartitioningMethod::GreedyGraphGrowingAlgorithm;
