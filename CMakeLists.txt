@@ -85,14 +85,17 @@ target_compile_options(yagkp PRIVATE
 set_source_files_properties(external/mmio/mmio.cpp PROPERTIES COMPILE_OPTIONS "-w")
 
 # -----------------------------------------------------------------------------
-# Параллельная версия. Пока только заготовка: макрос YAGKP_PARALLEL и OpenMP
-# подключаются, но код ядра их ещё не использует
+# Параллельная версия
 # -----------------------------------------------------------------------------
 if(YAGKP_PARALLEL)
     message(WARNING "YAGKP_PARALLEL=ON: параллельная версия ещё не реализована")
     find_package(OpenMP REQUIRED)
     target_link_libraries(yagkp PUBLIC OpenMP::OpenMP_CXX)
     target_compile_definitions(yagkp PUBLIC YAGKP_PARALLEL=1)
+else()
+    target_compile_options(yagkp PUBLIC
+        $<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-unknown-pragmas>
+    )
 endif()
 
 # =============================================================================

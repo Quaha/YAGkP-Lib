@@ -21,6 +21,7 @@
 #include "yagkp/metrics.hpp"
 #include "yagkp/partitioner.hpp"
 #include "yagkp/types.hpp"
+#include "yagkp/parallel.hpp"
 
 namespace {
 
@@ -142,6 +143,7 @@ int main(int argc, char* argv[]) {
 		          << "n, m       " << graph.n << ", " << graph.m << "\n"
 		          << "k          " << opts.k << "\n"
 		          << "eps        " << opts.imbalance * 100.0 << "% (допустимый дисбаланс)\n"
+				  << "threads    " << parallel::MaxThreads() << "\n"
 		          << "time       " << time_ms << " ms\n"
 		          << "edge cut   " << PartitionMetrics::GetEdgeCut(graph, partition) << "\n"
 		          << "imbalance  "
