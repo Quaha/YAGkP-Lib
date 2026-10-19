@@ -9,6 +9,65 @@
 
 namespace yagkp::Coarser {
 
+	namespace {
+		template <typename EdgeRating>
+		void FillLevelByMatching(
+		    const CoarseLevel& level,
+		    const Graph& graph,
+		    CoarseLevel& new_level,
+		    const int_t k,
+		    const EdgeRating& edge_rating
+		) {
+			std::vector<int_t> permutation = GetRandomPermutation(graph.n);
+
+			std::vector<int_t> matching(graph.n, -1);
+			std::vector<int_t> matching_edge_weights(graph.n, 0);
+
+			int_t max_allowed_size = graph.getSumOfVertexWeights();
+			if (ProgramConfig::coarsening_clusterization_prohibition) {
+				max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
+				                           ProgramConfig::coarsening_clusterization_size_factor);
+			}
+
+			for (int_t curr_V: permutation) {
+				if (matching[curr_V] != -1) {
+					continue;
+				}
+				int_t best_V;
+				int_t best_W;
+
+				decltype(edge_rating(curr_V, curr_V, best_W)) best_rating;
+				
+				bool found = false;
+
+				for (auto [next_V, w]: graph[curr_V]) {
+					if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] >
+					    max_allowed_size)
+						continue;
+					if (matching[next_V] != -1)
+						continue;
+
+					auto rating = edge_rating(curr_V, next_V, w);
+					if (!found || rating > best_rating) {
+						best_V      = next_V;
+						best_W      = w;
+						best_rating = rating;
+						found       = true;
+					}
+				}
+
+				if (found) {
+					matching[best_V]              = curr_V;
+					matching[curr_V]              = best_V;
+					matching_edge_weights[best_V] = best_W;
+					matching_edge_weights[curr_V] = best_W;
+				}
+			}
+
+			ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		}
+	} // namespace
+
 	std::vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k) {
 		std::vector<CoarseLevel> levels;
 		levels.reserve(ProgramConfig::coarsening_iterations_limit + 1);
@@ -90,35 +149,7 @@ namespace yagkp::Coarser {
 	    CoarseLevel& new_level,
 	    const int_t k
 	) {
-
-		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
-
-		std::vector<int_t> matching(graph.n, -1);
-		std::vector<int_t> matching_edge_weights(graph.n, 0);
-
-		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
-			                           ProgramConfig::coarsening_clusterization_size_factor);
-		}
-
-		for (int_t curr_V: permutation) {
-			if (matching[curr_V] != -1)
-				continue;
-			for (auto [next_V, w]: graph[curr_V]) {
-				if (matching[next_V] == -1 &&
-				    graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] <=
-				        max_allowed_size) {
-					matching[next_V]              = curr_V;
-					matching[curr_V]              = next_V;
-					matching_edge_weights[next_V] = w;
-					matching_edge_weights[curr_V] = w;
-					break;
-				}
-			}
-		}
-
-		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t) { return 0; });
 	}
 
 	void LightEdgeMatching(
@@ -127,45 +158,7 @@ namespace yagkp::Coarser {
 	    CoarseLevel& new_level,
 	    const int_t k
 	) {
-
-		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
-
-		std::vector<int_t> matching(graph.n, -1);
-		std::vector<int_t> matching_edge_weights(graph.n, 0);
-
-		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
-			                           ProgramConfig::coarsening_clusterization_size_factor);
-		}
-
-		for (int_t curr_V: permutation) {
-			if (matching[curr_V] != -1) {
-				continue;
-			}
-			int_t best_V;
-			int_t min_W;
-			bool found = false;
-
-			for (auto [next_V, w]: graph[curr_V]) {
-				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size)
-					continue;
-				if (matching[next_V] == -1 && (!found || w < min_W)) {
-					min_W  = w;
-					best_V = next_V;
-					found  = true;
-				}
-			}
-
-			if (found) {
-				matching[best_V]              = curr_V;
-				matching[curr_V]              = best_V;
-				matching_edge_weights[best_V] = min_W;
-				matching_edge_weights[curr_V] = min_W;
-			}
-		}
-
-		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t w) { return -w; });
 	}
 
 	void HeavyEdgeMatching(
@@ -174,45 +167,7 @@ namespace yagkp::Coarser {
 	    CoarseLevel& new_level,
 	    const int_t k
 	) {
-
-		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
-
-		std::vector<int_t> matching(graph.n, -1);
-		std::vector<int_t> matching_edge_weights(graph.n, 0);
-
-		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (int_t)(((fp_t)(max_allowed_size) / (fp_t)(k)) *
-			                           ProgramConfig::coarsening_clusterization_size_factor);
-		}
-
-		for (int_t curr_V: permutation) {
-			if (matching[curr_V] != -1) {
-				continue;
-			}
-			int_t best_V;
-			int_t max_W;
-			bool found = false;
-
-			for (auto [next_V, w]: graph[curr_V]) {
-				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size)
-					continue;
-				if (matching[next_V] == -1 && (!found || w > max_W)) {
-					max_W  = w;
-					best_V = next_V;
-					found  = true;
-				}
-			}
-
-			if (found) {
-				matching[best_V]              = curr_V;
-				matching[curr_V]              = best_V;
-				matching_edge_weights[best_V] = max_W;
-				matching_edge_weights[curr_V] = max_W;
-			}
-		}
-
-		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t w) { return w; });
 	}
 
 	void HeavyCliqueMatching(
@@ -221,63 +176,19 @@ namespace yagkp::Coarser {
 	    CoarseLevel& new_level,
 	    const int_t k
 	) {
-
-		std::vector<int_t> permutation = GetRandomPermutation(graph.n);
-
-		std::vector<int_t> matching(graph.n, -1);
-		std::vector<int_t> matching_edge_weights(graph.n, 0);
-
-		int_t max_allowed_size = graph.getSumOfVertexWeights();
-		if (ProgramConfig::coarsening_clusterization_prohibition) {
-			max_allowed_size = (int_t)((fp_t(max_allowed_size) / fp_t(k)) *
-			                           ProgramConfig::coarsening_clusterization_size_factor);
-		}
-
-		for (int_t curr_V: permutation) {
-			if (matching[curr_V] != -1) {
-				continue;
-			}
-			int_t best_V;
-			fp_t best_F;
-			int_t edge_W;
-			bool found = false;
-
-			for (auto [next_V, w]: graph[curr_V]) {
-				if (graph.vertex_weights[curr_V] + graph.vertex_weights[next_V] > max_allowed_size)
-					continue;
-				if (matching[next_V] == -1) {
-					int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
-					                level.coarsened_graph.vertex_weights[next_V];
-					fp_t F = 2.0 *
-					         fp_t(
-					             w + level.included_ew_in_vertex[curr_V] +
-					             level.included_ew_in_vertex[next_V]
-					         ) /
-					         fp_t(
-					             std::max(
-					                 1ll,
-					                 static_cast<long long>(total_W) *
-					                     static_cast<long long>(total_W - 1)
-					             )
-					         );
-					if (!found || F > best_F) {
-						edge_W = w;
-						best_V = next_V;
-						best_F = F;
-						found  = true;
-					}
-				}
-			}
-
-			if (found) {
-				matching[best_V]              = curr_V;
-				matching[curr_V]              = best_V;
-				matching_edge_weights[best_V] = edge_W;
-				matching_edge_weights[curr_V] = edge_W;
-			}
-		}
-
-		ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		auto clique_density = [&level](int_t curr_V, int_t next_V, int_t w) -> fp_t {
+			int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
+			                level.coarsened_graph.vertex_weights[next_V];
+			return 2.0 *
+			       fp_t(
+			           w + level.included_ew_in_vertex[curr_V] + level.included_ew_in_vertex[next_V]
+			       ) /
+			       fp_t(std::max(
+			           1ll,
+			           static_cast<long long>(total_W) * static_cast<long long>(total_W - 1)
+			       ));
+		};
+		FillLevelByMatching(level, graph, new_level, k, clique_density);
 	}
 
 	// This function builds the coarse level based on the found matching
