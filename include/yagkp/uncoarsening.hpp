@@ -36,6 +36,22 @@ namespace yagkp::Uncoarser {
 	);
 
 	/**
+	 * @brief Improves the partition of the graph with Kernighan-Lin and fixes its balance.
+	 *
+	 * @param graph graph to refine
+	 * @param current_partition partition of this graph
+	 * @param C1 restriction on the 1st part
+	 * @param C2 restriction on the 2nd part
+	 * @return improved partition of the graph
+	 */
+	std::vector<Part> KernighanLinBlocking(
+	    const Graph& graph,
+	    std::vector<Part> current_partition,
+	    const int_t C1,
+	    const int_t C2
+	);
+
+	/**
 	 * @brief
 	 *
 	 * @param previous_graph Projects the partition of the coarsened graph onto the the previous

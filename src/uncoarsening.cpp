@@ -20,6 +20,14 @@ namespace yagkp::Uncoarser {
 			break;
 
 		case ProgramConfig::UncoarseningMethod::KernighanLin:
+			if (levels.size() == 1) {
+				partition = Uncoarser::KernighanLinBlocking(
+				    levels[0].coarsened_graph,
+				    std::move(partition),
+				    C1,
+				    C2
+				);
+			}
 			for (int_t i = levels.size() - 1; i > 0; i--) {
 				partition = Uncoarser::KernighanLinBlocking(
 				    levels[i - 1].coarsened_graph,

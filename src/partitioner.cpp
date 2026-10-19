@@ -21,9 +21,23 @@ namespace yagkp::Partitioner {
 
 		std::vector<std::vector<int_t>> partitions(ProgramConfig::runs);
 
+		// parallel: создаёт команду потоков (OMP_NUM_THREADS или по числу ядер).
+		//    Это единственная параллельная область в программе: все прагмы ниже
+		//    по стеку вызовов (task, taskloop) раздают работу этой же команде.
 #pragma omp parallel
+		// single: блок выполняет один поток, остальные сразу идут на неявный
+		//    барьер в конце single и, ожидая на нём, выполняют задачи из очереди.
+		//    Барьер отпускает всех, только когда все задачи (с вложенными) готовы
 #pragma omp single
 		for (int_t i = 0; i < ProgramConfig::runs; ++i) {
+			// task: следующий оператор - задача в общей очереди, её выполнит
+			//    любой свободный поток, возможно позже.
+			// default(none): каждую переменную нужно указать явно (иначе локальные
+			//    переменные по умолчанию копируются в задачу).
+			// shared(graph, partitions): работать с оригиналами - граф только
+			//    читается, а каждая задача пишет в свою ячейку partitions[i].
+			// firstprivate(i, k, M): скопировать значения в момент создания задачи;
+			//    для i это обязательно, цикл к моменту выполнения уйдёт дальше
 #pragma omp task default(none) shared(graph, partitions) firstprivate(i, k, M)
 			partitions[i] = RecursivePartition(graph, k, M, 0);
 		}
@@ -84,11 +98,24 @@ namespace yagkp::Partitioner {
 		std::vector<int_t> partition1;
 		std::vector<int_t> partition2;
 
+		// task: первая ветка - задача в общей очереди, её может взять любой поток.
+		//    Прагма относится только к следующему оператору: вторая ветка уже не
+		//    задача, её выполняет текущий поток сразу.
+		// shared(first_graph, partition1): подграф не копируется, результат пишется
+		//    в partition1 этой функции; это безопасно, потому что taskwait ниже
+		//    дождётся задачи до выхода из функции.
+		// firstprivate(k1, M, offset): дешёвые копии чисел.
+		// if (...): для маленького подграфа задача не откладывается в очередь, а
+		//    сразу выполняется текущим потоком — накладные расходы больше выигрыша
 #pragma omp task default(none) shared(first_graph, partition1)                                     \
     firstprivate(k1, M, offset) if (first_graph.n >= ProgramConfig::parallel_task_min_vertices)
 		partition1 = RecursivePartition(first_graph, k1, M, offset);
 
 		partition2 = RecursivePartition(second_graph, k2, M, offset + k1);
+
+		// taskwait: ждать завершения задач, созданных этой функцией (здесь -
+		//    первой ветки). Пока ждёт, поток выполняет другие задачи из очереди.
+		//    Ждёт только прямых детей, но каждый ребёнок сам ждёт своих
 #pragma omp taskwait
 
 		for (int_t i = 0; i < (int_t)first_part_vertices.size(); i++) {
