@@ -10,6 +10,36 @@
 
 namespace yagkp::Bipartitioner {
 
+	namespace {
+		template <typename BipartitionAlgorithm>
+		std::vector<Part> GetBestBipartition(
+		    const Graph& graph,
+		    const BipartitionAlgorithm& bipartition_algorithm
+		) {
+			const int_t launches = ProgramConfig::bipartitioning_launches_count;
+
+			std::vector<std::vector<Part>> partitions(launches);
+			std::vector<int_t> edge_cuts(launches);
+
+			// taskloop: итерации цикла раздаются как задачи той же команде потоков
+			// grainsize(1): каждый запуск - отдельная задача
+#pragma omp taskloop default(none) grainsize(1)                                                    \
+    shared(graph, bipartition_algorithm, partitions, edge_cuts) firstprivate(launches)
+			for (int_t i = 0; i < launches; ++i) {
+				partitions[i] = bipartition_algorithm();
+				edge_cuts[i]  = PartitionMetrics::GetEdgeCut(graph, partitions[i]);
+			}
+
+			int_t best = 0;
+			for (int_t i = 1; i < launches; ++i) {
+				if (edge_cuts[i] < edge_cuts[best]) {
+					best = i;
+				}
+			}
+			return std::move(partitions[best]);
+		}
+	} // namespace
+
 	std::vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
 		switch (ProgramConfig::bipartitioning_method) {
 		case (ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm):
@@ -24,12 +54,8 @@ namespace yagkp::Bipartitioner {
 	}
 
 	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
-		const int_t n = graph.n;
-
-		std::vector<Part> best_partition;
-		int_t best_edge_cut = std::numeric_limits<int_t>::max();
-
-		for (int_t i = 0; i < ProgramConfig::bipartitioning_launches_count; ++i) {
+		return GetBestBipartition(graph, [&]() {
+			const int_t n = graph.n;
 
 			std::vector<Part> partition(n, Part::Second);
 			std::vector<bool> visited(n, false);
@@ -68,14 +94,8 @@ namespace yagkp::Bipartitioner {
 				}
 			}
 
-			int_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
-
-			if (edge_cut < best_edge_cut) {
-				best_partition = partition;
-				best_edge_cut  = edge_cut;
-			}
-		}
-		return best_partition;
+			return partition;
+		});
 	}
 
 	std::vector<Part> GreedyGraphGrowingAlgorithm(
@@ -96,10 +116,7 @@ namespace yagkp::Bipartitioner {
 			setmax(max_possible_gain, sum);
 		}
 
-		std::vector<Part> best_partition;
-		int_t best_edge_cut = std::numeric_limits<int_t>::max();
-
-		for (int_t i = 0; i < ProgramConfig::bipartitioning_launches_count; ++i) {
+		return GetBestBipartition(graph, [&]() {
 			std::vector<Part> partition(n, Part::Second);
 			std::vector<bool> blocked(n, false);
 			int_t current_weight = 0;
@@ -154,14 +171,7 @@ namespace yagkp::Bipartitioner {
 					}
 				}
 			}
-
-			int_t edge_cut = PartitionMetrics::GetEdgeCut(graph, partition);
-			if (edge_cut < best_edge_cut) {
-				best_edge_cut  = edge_cut;
-				best_partition = partition;
-			}
-		}
-
-		return best_partition;
+			return partition;
+		});
 	}
 } // namespace yagkp::Bipartitioner
