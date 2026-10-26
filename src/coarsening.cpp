@@ -254,10 +254,7 @@ namespace yagkp::Coarser {
 			return GetGreedyMatching(level, k, clique_density);
 		}
 
-		std::vector<int_t> GetMatching(
-		    const CoarseLevel& level,
-		    const int_t k
-		) {
+		std::vector<int_t> GetMatching(const CoarseLevel& level, const int_t k) {
 			using Method = ProgramConfig::CoarseningMethod;
 
 			switch (ProgramConfig::coarsening_method) {
@@ -293,32 +290,30 @@ namespace yagkp::Coarser {
 
 		std::vector<int_t> base_included_ew_in_vertex(graph.n, 0);
 
-		levels.push_back(
-		    CoarseLevel{
-		        base_uncoarse_to_coarse,
-		        base_coarse_to_uncoarse,
-		        graph,
-		        base_included_ew_in_vertex
-		    }
+		levels.emplace_back(
+		    std::move(base_uncoarse_to_coarse),
+		    std::move(base_coarse_to_uncoarse),
+		    graph,
+		    std::move(base_included_ew_in_vertex)
+		);
+		const int_t target_vertex_count = std::max<int_t>(
+		    2,
+		    std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2)
 		);
 
-		for (int_t i = 0;
-		     i < ProgramConfig::coarsening_iterations_limit &&
-		     levels[i].coarsened_graph.n >
-		         std::max<int_t>(
-		             2,
-		             std::min(ProgramConfig::coarsening_vertex_count_limit, graph.n / k / 2)
-		         );
-		     ++i) {
+		for (int_t i = 0; i < ProgramConfig::coarsening_iterations_limit; ++i) {
+			if (levels[i].coarsened_graph.n <= target_vertex_count) {
+				break;
+			}
 
-			CoarseLevel new_level = ContractMatching(levels[i], GetMatching(levels[i], k));
+			CoarseLevel level = ContractMatching(levels[i], GetMatching(levels[i], k));
 
-			if (new_level.coarsened_graph.n >
+			if (level.coarsened_graph.n >
 			    ProgramConfig::coarsening_min_reduction_fraction * levels[i].coarsened_graph.n) {
 				break;
 			}
 
-			levels.push_back(std::move(new_level));
+			levels.push_back(std::move(level));
 		}
 		return levels;
 	}
