@@ -4,6 +4,8 @@
 #include <omp.h>
 #endif
 
+#include <atomic>
+
 #include "yagkp/types.hpp"
 
 namespace yagkp::parallel {
@@ -28,4 +30,13 @@ namespace yagkp::parallel {
 		return 0;
 #endif
 	}
+
+	template <typename T> inline T RelaxedLoad(T& x) {
+		return std::atomic_ref<T>(x).load(std::memory_order_relaxed);
+	}
+
+	template <typename T> inline void RelaxedStore(T& x, const T value) {
+		std::atomic_ref<T>(x).store(value, std::memory_order_relaxed);
+	}
+
 } // namespace yagkp::parallel

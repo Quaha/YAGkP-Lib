@@ -33,6 +33,9 @@ namespace yagkp {
 		// --- Parallel parameters ---
 		inline static int_t parallel_task_min_vertices = 1000;
 
+		inline static int_t parallel_loop_min_vertices = 10000;
+		inline static int_t parallel_loop_grain_size   = 1024;
+
 		// --- Coarsening parameters ---
 		inline static CoarseningMethod coarsening_method = CoarseningMethod::HeavyCliqueMatching;
 
