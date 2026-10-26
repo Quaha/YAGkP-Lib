@@ -1,6 +1,6 @@
 #include "yagkp/bipartitioner.hpp"
 
-#include <iostream>
+#include <stdexcept>
 
 #include "yagkp/buckets.hpp"
 #include "yagkp/config.hpp"
@@ -45,13 +45,13 @@ namespace yagkp::Bipartitioner {
 		using Method = ProgramConfig::BipartitioningMethod;
 
 		switch (ProgramConfig::bipartitioning_method) {
-		case (Method::GraphGrowingAlgorithm):
+		case Method::GraphGrowingAlgorithm:
 			return GraphGrowingAlgorithm(graph, C1, C2);
 
-		case (Method::GreedyGraphGrowingAlgorithm):
+		case Method::GreedyGraphGrowingAlgorithm:
 			return GreedyGraphGrowingAlgorithm(graph, C1, C2);
 		}
-		throw std::logic_error("Unknown processing method");
+		throw std::logic_error("Unknown bipartitioning method");
 	}
 
 	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {

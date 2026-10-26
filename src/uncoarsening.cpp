@@ -1,5 +1,7 @@
 #include "yagkp/uncoarsening.hpp"
 
+#include <stdexcept>
+
 #include "yagkp/buckets.hpp"
 #include "yagkp/config.hpp"
 #include "yagkp/metrics.hpp"
@@ -41,7 +43,7 @@ namespace yagkp::Uncoarser {
 			}
 			return partition;
 		}
-		throw std::logic_error("Unknown processing method");
+		throw std::logic_error("Unknown uncoarsening method");
 	}
 
 	std::vector<Part> DirectMapping(

@@ -2,23 +2,22 @@
 
 #include <algorithm>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 #include "yagkp/config.hpp"
-#include "yagkp/queue.hpp"
+#include "yagkp/parallel.hpp"
 #include "yagkp/random.hpp"
 
 namespace yagkp::Coarser {
 
 	namespace {
 
-		// This function builds the coarse level based on the found matching
-		CoarseLevel ProcessMatching(
-		    const CoarseLevel& level,
-		    const Graph& graph,
-		    const std::vector<int_t>& matching,
-		    const std::vector<int_t>& matching_edge_weights
-		) {
+		// This function builds the new coarse level based on the found matching
+		CoarseLevel ContractMatching(const CoarseLevel& level, const std::vector<int_t>& matching) {
+
+			const Graph& graph = level.coarsened_graph;
+
 			// 1. Filling coarse vectors
 
 			std::vector<int_t> uncoarse_to_coarse(graph.n, -1);
@@ -78,6 +77,7 @@ namespace yagkp::Coarser {
 			std::vector<int_t> upper_edge_weights(upper_xadj[coarsened_graph.n]);
 			std::vector<int_t> degree(coarsened_graph.n, 0);
 			std::vector<int_t> marker(coarsened_graph.n, -1);
+			std::vector<int_t> internal_edge_weight(coarsened_graph.n, 0);
 
 			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
 				const int_t begin = upper_xadj[c_curr_V];
@@ -87,6 +87,7 @@ namespace yagkp::Coarser {
 					for (auto [u_next_V, w]: graph[u_curr_V]) {
 						int_t c_next_V = uncoarse_to_coarse[u_next_V];
 						if (c_next_V == c_curr_V) {
+							internal_edge_weight[c_curr_V] += w;
 							continue;
 						}
 						if (marker[c_next_V] == -1) {
@@ -139,8 +140,7 @@ namespace yagkp::Coarser {
 					included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
 				}
 				if (coarse_to_uncoarse[curr_V].size() == 2) {
-					included_ew_in_vertex[curr_V] +=
-					    matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
+					included_ew_in_vertex[curr_V] += internal_edge_weight[curr_V] / 2;
 				}
 			}
 
@@ -157,13 +157,13 @@ namespace yagkp::Coarser {
 		}
 
 		template <typename EdgeRating>
-		CoarseLevel GetLevelByMatching(
+		std::vector<int_t> GetGreedyMatching(
 		    const CoarseLevel& level,
-		    const Graph& graph,
 		    const int_t k,
 		    const EdgeRating& edge_rating
 		) {
-			const int_t n = graph.n;
+			const Graph& graph = level.coarsened_graph;
+			const int_t n      = graph.n;
 
 			std::vector<int_t> permutation = GetRandomPermutation(n);
 
@@ -220,40 +220,22 @@ namespace yagkp::Coarser {
 				}
 			}
 
-			std::vector<int_t> matching_edge_weights(n, 0);
-#pragma omp taskloop default(none) shared(graph, matching, matching_edge_weights) firstprivate(n)  \
-    grainsize(grain_size) if (is_parallel)
-			for (int_t curr_V = 0; curr_V < n; ++curr_V) {
-				if (matching[curr_V] == -1) {
-					continue;
-				}
-				for (auto [next_V, w]: graph[curr_V]) {
-					if (next_V == matching[curr_V]) {
-						matching_edge_weights[curr_V] = w;
-						break;
-					}
-				}
-			}
-			return ProcessMatching(level, graph, matching, matching_edge_weights);
+			return matching;
 		}
 
-		CoarseLevel RandomMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
-			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t) { return 0; });
+		std::vector<int_t> RandomMatching(const CoarseLevel& level, const int_t k) {
+			return GetGreedyMatching(level, k, [](int_t, int_t, int_t) { return 0; });
 		}
 
-		CoarseLevel LightEdgeMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
-			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t w) { return -w; });
+		std::vector<int_t> LightEdgeMatching(const CoarseLevel& level, const int_t k) {
+			return GetGreedyMatching(level, k, [](int_t, int_t, int_t w) { return -w; });
 		}
 
-		CoarseLevel HeavyEdgeMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
-			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t w) { return w; });
+		std::vector<int_t> HeavyEdgeMatching(const CoarseLevel& level, const int_t k) {
+			return GetGreedyMatching(level, k, [](int_t, int_t, int_t w) { return w; });
 		}
 
-		CoarseLevel HeavyCliqueMatching(
-		    const CoarseLevel& level,
-		    const Graph& graph,
-		    const int_t k
-		) {
+		std::vector<int_t> HeavyCliqueMatching(const CoarseLevel& level, const int_t k) {
 			auto clique_density = [&level](int_t curr_V, int_t next_V, int_t w) -> fp_t {
 				int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
 				                level.coarsened_graph.vertex_weights[next_V];
@@ -269,27 +251,30 @@ namespace yagkp::Coarser {
 				           )
 				       );
 			};
-			return GetLevelByMatching(level, graph, k, clique_density);
+			return GetGreedyMatching(level, k, clique_density);
 		}
 
-		CoarseLevel FillLevel(const CoarseLevel& level, const Graph& graph, const int_t k) {
+		std::vector<int_t> GetMatching(
+		    const CoarseLevel& level,
+		    const int_t k
+		) {
 			using Method = ProgramConfig::CoarseningMethod;
 
 			switch (ProgramConfig::coarsening_method) {
 			case Method::RandomMatching:
-				return RandomMatching(level, graph, k);
+				return RandomMatching(level, k);
 
 			case Method::LightEdgeMatching:
-				return LightEdgeMatching(level, graph, k);
+				return LightEdgeMatching(level, k);
 
 			case Method::HeavyEdgeMatching:
-				return HeavyEdgeMatching(level, graph, k);
+				return HeavyEdgeMatching(level, k);
 
 			case Method::HeavyCliqueMatching:
-				return HeavyCliqueMatching(level, graph, k);
+				return HeavyCliqueMatching(level, k);
 			}
 
-			throw std::logic_error("Unknown processing method");
+			throw std::logic_error("Unknown coarsening method");
 		}
 	} // namespace
 
@@ -326,7 +311,7 @@ namespace yagkp::Coarser {
 		         );
 		     ++i) {
 
-			CoarseLevel new_level = FillLevel(levels[i], levels[i].coarsened_graph, k);
+			CoarseLevel new_level = ContractMatching(levels[i], GetMatching(levels[i], k));
 
 			if (new_level.coarsened_graph.n >
 			    ProgramConfig::coarsening_min_reduction_fraction * levels[i].coarsened_graph.n) {
