@@ -13,73 +13,78 @@ namespace yagkp::Coarser {
 
 	namespace {
 
-		// This function builds the new coarse level based on the found matching
+		std::vector<int_t>& ThreadMarker(const int_t size) {
+			thread_local std::vector<int_t> marker;
+			if ((int_t)marker.size() < size) {
+				marker.resize(size, -1);
+			}
+			return marker;
+		}
+
 		CoarseLevel ContractMatching(const CoarseLevel& level, const std::vector<int_t>& matching) {
 
 			const Graph& graph = level.coarsened_graph;
+			const int_t n      = graph.n;
+
+			[[maybe_unused]] const int_t grain_size = ProgramConfig::parallel_loop_grain_size;
+			[[maybe_unused]] const bool is_parallel =
+			    n >= ProgramConfig::parallel_loop_min_vertices;
 
 			// 1. Filling coarse vectors
 
-			std::vector<int_t> uncoarse_to_coarse(graph.n, -1);
+			std::vector<int_t> uncoarse_to_coarse(n, -1);
+			int_t coarse_n = 0;
+			for (int_t curr_V = 0; curr_V < n; ++curr_V) {
+				if (matching[curr_V] == -1 || curr_V < matching[curr_V]) {
+					uncoarse_to_coarse[curr_V] = coarse_n++;
+				}
+			}
 
-			std::vector<std::vector<int_t>> coarse_to_uncoarse;
-			coarse_to_uncoarse.reserve(graph.n / 2 + 1);
-
-			int_t vertex_count = 0;
-
-			for (int_t curr_V = 0; curr_V < graph.n; ++curr_V) {
-				if (uncoarse_to_coarse[curr_V] != -1)
-					continue;
-
-				int_t next_V = matching[curr_V];
-				std::vector<int_t> component;
-
+			std::vector<std::vector<int_t>> coarse_to_uncoarse(coarse_n);
+#pragma omp taskloop default(shared) grainsize(grain_size) if (is_parallel)
+			for (int_t curr_V = 0; curr_V < n; ++curr_V) {
+				const int_t next_V = matching[curr_V];
 				if (next_V == -1) {
-					uncoarse_to_coarse[curr_V] = vertex_count;
-					component.push_back(curr_V);
+					coarse_to_uncoarse[uncoarse_to_coarse[curr_V]] = {curr_V};
 				}
 				else if (curr_V < next_V) {
-					uncoarse_to_coarse[curr_V] = vertex_count;
-					uncoarse_to_coarse[next_V] = vertex_count;
-					component.push_back(curr_V);
-					component.push_back(next_V);
+					const int_t c_curr_V         = uncoarse_to_coarse[curr_V];
+					uncoarse_to_coarse[next_V]   = c_curr_V;
+					coarse_to_uncoarse[c_curr_V] = {curr_V, next_V};
 				}
-
-				coarse_to_uncoarse.push_back(std::move(component));
-				++vertex_count;
 			}
 
 			// 2. Building graph
 
 			Graph coarsened_graph;
-			coarsened_graph.n = coarse_to_uncoarse.size();
-			coarsened_graph.vertex_weights.resize(coarsened_graph.n, 0);
+			coarsened_graph.n                   = coarse_n;
+			coarsened_graph.total_vertex_weight = graph.total_vertex_weight;
+			coarsened_graph.vertex_weights.resize(coarse_n, 0);
 
-			for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
-				for (int_t next_V: coarse_to_uncoarse[curr_V]) {
-					coarsened_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
+			std::vector<int_t> upper_xadj(coarse_n + 1, 0);
+
+#pragma omp taskloop default(shared) grainsize(grain_size) if (is_parallel)
+			for (int_t c_curr_V = 0; c_curr_V < coarse_n; ++c_curr_V) {
+				for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
+					coarsened_graph.vertex_weights[c_curr_V] += graph.vertex_weights[u_curr_V];
+					upper_xadj[c_curr_V + 1] += graph.xadj[u_curr_V + 1] - graph.xadj[u_curr_V];
 				}
 			}
 
-			coarsened_graph.total_vertex_weight = graph.total_vertex_weight;
+			for (int_t c_curr_V = 0; c_curr_V < coarse_n; ++c_curr_V) {
+				upper_xadj[c_curr_V + 1] += upper_xadj[c_curr_V];
+			}
 
 			// 3. Edges
-			std::vector<int_t> upper_xadj(coarsened_graph.n + 1, 0);
-			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
-				int_t upper_degree = 0;
-				for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
-					upper_degree += graph.xadj[u_curr_V + 1] - graph.xadj[u_curr_V];
-				}
-				upper_xadj[c_curr_V + 1] = upper_xadj[c_curr_V] + upper_degree;
-			}
+			std::vector<int_t> upper_adjncy(upper_xadj[coarse_n]);
+			std::vector<int_t> upper_edge_weights(upper_xadj[coarse_n]);
+			std::vector<int_t> degree(coarse_n, 0);
+			std::vector<int_t> internal_edge_weight(coarse_n, 0);
 
-			std::vector<int_t> upper_adjncy(upper_xadj[coarsened_graph.n]);
-			std::vector<int_t> upper_edge_weights(upper_xadj[coarsened_graph.n]);
-			std::vector<int_t> degree(coarsened_graph.n, 0);
-			std::vector<int_t> marker(coarsened_graph.n, -1);
-			std::vector<int_t> internal_edge_weight(coarsened_graph.n, 0);
+#pragma omp taskloop default(shared) grainsize(grain_size) if (is_parallel)
+			for (int_t c_curr_V = 0; c_curr_V < coarse_n; ++c_curr_V) {
+				std::vector<int_t>& marker = ThreadMarker(coarse_n);
 
-			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
 				const int_t begin = upper_xadj[c_curr_V];
 				int_t end         = begin;
 
@@ -108,18 +113,23 @@ namespace yagkp::Coarser {
 				degree[c_curr_V] = end - begin;
 			}
 
-			coarsened_graph.xadj.resize(coarsened_graph.n + 1);
+			coarsened_graph.xadj.resize(coarse_n + 1);
 			coarsened_graph.xadj[0] = 0;
-			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+			for (int_t c_curr_V = 0; c_curr_V < coarse_n; ++c_curr_V) {
 				coarsened_graph.xadj[c_curr_V + 1] =
 				    coarsened_graph.xadj[c_curr_V] + degree[c_curr_V];
 			}
 
-			coarsened_graph.m = coarsened_graph.xadj[coarsened_graph.n];
+			coarsened_graph.m = coarsened_graph.xadj[coarse_n];
 			coarsened_graph.adjncy.resize(coarsened_graph.m);
 			coarsened_graph.edge_weights.resize(coarsened_graph.m);
 
-			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+			// 4. included_ew_in_vertex
+
+			std::vector<int_t> included_ew_in_vertex(coarse_n, 0);
+
+#pragma omp taskloop default(shared) grainsize(grain_size) if (is_parallel)
+			for (int_t c_curr_V = 0; c_curr_V < coarse_n; ++c_curr_V) {
 				std::copy_n(
 				    upper_adjncy.begin() + upper_xadj[c_curr_V],
 				    degree[c_curr_V],
@@ -130,30 +140,19 @@ namespace yagkp::Coarser {
 				    degree[c_curr_V],
 				    coarsened_graph.edge_weights.begin() + coarsened_graph.xadj[c_curr_V]
 				);
+
+				for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
+					included_ew_in_vertex[c_curr_V] += level.included_ew_in_vertex[u_curr_V];
+				}
+				included_ew_in_vertex[c_curr_V] += internal_edge_weight[c_curr_V] / 2;
 			}
 
-			// 4. Importance
-
-			std::vector<int_t> included_ew_in_vertex(coarsened_graph.n, 0);
-			for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
-				for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
-					included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
-				}
-				if (coarse_to_uncoarse[curr_V].size() == 2) {
-					included_ew_in_vertex[curr_V] += internal_edge_weight[curr_V] / 2;
-				}
-			}
-
-			// 5. Results
-
-			CoarseLevel new_level;
-
-			new_level.uncoarse_to_coarse    = std::move(uncoarse_to_coarse);
-			new_level.coarse_to_uncoarse    = std::move(coarse_to_uncoarse);
-			new_level.coarsened_graph       = std::move(coarsened_graph);
-			new_level.included_ew_in_vertex = std::move(included_ew_in_vertex);
-
-			return new_level;
+			return CoarseLevel{
+			    uncoarse_to_coarse,
+			    coarse_to_uncoarse,
+			    coarsened_graph,
+			    included_ew_in_vertex
+			};
 		}
 
 		template <typename EdgeRating>
