@@ -38,6 +38,132 @@ namespace yagkp::Bipartitioner {
 			}
 			return std::move(partitions[best]);
 		}
+
+		std::vector<Part> GraphGrowingAlgorithm(
+		    const Graph& graph,
+		    const int_t C1,
+		    const int_t C2
+		) {
+			return GetBestBipartition(graph, [&]() {
+				const int_t n = graph.n;
+
+				std::vector<Part> partition(n, Part::Second);
+				std::vector<bool> visited(n, false);
+
+				Queue<int_t> q;
+				q.reserve(n / 2);
+
+				std::vector<int_t> order = GetRandomPermutation(n);
+
+				for (int_t start_V: order) {
+					if (graph.vertex_weights[start_V] <= C1) {
+						q.push(start_V);
+						visited[start_V] = true;
+						break;
+					}
+				}
+
+				int_t current_weight = 0;
+
+				while (!q.empty()) {
+					int_t curr_V = q.front();
+					q.pop();
+
+					if (current_weight + graph.vertex_weights[curr_V] > C1) {
+						continue;
+					}
+
+					partition[curr_V] = Part::First;
+					current_weight += graph.vertex_weights[curr_V];
+
+					for (auto [next_V, w]: graph[curr_V]) {
+						if (!visited[next_V]) {
+							visited[next_V] = true;
+							q.push(next_V);
+						}
+					}
+				}
+
+				return partition;
+			});
+		}
+
+		std::vector<Part> GreedyGraphGrowingAlgorithm(
+		    const Graph& graph,
+		    const int_t C1,
+		    const int_t C2
+		) {
+			const int_t n = graph.n;
+
+			int_t max_possible_gain = 0;
+			std::vector<int_t> sum_of_incident_edges_weights(n, 0);
+			for (int_t curr_V = 0; curr_V < n; ++curr_V) {
+				int_t sum = 0;
+				for (auto [next_V, w]: graph[curr_V]) {
+					sum += w;
+				}
+				sum_of_incident_edges_weights[curr_V] = sum;
+				setmax(max_possible_gain, sum);
+			}
+
+			return GetBestBipartition(graph, [&]() {
+				std::vector<Part> partition(n, Part::Second);
+				std::vector<bool> blocked(n, false);
+				int_t current_weight = 0;
+
+				BucketPriorityQueue pq(n, -max_possible_gain, max_possible_gain);
+				std::vector<int_t> order = GetRandomPermutation(n);
+
+				auto touch = [&](int_t u, int_t w) {
+					if (blocked[u])
+						return;
+					if (pq.contains(u)) {
+						pq.add(+2 * w, u);
+					}
+					else {
+						pq.insert(2 * w - sum_of_incident_edges_weights[u], u);
+					}
+				};
+
+				bool progressed = true;
+				while (progressed) {
+					progressed = false;
+
+					for (int_t V: order) {
+						if (blocked[V])
+							continue;
+						if (current_weight + graph.getVertexWeight(V) > C1)
+							continue;
+
+						progressed   = true;
+						partition[V] = Part::First;
+						blocked[V]   = true;
+						current_weight += graph.getVertexWeight(V);
+
+						for (auto [u, w]: graph[V])
+							touch(u, w);
+						break;
+					}
+
+					while (!pq.empty()) {
+						auto [gain, curr_V] = pq.extract();
+						blocked[curr_V]     = true;
+
+						if (current_weight + graph.vertex_weights[curr_V] > C1) {
+							continue;
+						}
+
+						current_weight += graph.vertex_weights[curr_V];
+						partition[curr_V] = Part::First;
+
+						for (auto [next_V, w]: graph[curr_V]) {
+							touch(next_V, w);
+						}
+					}
+				}
+				return partition;
+			});
+		}
 	} // namespace
 
 	std::vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
@@ -54,125 +180,4 @@ namespace yagkp::Bipartitioner {
 		throw std::logic_error("Unknown bipartitioning method");
 	}
 
-	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
-		return GetBestBipartition(graph, [&]() {
-			const int_t n = graph.n;
-
-			std::vector<Part> partition(n, Part::Second);
-			std::vector<bool> visited(n, false);
-
-			Queue<int_t> q;
-			q.reserve(n / 2);
-
-			std::vector<int_t> order = GetRandomPermutation(n);
-
-			for (int_t start_V: order) {
-				if (graph.vertex_weights[start_V] <= C1) {
-					q.push(start_V);
-					visited[start_V] = true;
-					break;
-				}
-			}
-
-			int_t current_weight = 0;
-
-			while (!q.empty()) {
-				int_t curr_V = q.front();
-				q.pop();
-
-				if (current_weight + graph.vertex_weights[curr_V] > C1) {
-					continue;
-				}
-
-				partition[curr_V] = Part::First;
-				current_weight += graph.vertex_weights[curr_V];
-
-				for (auto [next_V, w]: graph[curr_V]) {
-					if (!visited[next_V]) {
-						visited[next_V] = true;
-						q.push(next_V);
-					}
-				}
-			}
-
-			return partition;
-		});
-	}
-
-	std::vector<Part> GreedyGraphGrowingAlgorithm(
-	    const Graph& graph,
-	    const int_t C1,
-	    const int_t C2
-	) {
-		const int_t n = graph.n;
-
-		int_t max_possible_gain = 0;
-		std::vector<int_t> sum_of_incident_edges_weights(n, 0);
-		for (int_t curr_V = 0; curr_V < n; ++curr_V) {
-			int_t sum = 0;
-			for (auto [next_V, w]: graph[curr_V]) {
-				sum += w;
-			}
-			sum_of_incident_edges_weights[curr_V] = sum;
-			setmax(max_possible_gain, sum);
-		}
-
-		return GetBestBipartition(graph, [&]() {
-			std::vector<Part> partition(n, Part::Second);
-			std::vector<bool> blocked(n, false);
-			int_t current_weight = 0;
-
-			BucketPriorityQueue pq(n, -max_possible_gain, max_possible_gain);
-			std::vector<int_t> order = GetRandomPermutation(n);
-
-			auto touch = [&](int_t u, int_t w) {
-				if (blocked[u])
-					return;
-				if (pq.contains(u)) {
-					pq.add(+2 * w, u);
-				}
-				else {
-					pq.insert(2 * w - sum_of_incident_edges_weights[u], u);
-				}
-			};
-
-			bool progressed = true;
-			while (progressed) {
-				progressed = false;
-
-				for (int_t V: order) {
-					if (blocked[V])
-						continue;
-					if (current_weight + graph.getVertexWeight(V) > C1)
-						continue;
-
-					progressed   = true;
-					partition[V] = Part::First;
-					blocked[V]   = true;
-					current_weight += graph.getVertexWeight(V);
-
-					for (auto [u, w]: graph[V])
-						touch(u, w);
-					break;
-				}
-
-				while (!pq.empty()) {
-					auto [gain, curr_V] = pq.extract();
-					blocked[curr_V]     = true;
-
-					if (current_weight + graph.vertex_weights[curr_V] > C1) {
-						continue;
-					}
-
-					current_weight += graph.vertex_weights[curr_V];
-					partition[curr_V] = Part::First;
-
-					for (auto [next_V, w]: graph[curr_V]) {
-						touch(next_V, w);
-					}
-				}
-			}
-			return partition;
-		});
-	}
 } // namespace yagkp::Bipartitioner
