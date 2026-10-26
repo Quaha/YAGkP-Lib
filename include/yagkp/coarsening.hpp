@@ -8,47 +8,4 @@
 
 namespace yagkp::Coarser {
 	std::vector<CoarseLevel> GetCoarseLevels(const Graph& graph, const int_t k);
-
-	void FillLevel(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	);
-
-	void RandomMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	);
-
-	void LightEdgeMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	);
-
-	void HeavyEdgeMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	);
-
-	void HeavyCliqueMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	);
-
-	void ProcessMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const std::vector<int_t>& matching,
-	    const std::vector<int_t>& matching_edge_weights
-	);
 } // namespace yagkp::Coarser

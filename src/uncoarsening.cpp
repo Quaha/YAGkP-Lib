@@ -12,14 +12,16 @@ namespace yagkp::Uncoarser {
 	    const int_t C1,
 	    const int_t C2
 	) {
+		using Method = ProgramConfig::UncoarseningMethod;
+
 		switch (ProgramConfig::uncoarsening_method) {
-		case ProgramConfig::UncoarseningMethod::DirectMapping:
+		case Method::DirectMapping:
 			for (int_t i = levels.size() - 1; i > 0; i--) {
 				partition = Uncoarser::DirectMapping(levels[i], partition);
 			}
-			break;
+			return partition;
 
-		case ProgramConfig::UncoarseningMethod::KernighanLin:
+		case Method::KernighanLin:
 			if (levels.size() == 1) {
 				partition = Uncoarser::KernighanLinBlocking(
 				    levels[0].coarsened_graph,
@@ -37,13 +39,9 @@ namespace yagkp::Uncoarser {
 				    C2
 				);
 			}
-			break;
-
-		default:
-			throw std::logic_error("Unknown processing method");
+			return partition;
 		}
-
-		return partition;
+		throw std::logic_error("Unknown processing method");
 	}
 
 	std::vector<Part> DirectMapping(

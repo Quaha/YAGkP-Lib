@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <vector>
 
 #include "yagkp/config.hpp"
 #include "yagkp/queue.hpp"
@@ -10,11 +11,155 @@
 namespace yagkp::Coarser {
 
 	namespace {
-		template <typename EdgeRating>
-		void FillLevelByMatching(
+
+		// This function builds the coarse level based on the found matching
+		CoarseLevel ProcessMatching(
 		    const CoarseLevel& level,
 		    const Graph& graph,
-		    CoarseLevel& new_level,
+		    const std::vector<int_t>& matching,
+		    const std::vector<int_t>& matching_edge_weights
+		) {
+			// 1. Filling coarse vectors
+
+			std::vector<int_t> uncoarse_to_coarse(graph.n, -1);
+
+			std::vector<std::vector<int_t>> coarse_to_uncoarse;
+			coarse_to_uncoarse.reserve(graph.n / 2 + 1);
+
+			int_t vertex_count = 0;
+
+			for (int_t curr_V = 0; curr_V < graph.n; ++curr_V) {
+				if (uncoarse_to_coarse[curr_V] != -1)
+					continue;
+
+				int_t next_V = matching[curr_V];
+				std::vector<int_t> component;
+
+				if (next_V == -1) {
+					uncoarse_to_coarse[curr_V] = vertex_count;
+					component.push_back(curr_V);
+				}
+				else if (curr_V < next_V) {
+					uncoarse_to_coarse[curr_V] = vertex_count;
+					uncoarse_to_coarse[next_V] = vertex_count;
+					component.push_back(curr_V);
+					component.push_back(next_V);
+				}
+
+				coarse_to_uncoarse.push_back(std::move(component));
+				++vertex_count;
+			}
+
+			// 2. Building graph
+
+			Graph coarsened_graph;
+			coarsened_graph.n = coarse_to_uncoarse.size();
+			coarsened_graph.vertex_weights.resize(coarsened_graph.n, 0);
+
+			for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
+				for (int_t next_V: coarse_to_uncoarse[curr_V]) {
+					coarsened_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
+				}
+			}
+
+			coarsened_graph.total_vertex_weight = graph.total_vertex_weight;
+
+			// 3. Edges
+			std::vector<int_t> upper_xadj(coarsened_graph.n + 1, 0);
+			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+				int_t upper_degree = 0;
+				for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
+					upper_degree += graph.xadj[u_curr_V + 1] - graph.xadj[u_curr_V];
+				}
+				upper_xadj[c_curr_V + 1] = upper_xadj[c_curr_V] + upper_degree;
+			}
+
+			std::vector<int_t> upper_adjncy(upper_xadj[coarsened_graph.n]);
+			std::vector<int_t> upper_edge_weights(upper_xadj[coarsened_graph.n]);
+			std::vector<int_t> degree(coarsened_graph.n, 0);
+			std::vector<int_t> marker(coarsened_graph.n, -1);
+
+			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+				const int_t begin = upper_xadj[c_curr_V];
+				int_t end         = begin;
+
+				for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
+					for (auto [u_next_V, w]: graph[u_curr_V]) {
+						int_t c_next_V = uncoarse_to_coarse[u_next_V];
+						if (c_next_V == c_curr_V) {
+							continue;
+						}
+						if (marker[c_next_V] == -1) {
+							marker[c_next_V]        = end;
+							upper_adjncy[end]       = c_next_V;
+							upper_edge_weights[end] = w;
+							++end;
+						}
+						else {
+							upper_edge_weights[marker[c_next_V]] += w;
+						}
+					}
+				}
+
+				for (int_t pos = begin; pos < end; ++pos) {
+					marker[upper_adjncy[pos]] = -1;
+				}
+				degree[c_curr_V] = end - begin;
+			}
+
+			coarsened_graph.xadj.resize(coarsened_graph.n + 1);
+			coarsened_graph.xadj[0] = 0;
+			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+				coarsened_graph.xadj[c_curr_V + 1] =
+				    coarsened_graph.xadj[c_curr_V] + degree[c_curr_V];
+			}
+
+			coarsened_graph.m = coarsened_graph.xadj[coarsened_graph.n];
+			coarsened_graph.adjncy.resize(coarsened_graph.m);
+			coarsened_graph.edge_weights.resize(coarsened_graph.m);
+
+			for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
+				std::copy_n(
+				    upper_adjncy.begin() + upper_xadj[c_curr_V],
+				    degree[c_curr_V],
+				    coarsened_graph.adjncy.begin() + coarsened_graph.xadj[c_curr_V]
+				);
+				std::copy_n(
+				    upper_edge_weights.begin() + upper_xadj[c_curr_V],
+				    degree[c_curr_V],
+				    coarsened_graph.edge_weights.begin() + coarsened_graph.xadj[c_curr_V]
+				);
+			}
+
+			// 4. Importance
+
+			std::vector<int_t> included_ew_in_vertex(coarsened_graph.n, 0);
+			for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
+				for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
+					included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
+				}
+				if (coarse_to_uncoarse[curr_V].size() == 2) {
+					included_ew_in_vertex[curr_V] +=
+					    matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
+				}
+			}
+
+			// 5. Results
+
+			CoarseLevel new_level;
+
+			new_level.uncoarse_to_coarse    = std::move(uncoarse_to_coarse);
+			new_level.coarse_to_uncoarse    = std::move(coarse_to_uncoarse);
+			new_level.coarsened_graph       = std::move(coarsened_graph);
+			new_level.included_ew_in_vertex = std::move(included_ew_in_vertex);
+
+			return new_level;
+		}
+
+		template <typename EdgeRating>
+		CoarseLevel GetLevelByMatching(
+		    const CoarseLevel& level,
+		    const Graph& graph,
 		    const int_t k,
 		    const EdgeRating& edge_rating
 		) {
@@ -89,8 +234,62 @@ namespace yagkp::Coarser {
 					}
 				}
 			}
+			return ProcessMatching(level, graph, matching, matching_edge_weights);
+		}
 
-			ProcessMatching(level, graph, new_level, matching, matching_edge_weights);
+		CoarseLevel RandomMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
+			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t) { return 0; });
+		}
+
+		CoarseLevel LightEdgeMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
+			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t w) { return -w; });
+		}
+
+		CoarseLevel HeavyEdgeMatching(const CoarseLevel& level, const Graph& graph, const int_t k) {
+			return GetLevelByMatching(level, graph, k, [](int_t, int_t, int_t w) { return w; });
+		}
+
+		CoarseLevel HeavyCliqueMatching(
+		    const CoarseLevel& level,
+		    const Graph& graph,
+		    const int_t k
+		) {
+			auto clique_density = [&level](int_t curr_V, int_t next_V, int_t w) -> fp_t {
+				int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
+				                level.coarsened_graph.vertex_weights[next_V];
+				return 2.0 *
+				       fp_t(
+				           w + level.included_ew_in_vertex[curr_V] +
+				           level.included_ew_in_vertex[next_V]
+				       ) /
+				       fp_t(
+				           std::max(
+				               1ll,
+				               static_cast<long long>(total_W) * static_cast<long long>(total_W - 1)
+				           )
+				       );
+			};
+			return GetLevelByMatching(level, graph, k, clique_density);
+		}
+
+		CoarseLevel FillLevel(const CoarseLevel& level, const Graph& graph, const int_t k) {
+			using Method = ProgramConfig::CoarseningMethod;
+
+			switch (ProgramConfig::coarsening_method) {
+			case Method::RandomMatching:
+				return RandomMatching(level, graph, k);
+
+			case Method::LightEdgeMatching:
+				return LightEdgeMatching(level, graph, k);
+
+			case Method::HeavyEdgeMatching:
+				return HeavyEdgeMatching(level, graph, k);
+
+			case Method::HeavyCliqueMatching:
+				return HeavyCliqueMatching(level, graph, k);
+			}
+
+			throw std::logic_error("Unknown processing method");
 		}
 	} // namespace
 
@@ -127,9 +326,7 @@ namespace yagkp::Coarser {
 		         );
 		     ++i) {
 
-			CoarseLevel new_level;
-
-			FillLevel(levels[i], levels[i].coarsened_graph, new_level, k);
+			CoarseLevel new_level = FillLevel(levels[i], levels[i].coarsened_graph, k);
 
 			if (new_level.coarsened_graph.n >
 			    ProgramConfig::coarsening_min_reduction_fraction * levels[i].coarsened_graph.n) {
@@ -139,223 +336,5 @@ namespace yagkp::Coarser {
 			levels.push_back(std::move(new_level));
 		}
 		return levels;
-	}
-
-	void FillLevel(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	) {
-		switch (ProgramConfig::coarsening_method) {
-		case ProgramConfig::CoarseningMethod::RandomMatching:
-			RandomMatching(level, graph, new_level, k);
-			break;
-
-		case ProgramConfig::CoarseningMethod::LightEdgeMatching:
-			LightEdgeMatching(level, graph, new_level, k);
-			break;
-
-		case ProgramConfig::CoarseningMethod::HeavyEdgeMatching:
-			HeavyEdgeMatching(level, graph, new_level, k);
-			break;
-
-		case ProgramConfig::CoarseningMethod::HeavyCliqueMatching:
-			HeavyCliqueMatching(level, graph, new_level, k);
-			break;
-
-		default:
-			throw std::logic_error("Unknown processing method");
-		}
-	}
-
-	void RandomMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	) {
-		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t) { return 0; });
-	}
-
-	void LightEdgeMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	) {
-		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t w) { return -w; });
-	}
-
-	void HeavyEdgeMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	) {
-		FillLevelByMatching(level, graph, new_level, k, [](int_t, int_t, int_t w) { return w; });
-	}
-
-	void HeavyCliqueMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const int_t k
-	) {
-		auto clique_density = [&level](int_t curr_V, int_t next_V, int_t w) -> fp_t {
-			int_t total_W = level.coarsened_graph.vertex_weights[curr_V] +
-			                level.coarsened_graph.vertex_weights[next_V];
-			return 2.0 *
-			       fp_t(
-			           w + level.included_ew_in_vertex[curr_V] + level.included_ew_in_vertex[next_V]
-			       ) /
-			       fp_t(
-			           std::max(
-			               1ll,
-			               static_cast<long long>(total_W) * static_cast<long long>(total_W - 1)
-			           )
-			       );
-		};
-		FillLevelByMatching(level, graph, new_level, k, clique_density);
-	}
-
-	// This function builds the coarse level based on the found matching
-	void ProcessMatching(
-	    const CoarseLevel& level,
-	    const Graph& graph,
-	    CoarseLevel& new_level,
-	    const std::vector<int_t>& matching,
-	    const std::vector<int_t>& matching_edge_weights
-	) {
-		// 1. Filling coarse vectors
-
-		std::vector<int_t> uncoarse_to_coarse(graph.n, -1);
-
-		std::vector<std::vector<int_t>> coarse_to_uncoarse;
-		coarse_to_uncoarse.reserve(graph.n / 2 + 1);
-
-		int_t vertex_count = 0;
-
-		for (int_t curr_V = 0; curr_V < graph.n; ++curr_V) {
-			if (uncoarse_to_coarse[curr_V] != -1)
-				continue;
-
-			int_t next_V = matching[curr_V];
-			std::vector<int_t> component;
-
-			if (next_V == -1) {
-				uncoarse_to_coarse[curr_V] = vertex_count;
-				component.push_back(curr_V);
-			}
-			else if (curr_V < next_V) {
-				uncoarse_to_coarse[curr_V] = vertex_count;
-				uncoarse_to_coarse[next_V] = vertex_count;
-				component.push_back(curr_V);
-				component.push_back(next_V);
-			}
-
-			coarse_to_uncoarse.push_back(std::move(component));
-			++vertex_count;
-		}
-
-		// 2. Building graph
-
-		Graph coarsened_graph;
-		coarsened_graph.n = coarse_to_uncoarse.size();
-		coarsened_graph.vertex_weights.resize(coarsened_graph.n, 0);
-
-		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
-			for (int_t next_V: coarse_to_uncoarse[curr_V]) {
-				coarsened_graph.vertex_weights[curr_V] += graph.vertex_weights[next_V];
-			}
-		}
-
-		coarsened_graph.total_vertex_weight = graph.total_vertex_weight;
-
-		// 3. Edges
-		std::vector<int_t> upper_xadj(coarsened_graph.n + 1, 0);
-		for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
-			int_t upper_degree = 0;
-			for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
-				upper_degree += graph.xadj[u_curr_V + 1] - graph.xadj[u_curr_V];
-			}
-			upper_xadj[c_curr_V + 1] = upper_xadj[c_curr_V] + upper_degree;
-		}
-
-		std::vector<int_t> upper_adjncy(upper_xadj[coarsened_graph.n]);
-		std::vector<int_t> upper_edge_weights(upper_xadj[coarsened_graph.n]);
-		std::vector<int_t> degree(coarsened_graph.n, 0);
-		std::vector<int_t> marker(coarsened_graph.n, -1);
-
-		for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
-			const int_t begin = upper_xadj[c_curr_V];
-			int_t end         = begin;
-
-			for (int_t u_curr_V: coarse_to_uncoarse[c_curr_V]) {
-				for (auto [u_next_V, w]: graph[u_curr_V]) {
-					int_t c_next_V = uncoarse_to_coarse[u_next_V];
-					if (c_next_V == c_curr_V) {
-						continue;
-					}
-					if (marker[c_next_V] == -1) {
-						marker[c_next_V]        = end;
-						upper_adjncy[end]       = c_next_V;
-						upper_edge_weights[end] = w;
-						++end;
-					}
-					else {
-						upper_edge_weights[marker[c_next_V]] += w;
-					}
-				}
-			}
-
-			for (int_t pos = begin; pos < end; ++pos) {
-				marker[upper_adjncy[pos]] = -1;
-			}
-			degree[c_curr_V] = end - begin;
-		}
-
-		coarsened_graph.xadj.resize(coarsened_graph.n + 1);
-		coarsened_graph.xadj[0] = 0;
-		for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
-			coarsened_graph.xadj[c_curr_V + 1] = coarsened_graph.xadj[c_curr_V] + degree[c_curr_V];
-		}
-
-		coarsened_graph.m = coarsened_graph.xadj[coarsened_graph.n];
-		coarsened_graph.adjncy.resize(coarsened_graph.m);
-		coarsened_graph.edge_weights.resize(coarsened_graph.m);
-
-		for (int_t c_curr_V = 0; c_curr_V < coarsened_graph.n; ++c_curr_V) {
-			std::copy_n(
-			    upper_adjncy.begin() + upper_xadj[c_curr_V],
-			    degree[c_curr_V],
-			    coarsened_graph.adjncy.begin() + coarsened_graph.xadj[c_curr_V]
-			);
-			std::copy_n(
-			    upper_edge_weights.begin() + upper_xadj[c_curr_V],
-			    degree[c_curr_V],
-			    coarsened_graph.edge_weights.begin() + coarsened_graph.xadj[c_curr_V]
-			);
-		}
-
-		// 4. Importance
-
-		std::vector<int_t> included_ew_in_vertex(coarsened_graph.n, 0);
-		for (int_t curr_V = 0; curr_V < coarsened_graph.n; ++curr_V) {
-			for (int_t prev_V: coarse_to_uncoarse[curr_V]) {
-				included_ew_in_vertex[curr_V] += level.included_ew_in_vertex[prev_V];
-			}
-			if (coarse_to_uncoarse[curr_V].size() == 2) {
-				included_ew_in_vertex[curr_V] +=
-				    matching_edge_weights[coarse_to_uncoarse[curr_V][0]];
-			}
-		}
-
-		// 5. Results
-
-		new_level.uncoarse_to_coarse    = std::move(uncoarse_to_coarse);
-		new_level.coarse_to_uncoarse    = std::move(coarse_to_uncoarse);
-		new_level.coarsened_graph       = std::move(coarsened_graph);
-		new_level.included_ew_in_vertex = std::move(included_ew_in_vertex);
 	}
 } // namespace yagkp::Coarser

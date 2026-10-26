@@ -41,16 +41,17 @@ namespace yagkp::Bipartitioner {
 	} // namespace
 
 	std::vector<Part> GetGraphBipartition(const Graph& graph, const int_t C1, const int_t C2) {
+
+		using Method = ProgramConfig::BipartitioningMethod;
+
 		switch (ProgramConfig::bipartitioning_method) {
-		case (ProgramConfig::BipartitioningMethod::GraphGrowingAlgorithm):
+		case (Method::GraphGrowingAlgorithm):
 			return GraphGrowingAlgorithm(graph, C1, C2);
 
-		case (ProgramConfig::BipartitioningMethod::GreedyGraphGrowingAlgorithm):
+		case (Method::GreedyGraphGrowingAlgorithm):
 			return GreedyGraphGrowingAlgorithm(graph, C1, C2);
-
-		default:
-			throw std::logic_error("Unknown processing method");
 		}
+		throw std::logic_error("Unknown processing method");
 	}
 
 	std::vector<Part> GraphGrowingAlgorithm(const Graph& graph, const int_t C1, const int_t C2) {
