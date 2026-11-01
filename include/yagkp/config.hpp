@@ -56,7 +56,7 @@ namespace yagkp {
 		// --- Uncoarsening parameters ---
 		inline static UncoarseningMethod uncoarsening_method = UncoarseningMethod::KernighanLin;
 
-		inline static int_t uncoarsening_KernighanLin_runs        = 5;
-		inline static int_t uncoarsening_KernighanLin_waste_limit = 120;
+		inline static int_t uncoarsening_KernighanLin_runs        = 3;
+		inline static int_t uncoarsening_KernighanLin_waste_limit = 1000;
 	};
 } // namespace yagkp

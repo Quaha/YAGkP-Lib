@@ -1,5 +1,6 @@
 #include "yagkp/partitioner.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -11,6 +12,15 @@
 
 namespace yagkp::Partitioner {
 	namespace {
+		int_t GetHalfLimit(const fp_t W, const int_t M, const int_t part_k, const int_t k) {
+			const fp_t levels       = std::ceil(std::log2(fp_t(k)));
+			const fp_t level_factor = std::pow(fp_t(M) * fp_t(k) / W, 1.0 / levels);
+
+			const int_t limit =
+			    std::min(M * part_k, int_t(level_factor * W * fp_t(part_k) / fp_t(k)));
+			return std::max(limit, int_t(std::ceil(W * fp_t(part_k) / fp_t(k))));
+		}
+
 		// graph: input graph to partition                      | graph
 		// k: number of parts for this recursive call (k >= 1)  | 2
 		// offset: starting index for parts in this call        | 2
@@ -32,8 +42,9 @@ namespace yagkp::Partitioner {
 			int_t k1 = k / 2;
 			int_t k2 = k - k1;
 
-			int_t C1 = M * k1;
-			int_t C2 = M * k2;
+			const fp_t W   = fp_t(graph.getSumOfVertexWeights());
+			const int_t C1 = GetHalfLimit(W, M, k1, k);
+			const int_t C2 = GetHalfLimit(W, M, k2, k);
 
 			std::vector<Part> initial_partition =
 			    Bipartitioner::GetGraphBipartition(coarsened_graph, C1, C2);
