@@ -221,18 +221,19 @@ namespace yagkp::Uncoarser {
 
 					blocked[curr_V] = true;
 
-					if (gain < 0) {
-						waste_cnt++;
-					}
-					else {
-						waste_cnt = 0;
-					}
 
 					gains.push_back(gain);
 					vertices.push_back(curr_V);
 
 					current_edgecut -= gain;
-					setmin(current_run_best_edgecut, current_edgecut);
+
+					if (current_edgecut < current_run_best_edgecut) {
+						current_run_best_edgecut = current_edgecut;
+						waste_cnt                = 0;
+					}
+					else {
+						waste_cnt++;
+					}
 
 					weights[from] -= weight;
 					weights[to] += weight;
