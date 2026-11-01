@@ -181,8 +181,8 @@ namespace yagkp::Uncoarser {
 						from = 0;
 					}
 					else {
-						const int_t V0 = heaps[0].top().second;
-						const int_t V1 = heaps[1].top().second;
+						const auto [gain0, V0] = heaps[0].top();
+						const auto [gain1, V1] = heaps[1].top();
 
 						const bool fits0 = weights[1] + graph.vertex_weights[V0] <= C[1];
 						const bool fits1 = weights[0] + graph.vertex_weights[V1] <= C[0];
@@ -201,6 +201,9 @@ namespace yagkp::Uncoarser {
 						}
 						else if (!fits1) {
 							from = 0;
+						}
+						else if (gain0 != gain1) {
+							from = gain0 > gain1 ? 0 : 1;
 						}
 						else {
 							from = C[0] - weights[0] <= C[1] - weights[1] ? 0 : 1;
