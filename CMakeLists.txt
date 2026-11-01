@@ -16,7 +16,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # compile_commands.json для clangd / 
 #   yagkp            ядро библиотеки, без внешних зависимостей
 #   yagkp_partition  CLI: разбиение только средствами YAGkP (apps/partition)
 #   yagkp_bench      CLI: любой алгоритм с замером метрик (apps/bench)
-#   yagkp_tests      модульные тесты (подмодуль external/gtest)
 #
 # Флаги компиляции здесь не задаются: их передают скрипты из scripts/
 # через CMAKE_BUILD_TYPE и CMAKE_<LANG>_FLAGS_<TYPE>. Единый источник
@@ -25,7 +24,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # compile_commands.json для clangd / 
 option(YAGKP_PARALLEL        "Параллельная версия (OpenMP)"                          OFF)
 option(YAGKP_BUILD_APPS      "Собирать приложения из apps/"                          ON)
 option(YAGKP_BUILD_BENCHMARK "Собирать yagkp_bench (нужны сторонние библиотеки)"     OFF)
-option(YAGKP_BUILD_TESTS     "Собирать модульные тесты"                              OFF)
 
 # Сторонние библиотеки собирают scripts/deps/*.sh: deps/seq или deps/par
 if(YAGKP_PARALLEL)
@@ -106,14 +104,6 @@ if(YAGKP_BUILD_APPS)
 endif()
 
 # =============================================================================
-# Тесты
-# =============================================================================
-if(YAGKP_BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
-# =============================================================================
 # Сводка конфигурации
 # =============================================================================
 string(TOUPPER "${CMAKE_BUILD_TYPE}" _type)
@@ -126,5 +116,4 @@ message(STATUS "  CXX flags    ${_flags}")
 message(STATUS "  Parallel     ${YAGKP_PARALLEL}")
 message(STATUS "  Apps         ${YAGKP_BUILD_APPS}")
 message(STATUS "  Benchmark    ${YAGKP_BUILD_BENCHMARK}")
-message(STATUS "  Tests        ${YAGKP_BUILD_TESTS}")
 message(STATUS "")

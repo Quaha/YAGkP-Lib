@@ -17,7 +17,7 @@ usage() {
 Использование: bash build.sh [режимы] [варианты] [опции]
 
 Режимы (можно несколько; по умолчанию --debug):
-  -d, --debug       ядро + тесты, отладочная сборка; тесты запускаются
+  -d, --debug       ядро и приложения, отладочная сборка
   -r, --release     ядро, оптимизированная сборка
   -p, --profile     ядро, сборка для gprof
   -b, --benchmark   ядро + METIS / KaHIP / SCOTCH с одинаковыми флагами
@@ -30,7 +30,6 @@ usage() {
 Опции:
   -c, --clean       удалить каталоги сборки перед сборкой
   -j N, -jN         число потоков сборки (по умолчанию все ядра)
-  --no-tests        не запускать тесты в режиме debug
   -h, --help        показать справку
 
 Примеры:
@@ -53,7 +52,6 @@ USAGE
 chosen_modes=" "
 chosen_variants=" "
 clean=0
-no_tests=0
 jobs="$(default_jobs)"
 
 choose_mode() {
@@ -80,7 +78,6 @@ while [ $# -gt 0 ]; do
 		--seq) choose_variant seq ;;
 		--par) choose_variant par ;;
 		-c | --clean) clean=1 ;;
-		--no-tests) no_tests=1 ;;
 		-j)
 			[ $# -ge 2 ] || die "-j: ожидается число"
 			[[ "$2" =~ ^[1-9][0-9]*$ ]] || die "-j: ожидается положительное число, получено '$2'"
@@ -124,9 +121,6 @@ for variant in "${variants[@]}"; do
 		args=("--$variant" -j "$jobs")
 		if [ "$clean" -eq 1 ]; then
 			args+=(--clean)
-		fi
-		if [ "$mode" = "debug" ] && [ "$no_tests" -eq 1 ]; then
-			args+=(--no-tests)
 		fi
 
 		start=$SECONDS
