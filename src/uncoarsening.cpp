@@ -1,5 +1,6 @@
 #include "yagkp/uncoarsening.hpp"
 
+#include <array>
 #include <stdexcept>
 
 #include "yagkp/buckets.hpp"
@@ -43,31 +44,51 @@ namespace yagkp::Uncoarser {
 			return gain;
 		}
 
+		inline int_t Side(Part part) {
+			return part == Part::First ? 0 : 1;
+		}
+
+		using GainQueues = std::array<BucketPriorityQueue, 2>;
+
+		GainQueues GetGainQueues(
+		    const Graph& graph,
+		    const std::vector<Part>& partition,
+		    const int_t max_possible_gain
+		) {
+			GainQueues heaps{
+			    BucketPriorityQueue(graph.n, -max_possible_gain, max_possible_gain),
+			    BucketPriorityQueue(graph.n, -max_possible_gain, max_possible_gain)
+			};
+			for (int_t curr_V = 0; curr_V < graph.n; curr_V++) {
+				heaps[Side(partition[curr_V])].insert(GetGain(curr_V, graph, partition), curr_V);
+			}
+			return heaps;
+		}
+
+		std::array<int_t, 2> GetPartWeights(
+		    const Graph& graph,
+		    const std::vector<Part>& partition
+		) {
+			std::array<int_t, 2> weights = {0, 0};
+			for (int_t curr_V = 0; curr_V < graph.n; curr_V++) {
+				weights[Side(partition[curr_V])] += graph.vertex_weights[curr_V];
+			}
+			return weights;
+		}
+
 		inline void UpdateNearGains(
 		    int_t V,
 		    const Graph& graph,
 		    const std::vector<Part>& partition,
-		    const std::vector<bool>& blocked,
-		    BucketPriorityQueue& heap1,
-		    BucketPriorityQueue& heap2
+		    const std::vector<char>& blocked,
+		    GainQueues& heaps
 		) {
 			for (auto [near_V, w]: graph[V]) {
 				if (blocked[near_V]) {
 					continue;
 				}
-				int_t delta;
-				if (partition[near_V] == partition[V]) {
-					delta = -2 * w;
-				}
-				else {
-					delta = 2 * w;
-				}
-				if (partition[near_V] == Part::First) {
-					heap1.add(delta, near_V);
-				}
-				else {
-					heap2.add(delta, near_V);
-				}
+				const int_t delta = partition[near_V] == partition[V] ? -2 * w : 2 * w;
+				heaps[Side(partition[near_V])].add(delta, near_V);
 			}
 		}
 
@@ -86,7 +107,8 @@ namespace yagkp::Uncoarser {
 		    const int_t C1,
 		    const int_t C2
 		) {
-			int_t n = graph.n;
+			const int_t n                = graph.n;
+			const std::array<int_t, 2> C = {C1, C2};
 
 			int_t max_possible_gain = 0;
 			for (int_t curr_V = 0; curr_V < n; curr_V++) {
@@ -97,53 +119,25 @@ namespace yagkp::Uncoarser {
 				setmax(max_possible_gain, current_possible_gain);
 			}
 
-			{ // initial balance fixing
-				int_t weight1 = 0;
-				int_t weight2 = 0;
+			std::array<int_t, 2> weights = GetPartWeights(graph, current_partition);
+			if (weights[0] > C[0] || weights[1] > C[1]) {
+				std::vector<char> blocked(n, false);
+				GainQueues heaps = GetGainQueues(graph, current_partition, max_possible_gain);
 
-				std::vector<bool> blocked(n, false);
+				for (int_t from = 0; from < 2; from++) {
+					const int_t to = 1 - from;
+					while (weights[from] > C[from] && !heaps[from].empty()) {
+						auto [gain, curr_V] = heaps[from].extract();
+						blocked[curr_V]     = true;
 
-				BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
-				BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
-				for (int_t curr_V = 0; curr_V < n; curr_V++) {
-					int_t gain = GetGain(curr_V, graph, current_partition);
+						const int_t weight = graph.vertex_weights[curr_V];
+						if (weights[to] + weight <= C[to]) {
+							weights[from] -= weight;
+							weights[to] += weight;
 
-					if (current_partition[curr_V] == Part::First) {
-						heap1.insert(gain, curr_V);
-						weight1 += graph.getVertexWeight(curr_V);
-					}
-					else {
-						heap2.insert(gain, curr_V);
-						weight2 += graph.getVertexWeight(curr_V);
-					}
-				}
-
-				while (weight1 > C1 && !heap1.empty()) {
-					auto [gain, curr_V] = heap1.extract();
-					blocked[curr_V]     = true;
-
-					int_t weight = graph.getVertexWeight(curr_V);
-
-					if (weight + weight2 <= C2) {
-						weight1 -= weight;
-						weight2 += weight;
-
-						current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
-						UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
-					}
-				}
-				while (weight2 > C2 && !heap2.empty()) {
-					auto [gain, curr_V] = heap2.extract();
-					blocked[curr_V]     = true;
-
-					int_t weight = graph.getVertexWeight(curr_V);
-
-					if (weight + weight1 <= C1) {
-						weight2 -= weight;
-						weight1 += weight;
-
-						current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
-						UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
+							current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
+							UpdateNearGains(curr_V, graph, current_partition, blocked, heaps);
+						}
 					}
 				}
 			}
@@ -156,24 +150,10 @@ namespace yagkp::Uncoarser {
 			for (int_t run_number = 0; run_number < ProgramConfig::uncoarsening_KernighanLin_runs;
 			     run_number++) {
 
-				int_t weight1 = 0;
-				int_t weight2 = 0;
+				weights = GetPartWeights(graph, current_partition);
 
-				std::vector<bool> blocked(n, false);
-
-				BucketPriorityQueue heap1(n, -max_possible_gain, max_possible_gain);
-				BucketPriorityQueue heap2(n, -max_possible_gain, max_possible_gain);
-				for (int_t curr_V = 0; curr_V < n; curr_V++) {
-					int_t gain = GetGain(curr_V, graph, current_partition);
-					if (current_partition[curr_V] == Part::First) {
-						heap1.insert(gain, curr_V);
-						weight1 += graph.getVertexWeight(curr_V);
-					}
-					else {
-						heap2.insert(gain, curr_V);
-						weight2 += graph.getVertexWeight(curr_V);
-					}
-				}
+				std::vector<char> blocked(n, false);
+				GainQueues heaps = GetGainQueues(graph, current_partition, max_possible_gain);
 
 				std::vector<int_t> gains;
 				std::vector<int_t> vertices;
@@ -184,82 +164,62 @@ namespace yagkp::Uncoarser {
 
 				while (waste_cnt < ProgramConfig::uncoarsening_KernighanLin_waste_limit) {
 
-					std::pair<int_t, int_t> data;
-					if (weight1 > C1) {
-						if (heap1.empty()) {
-							break;
-						}
-						data = heap1.extract();
-
-						int_t weight = graph.getVertexWeight(data.second);
-						if (weight2 + weight > C2) {
-							continue;
-						}
+					int_t from;
+					if (weights[0] > C[0]) {
+						from = 0;
 					}
-					else if (weight2 > C2) {
-						if (heap2.empty()) {
-							break;
-						}
-						data = heap2.extract();
-
-						int_t weight = graph.getVertexWeight(data.second);
-						if (weight1 + weight > C1) {
-							continue;
-						}
+					else if (weights[1] > C[1]) {
+						from = 1;
+					}
+					else if (heaps[0].empty() && heaps[1].empty()) {
+						break;
+					}
+					else if (heaps[0].empty()) {
+						from = 1;
+					}
+					else if (heaps[1].empty()) {
+						from = 0;
 					}
 					else {
-						if (heap1.empty() && heap2.empty()) {
-							break;
+						const int_t V0 = heaps[0].top().second;
+						const int_t V1 = heaps[1].top().second;
+
+						const bool fits0 = weights[1] + graph.vertex_weights[V0] <= C[1];
+						const bool fits1 = weights[0] + graph.vertex_weights[V1] <= C[0];
+
+						if (!fits0 && !fits1) {
+							heaps[0].extract();
+							heaps[1].extract();
+
+							blocked[V0] = true;
+							blocked[V1] = true;
+
+							continue;
 						}
-						else if (heap1.empty()) {
-							data         = heap2.extract();
-							int_t weight = graph.getVertexWeight(data.second);
-							if (weight1 + weight > C1) {
-								continue;
-							}
+						else if (!fits0) {
+							from = 1;
 						}
-						else if (heap2.empty()) {
-							data         = heap1.extract();
-							int_t weight = graph.getVertexWeight(data.second);
-							if (weight2 + weight > C2) {
-								continue;
-							}
+						else if (!fits1) {
+							from = 0;
 						}
 						else {
-							auto [gain1, V1] = heap1.top();
-							auto [gain2, V2] = heap2.top();
-
-							int_t vertex_weight1 = graph.getVertexWeight(V1);
-							int_t vertex_weight2 = graph.getVertexWeight(V2);
-
-							if (vertex_weight1 + weight2 > C2 && vertex_weight2 + weight1 > C1) {
-								heap1.extract();
-								heap2.extract();
-
-								blocked[V1] = true;
-								blocked[V2] = true;
-
-								continue;
-							}
-							else if (vertex_weight1 + weight2 > C2) {
-								data = heap2.extract();
-							}
-							else if (vertex_weight2 + weight1 > C1) {
-								data = heap1.extract();
-							}
-							else {
-								if (C1 - weight1 <= C2 - weight2) {
-									data = heap1.extract();
-								}
-								else {
-									data = heap2.extract();
-								}
-							}
+							from = C[0] - weights[0] <= C[1] - weights[1] ? 0 : 1;
 						}
 					}
 
-					auto [gain, curr_V] = data;
-					blocked[curr_V]     = true;
+					if (heaps[from].empty()) {
+						break;
+					}
+
+					const int_t to      = 1 - from;
+					auto [gain, curr_V] = heaps[from].extract();
+
+					const int_t weight = graph.vertex_weights[curr_V];
+					if (weights[to] + weight > C[to]) {
+						continue;
+					}
+
+					blocked[curr_V] = true;
 
 					if (gain < 0) {
 						waste_cnt++;
@@ -274,17 +234,11 @@ namespace yagkp::Uncoarser {
 					current_edgecut -= gain;
 					setmin(current_run_best_edgecut, current_edgecut);
 
-					if (current_partition[curr_V] == Part::First) {
-						weight1 -= graph.getVertexWeight(curr_V);
-						weight2 += graph.getVertexWeight(curr_V);
-					}
-					else {
-						weight1 += graph.getVertexWeight(curr_V);
-						weight2 -= graph.getVertexWeight(curr_V);
-					}
+					weights[from] -= weight;
+					weights[to] += weight;
 					current_partition[curr_V] = GetOtherPart(current_partition[curr_V]);
 
-					UpdateNearGains(curr_V, graph, current_partition, blocked, heap1, heap2);
+					UpdateNearGains(curr_V, graph, current_partition, blocked, heaps);
 				}
 
 				while (current_edgecut > current_run_best_edgecut) {
