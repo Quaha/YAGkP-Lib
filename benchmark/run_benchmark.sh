@@ -11,10 +11,10 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Собирается командой: bash build.sh --benchmark
 BINARY="$ROOT_DIR/build/benchmark-seq/apps/bench/yagkp_bench"
-DATA_DIR="$ROOT_DIR/data"
-CACHE_DIR="$ROOT_DIR/data/cache"
+SET="${1:-walshaw}"
+SET_DIR="$ROOT_DIR/data/$SET"
+GRAPHS_FILE="$ROOT_DIR/data/${SET}_list.txt"
 OUTPUT_DIR="$SCRIPT_DIR/results"
-GRAPHS_FILE="$ROOT_DIR/benchmark/graphs.txt"
 
 #ALGOS=("yagkp")
 ALGOS=("yagkp" "kahip_strong" "kahip_eco" "kahip_fast" "metis_kway" "metis_recursive" "scotch")
@@ -25,80 +25,36 @@ if [ ! -x "$BINARY" ]; then
     exit 1
 fi
 
-mkdir -p "$DATA_DIR" "$CACHE_DIR" "$OUTPUT_DIR"
+if [ ! -f "$GRAPHS_FILE" ]; then
+    echo "Error: $GRAPHS_FILE not found. Download the set first: bash data/download_graphs.sh $SET" >&2
+    exit 1
+fi
+
+mkdir -p "$OUTPUT_DIR"
 
 # =============================================================================
-# Read the list of required graphs from graphs.txt
-# Lines starting with # and empty lines are ignored
-# Builds an associative array: name -> GROUP/NAME
+# Graphs of the set: data/<set>_list.txt, one name per line;
+# commented (#) and empty lines are skipped
 # =============================================================================
-declare -A NEEDED
-while IFS= read -r line; do
-    [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
-    name=$(basename "$line")
-    NEEDED["$name"]="$line"
+graphs=()
+while read -r name _; do
+    [[ -z "${name:-}" || "$name" == \#* ]] && continue
+    graphs+=("$SET_DIR/$name.mtx")
 done < "$GRAPHS_FILE"
-
-# =============================================================================
-# Move graphs that are no longer in graphs.txt from data/ to cache
-# =============================================================================
-for mtx_file in "$DATA_DIR"/*.mtx; do
-    [ -f "$mtx_file" ] || continue
-    name=$(basename "$mtx_file" .mtx)
-    if [ -z "${NEEDED[$name]+x}" ]; then
-        echo "[cache] $name is not in the list → moving to cache"
-        mv "$mtx_file" "$CACHE_DIR/"
-    fi
-done
-
-# =============================================================================
-# Ensure all required graphs are present in data/
-# Order of lookup: data/ → cache/ → download
-# =============================================================================
-for name in "${!NEEDED[@]}"; do
-    matrix="${NEEDED[$name]}"
-    mtx_file="$DATA_DIR/${name}.mtx"
-
-    # Already in data/
-    if [ -f "$mtx_file" ]; then
-        continue
-    fi
-
-    # Found in cache — restore to data/
-    if [ -f "$CACHE_DIR/${name}.mtx" ]; then
-        echo "[$name] Found in cache → moving to data/"
-        mv "$CACHE_DIR/${name}.mtx" "$DATA_DIR/"
-        continue
-    fi
-
-    # Not found anywhere — download from SuiteSparse Matrix Collection
-    group=$(dirname "$matrix")
-    echo "[$name] Downloading..."
-    url="https://sparse.tamu.edu/MM/${group}/${name}.tar.gz"
-
-    if ! wget -q --show-progress -O "/tmp/${name}.tar.gz" "$url"; then
-        echo "[$name] ERROR: failed to download"
-        rm -f "/tmp/${name}.tar.gz"
-        continue
-    fi
-
-    tar -xzf "/tmp/${name}.tar.gz" -C "/tmp/"
-    mv "/tmp/${name}/${name}.mtx" "$DATA_DIR/"
-    rm -rf "/tmp/${name}" "/tmp/${name}.tar.gz"
-    echo "[$name] Done"
-done
 
 # =============================================================================
 # Benchmark
 # For each graph and each k, run all algorithms sequentially
 # Results are written to OUTPUT_DIR by the binary itself
 # =============================================================================
-graphs=("$DATA_DIR"/*.mtx)
 total=${#graphs[@]}
 current=0
 
 for graph in "${graphs[@]}"; do
-    [ -f "$graph" ] || continue
+    if [ ! -f "$graph" ]; then
+        echo "Warning: $graph not found, skipped" >&2
+        continue
+    fi
     graph_name=$(basename "$graph")
     current=$((current + 1))
     echo "[$current/$total] Graph: $graph_name"

@@ -1,5 +1,6 @@
 /build/
 /deps/
-/data/
+/data/*
+!/data/download_graphs.sh
 gmon.out
 compile_commands.json
