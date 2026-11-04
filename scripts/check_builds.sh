@@ -13,9 +13,6 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
 ALL_MODES=(debug release profile benchmark)
 
-# Режимы, у которых ещё нет параллельного варианта: для --par они пропускаются
-PAR_UNSUPPORTED=" benchmark "
-
 usage() {
 	cat <<'USAGE'
 Использование: bash scripts/check_builds.sh [варианты] [опции]
@@ -25,7 +22,7 @@ usage() {
 
 Варианты (можно оба; по умолчанию --seq):
   --seq          последовательная версия
-  --par          параллельная версия (режимы без неё пропускаются)
+  --par          параллельная версия
 
 Опции:
   --full         собирать с нуля и сторонние библиотеки (иначе используются
@@ -187,11 +184,6 @@ failed=0
 for variant in "${variants[@]}"; do
 	for mode in "${ALL_MODES[@]}"; do
 		name="$mode-$variant"
-
-		if [ "$variant" = "par" ] && [[ "$PAR_UNSUPPORTED" == *" $mode "* ]]; then
-			results+=("$(printf '%-16s %-6s %s' "$name" "SKIP" "параллельный вариант не поддерживается")")
-			continue
-		fi
 
 		log="$LOGS/$name.log"
 		info "$name ..."

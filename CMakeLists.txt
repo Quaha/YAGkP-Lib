@@ -25,13 +25,9 @@ option(YAGKP_PARALLEL        "Параллельная версия (OpenMP)"   
 option(YAGKP_BUILD_APPS      "Собирать приложения из apps/"                          ON)
 option(YAGKP_BUILD_BENCHMARK "Собирать yagkp_bench (нужны сторонние библиотеки)"     OFF)
 
-# Сторонние библиотеки собирают scripts/deps/*.sh: deps/seq или deps/par
-if(YAGKP_PARALLEL)
-    set(_deps_variant par)
-else()
-    set(_deps_variant seq)
-endif()
-set(YAGKP_DEPS_DIR "${PROJECT_SOURCE_DIR}/deps/${_deps_variant}" CACHE PATH
+# Сторонние библиотеки собирают scripts/deps/*.sh в deps/seq. Они однопоточные,
+# поэтому параллельная версия YAGkP использует ту же последовательную сборку
+set(YAGKP_DEPS_DIR "${PROJECT_SOURCE_DIR}/deps/seq" CACHE PATH
      "Каталог с собранными сторонними библиотеками (для YAGKP_BUILD_BENCHMARK)")
 
 # -----------------------------------------------------------------------------

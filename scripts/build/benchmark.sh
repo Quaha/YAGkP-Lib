@@ -24,10 +24,12 @@ USAGE
 
 parse_common_args "$@"
 
-bash "$YAGKP_ROOT/scripts/deps/all.sh" "--$VARIANT" -j "$JOBS"
+# Сторонние библиотеки однопоточные: и для --par используется их
+# последовательная сборка deps/seq
+bash "$YAGKP_ROOT/scripts/deps/all.sh" --seq -j "$JOBS"
 
 build_yagkp benchmark \
 	-DYAGKP_BUILD_BENCHMARK=ON \
-	-DYAGKP_DEPS_DIR="$YAGKP_DEPS_ROOT/$VARIANT"
+	-DYAGKP_DEPS_DIR="$YAGKP_DEPS_ROOT/seq"
 
 print_built apps/partition/yagkp_partition apps/bench/yagkp_bench
