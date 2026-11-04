@@ -13,6 +13,7 @@
 #include "yagkp/config.hpp"
 #include "yagkp/graph.hpp"
 #include "yagkp/metrics.hpp"
+#include "yagkp/parallel.hpp"
 #include "yagkp/partitioner.hpp"
 #include "yagkp/types.hpp"
 
@@ -22,7 +23,8 @@ namespace yagkp::benchmark {
 	    const std::string& graph_path,
 	    int k,
 	    const std::string& algo,
-	    const std::string& output_dir
+	    const std::string& output_dir,
+	    const bool csv
 	) {
 		std::string graph_name = std::filesystem::path(graph_path).filename().string();
 		Graph g(graph_path, "mtx", true);
@@ -121,6 +123,28 @@ namespace yagkp::benchmark {
 
 		std::string stem = graph_name + "_k" + std::to_string(k);
 
+		std::ostringstream pct;
+		pct << std::fixed << std::setprecision(2) << imbalance * 100.0 << "%";
+
+		// === CSV: одна строка, поля — kCsvHeader ===
+		if (csv) {
+			// Многопоточен только YAGkP; число потоков — то, что видит OpenMP
+			const int_t threads = algo == "yagkp" ? parallel::MaxThreads() : 1;
+			std::cout << std::filesystem::path(graph_path).stem().string() << ',' << g.n << ','
+			          << g.m / 2 << ',' << k << ',' << ProgramConfig::imbalance << ',' << algo
+			          << ',' << threads << ',' << time_ms << ',' << edge_cut << ','
+			          << std::setprecision(6) << imbalance << ',' << max_part << '\n';
+		}
+		else {
+			std::cout << std::left << std::fixed << std::setprecision(2) << std::setw(16) << algo
+			          << std::setw(12) << time_ms << std::setw(14) << edge_cut << std::setw(12)
+			          << pct.str() << std::setw(14) << max_part << std::setw(14) << opt << "\n";
+		}
+
+		if (output_dir.empty()) {
+			return;
+		}
+
 		// === TXT ===
 		std::filesystem::create_directories(output_dir);
 		std::string txt_path = output_dir + "/" + stem + ".txt";
@@ -138,16 +162,8 @@ namespace yagkp::benchmark {
 			txt << "# " << std::string(86, '-') << "\n";
 		}
 
-		std::ostringstream pct;
-		pct << std::fixed << std::setprecision(2) << imbalance * 100.0 << "%";
-
 		txt << std::left << std::fixed << std::setprecision(2) << std::setw(16) << algo
 		    << std::setw(12) << time_ms << std::setw(14) << edge_cut << std::setw(12) << pct.str()
 		    << std::setw(14) << max_part << std::setw(14) << opt << "\n";
-
-		// Вывод в stdout
-		std::cout << std::left << std::fixed << std::setprecision(2) << std::setw(16) << algo
-		          << std::setw(12) << time_ms << std::setw(14) << edge_cut << std::setw(12)
-		          << pct.str() << std::setw(14) << max_part << std::setw(14) << opt << "\n";
 	}
 } // namespace yagkp::benchmark

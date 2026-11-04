@@ -5,13 +5,16 @@
 #include "yagkp/config.hpp"
 
 // ./yagkp_bench --graph ../data/add20.mtx --k 4 --algo kahip_strong --output ../benchmark/results/
+// ./yagkp_bench --graph ../data/add20.mtx --k 4 --algo yagkp --csv   # одна строка CSV
+// ./yagkp_bench --csv-header                                          # заголовок CSV
 
 int main(int argc, char* argv[]) {
 
 	std::string graph_path;
 	std::string algo;
 	std::string output_dir;
-	int k = 0;
+	int k    = 0;
+	bool csv = false;
 
 	for (int i = 1; i < argc; i++) {
 		std::string arg = argv[i];
@@ -30,19 +33,27 @@ int main(int argc, char* argv[]) {
 		else if (arg == "--imbalance" && i + 1 < argc) {
 			yagkp::ProgramConfig::imbalance = std::stod(argv[++i]);
 		}
+		else if (arg == "--csv") {
+			csv = true;
+		}
+		else if (arg == "--csv-header") {
+			std::cout << yagkp::benchmark::kCsvHeader << std::endl;
+			return 0;
+		}
 	}
 
-	if (graph_path.empty() || k == 0 || algo.empty() || output_dir.empty()) {
-		std::cerr << "Usage: yagkp_bench --graph <path> --k <k> --algo <algo> --output <dir>"
-		             " [--imbalance <eps>]"
+	if (graph_path.empty() || k == 0 || algo.empty() || (output_dir.empty() && !csv)) {
+		std::cerr << "Usage: yagkp_bench --graph <path> --k <k> --algo <algo>"
+		             " (--output <dir> | --csv) [--imbalance <eps>]"
 		          << std::endl;
+		std::cerr << "       yagkp_bench --csv-header" << std::endl;
 		std::cerr << "Algos: yagkp, kahip_strong, kahip_eco, kahip_fast, metis_kway, "
 		             "metis_recursive, scotch"
 		          << std::endl;
 		return 1;
 	}
 
-	yagkp::benchmark::RunSingle(graph_path, k, algo, output_dir);
+	yagkp::benchmark::RunSingle(graph_path, k, algo, output_dir, csv);
 
 	return 0;
 }
