@@ -6,3 +6,4 @@ KS=(2 4 8 16 32 64)
 SOLVERS=(yagkp kahip_fast kahip_eco kahip_strong metis_kway metis_recursive scotch)
 THREADS=(1)
 REPEATS=1
+VARIANT=seq

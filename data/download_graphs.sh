@@ -27,6 +27,8 @@ if command -v curl >/dev/null 2>&1; then
 else
 	wget -q --show-progress -O - "$URL" | tar -xz -C "$TMP_DIR"
 fi
+
+chmod 644 "$TMP_DIR"/*.mtx # the archive may carry odd permissions from its sources
 rm -rf "$SET_DIR"
 mv "$TMP_DIR" "$SET_DIR"
 
